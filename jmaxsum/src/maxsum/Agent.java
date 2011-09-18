@@ -16,7 +16,7 @@ import messages.PostService;
 import operation.Operator;
 
 /**
- *
+ * Agent that controls variables
  * @author Michele Roncalli < roncallim at gmail dot com >
  */
 public class Agent {
