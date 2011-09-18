@@ -41,7 +41,7 @@ public class Mercurio {
         CmdLineParser.Option stepbystep = parser.addBooleanOption("step-by-step");
         CmdLineParser.Option report = parser.addStringOption('R', "report");
         CmdLineParser.Option screwup = parser.addBooleanOption("screw-it-up");
-
+        CmdLineParser.Option updateel = parser.addBooleanOption('U',"update-each-iteration");
 
         try {
             parser.parse(args);
@@ -56,6 +56,7 @@ public class Mercurio {
         Boolean oldformatV = (Boolean)parser.getOptionValue(oldformat,false);
         Boolean stepbystepV = (Boolean)parser.getOptionValue(stepbystep,false);
         Boolean screwupV = (Boolean)parser.getOptionValue(screwup,false);
+        Boolean updateelV = (Boolean)parser.getOptionValue(updateel,false);
         // what if no report? -> null!
         String reportV = (String)parser.getOptionValue(report);
 
@@ -102,6 +103,8 @@ public class Mercurio {
 
             core.setStepbystep(stepbystepV);
 
+            core.setUpdateOnlyAtEnd(!updateelV);
+
             if (reportV != null){
                 core.pleaseReport(reportV);
             }
@@ -133,6 +136,7 @@ public class Mercurio {
         usage += "\t--old-format\tif the input file does not specify function id and agent\n";
         usage += "\t--step-by-step\tat each iteration the execution pause and wait for ENTER to be pressed\n";
         usage += "\t--iterations-number <n> | -i <n>\n\t\tset the number of iterations of the algorithm\n";
+        usage += "\t--update-each-iteration <n> | -U <n>\n\t\tprint the utility value and variables value at every iteration\n";
         usage += "\t--screw-it-up\tto use the preferences-on-values hack\n";
         usage += "\t--report <file>\twrite the report of the execution on <file>";
 

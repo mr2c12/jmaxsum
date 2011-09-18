@@ -18,6 +18,7 @@ package system;
 
 import exception.PostServiceNotSetException;
 import exception.VariableNotSetException;
+import factorgraph.NodeVariable;
 import java.io.IOException;
 import java.util.Iterator;
 import maxsum.Agent;
@@ -99,10 +100,14 @@ public class Core {
     /*private boolean updateOnlyAtEnd = true;
     private boolean pleaseReport = false;
     private String reportpath = "";*/
-        this.updateOnlyAtEnd = false;
+        //this.updateOnlyAtEnd = false;
         this.pleaseReport = true;
         this.reportpath = file;
 
+    }
+
+    public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
+        this.updateOnlyAtEnd = updateOnlyAtEnd;
     }
 
     
@@ -112,6 +117,7 @@ public class Core {
             System.out.println("Core: init()");
         }
         this.init();
+        String status = "";
 
         if (this.pleaseReport) {
             this.report += "iterations_number="+this.iterationsNumber+"\n";
@@ -150,32 +156,39 @@ public class Core {
                 if (!this.updateOnlyAtEnd) {
                     agent.sendZMessages();
                     agent.updateVariableValue();
-                    if (this.pleaseReport) {
-                        try {
-                            this.report += "iteration_" + i + "=" + cop.actualValue() + "\n";
-                        } catch (VariableNotSetException ex) {
-                            System.out.println("Unable to log due to variable not set exception");
-                        }
 
+
+                    //System.out.println("iteration_" + (i+1) + "=" + cop.actualValue() + "\n");
+                    status = this.stringStatus((i+1));
+                    System.out.println(status);
+                    if (this.pleaseReport) {
+                        this.report += status +"\n";
                     }
+
+                    
+                   
                 }
 
             }
 
             // pause
-            try {
-                System.out.print("Iteration "+(i+1)+"/"+ this.iterationsNumber+" completed");
-                if (this.stepbystep) {
-                    System.out.println(", press enter to continue");
+
+            if (this.stepbystep) {
+                System.out.print("Iteration "+(i+1)+"/"+ this.iterationsNumber+" completed, press enter to continue");
+                try {
                     System.in.read();
+                } catch (IOException ex) {
+                    //skip
                 }
                 System.out.println("");
-            } catch (Exception e){
-                e.printStackTrace();
             }
+            
+
             // continue
         }
 
+        //finish
+        
         if (this.updateOnlyAtEnd) {
                     // after the cicle, computeZ and update the variables.
                     itAgent = this.cop.getAgents().iterator();
@@ -185,17 +198,10 @@ public class Core {
                         agent.updateVariableValue();
                         
                     }
-        }
-        String variableValue = "";
-        for (Agent mragent : this.cop.getAgents()){
-            variableValue = agent.variableValueToString();
-            System.out.println(agent+" with variables:\n"+variableValue);
-            if (this.pleaseReport) {
-                report += agent+" with variables:\n"+variableValue;
-            }
-        }
-       
 
+        }
+
+        // REMEMBER TO CALL Core.Conclude()
 
     }
 
@@ -203,14 +209,10 @@ public class Core {
      * Write the conclusion and flush the report
      */
     public void conclude(){
-        try {
-            System.out.println("Utility function value: "+ this.cop.actualValue());
-        } catch (Exception ex) {
-            System.out.println("Oops, something went wrong: one or more variables are not set!");
-        }
-
+        String status = this.stringStatus((-1));
+        System.out.println(status);
         if (this.pleaseReport) {
-            // game is over, time to write the report
+            this.report += status +"\n";
             if (debug>=3) {
                     String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                     String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -224,5 +226,28 @@ public class Core {
                 ex.printStackTrace();
             }
         }
+        
+    }
+
+    public String stringStatus(int iteration){
+        //String status = "";
+        String status = ((iteration >= 0) ? ("iteration_"+iteration+"=") : "final=");
+        try {
+            status += this.cop.actualValue()+";";
+        } catch (VariableNotSetException ex) {
+            status += "err;";
+        }
+                
+        for (Agent agent : this.cop.getAgents()){
+            for (NodeVariable variable : agent.getVariables()){
+                try {
+                    status += variable.toString() +"="+ variable.getStateArgument().toString()+ ";";
+                }catch (Exception e) {
+                    status += variable.toString() +"=err;";
+                }
+            }
+        }
+
+        return status;
     }
 }
