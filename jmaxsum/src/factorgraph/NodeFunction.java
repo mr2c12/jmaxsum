@@ -1,5 +1,6 @@
 package factorgraph;
 
+import exception.FunctionEvaluatorNotSetException;
 import exception.VariableNotSetException;
 import function.FunctionEvaluator;
 import java.util.HashMap;
@@ -14,8 +15,8 @@ public class NodeFunction implements Node{
 
 
     // order is represented in functionevaluator
-    // represent N(j), that is the set of variable nodes connected to the function j
-    protected HashSet<NodeVariable> neighbours;
+    // the set of neighbours, representing N(j), is retrieved from functionevaluator
+
 
     private FunctionEvaluator function;
 
@@ -24,7 +25,7 @@ public class NodeFunction implements Node{
 
     private NodeFunction (int id){
         this.id = id;
-        this.neighbours = new HashSet<NodeVariable>();
+        //this.neighbours = new HashSet<NodeVariable>();
     }
 
     public void setFunction ( FunctionEvaluator function ){
@@ -37,8 +38,9 @@ public class NodeFunction implements Node{
 
 
     public void addNeighbour(Node x){
-        if (x instanceof NodeVariable)
-            this.neighbours.add((NodeVariable) (x));
+         if ((x instanceof NodeVariable)){
+            this.function.addParameter((NodeVariable) x);
+        }
     }
 
     /**
@@ -46,17 +48,34 @@ public class NodeFunction implements Node{
      * @return the number of argumensts of the function
      */
     public int size(){
-        return this.neighbours.size();
+        return this.function.getNeighbour().size();
     }
 
+    /**
+     *
+     * @return the neighbours of nodeFunction
+     */
     public HashSet<NodeVariable> getNeighbour() {
-        return this.neighbours;
+        return this.function.getNeighbour();
     }
 
-    public static NodeFunction getNodeFunction(Integer id){
+
+    /* this method is hidden cause it can be dangerous: declaring a new nodeFunction
+     without setting the proper functionevaluator could lead to misterious error
+     * use the method below where functionevaluator is required
+    */
+/*    public static NodeFunction getNodeFunction(Integer id){
         if (!(NodeFunction.table.containsKey(id))){
             NodeFunction.table.put(id, new NodeFunction(id));
         }
+        return NodeFunction.table.get(id);
+    }*/
+
+    public static NodeFunction getNodeFunction(Integer id, FunctionEvaluator fe){
+        if (!(NodeFunction.table.containsKey(id))){
+            NodeFunction.table.put(id, new NodeFunction(id));
+        }
+        NodeFunction.table.get(id).setFunction(fe);
         return NodeFunction.table.get(id);
     }
 
@@ -66,7 +85,7 @@ public class NodeFunction implements Node{
 
     public String stringOfNeighbour() {
         String neighbours = "";
-        Iterator<NodeVariable> itnode = this.neighbours.iterator();
+        Iterator<NodeVariable> itnode = this.function.getNeighbour().iterator();
         while (itnode.hasNext()) {
             NodeVariable nodeVariable = itnode.next();
             neighbours += nodeVariable+" ";

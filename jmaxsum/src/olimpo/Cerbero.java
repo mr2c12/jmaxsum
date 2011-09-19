@@ -79,7 +79,7 @@ public class Cerbero {
             Agent agent = null;
             NodeVariable nodevariable = null;
             NodeFunction nodefunction = null;
-            TabularFunction functionevaluator = null;
+            //TabularFunction functionevaluator = null;
             StringTokenizer t = null;
             String token = null;
             int agent_id, variable_id, variable_to_agent, number_of_argument, cost, function_id = -1, variable_to_function = -1, function_to_agent = -1;
@@ -138,7 +138,8 @@ public class Cerbero {
                         else {
                             function_id = Integer.parseInt(t.nextToken());
                         }
-                        nodefunction = NodeFunction.getNodeFunction(function_id);
+                        // tabular function
+                        nodefunction = NodeFunction.getNodeFunction(function_id, new TabularFunction());
                         nodefunctions.add(nodefunction);
                         if(debug>=3){
                             System.out.println("nodefunction of id: "+function_id);
@@ -175,7 +176,7 @@ public class Cerbero {
 
                         //ok, here we have function_id and all the parameters it needs
 
-                        functionevaluator = new TabularFunction();
+                        /*functionevaluator = new TabularFunction();
 
                         nodefunction.setFunction(functionevaluator);
 
@@ -183,20 +184,20 @@ public class Cerbero {
                         while (itv.hasNext()) {
                             NodeVariable nodeVariable = itv.next();
                             functionevaluator.addParameter(nodeVariable);
-                        }
+                        }*/
 
                         // function evaluator created
 
                     }
 
                     if (token.equals("F")) {
-                        arguments = new NodeArgument[functionevaluator.parametersNumber()];
-                        for (int i = 0; i < functionevaluator.parametersNumber(); i++) {
+                        arguments = new NodeArgument[nodefunction.getFunction().parametersNumber()];
+                        for (int i = 0; i < nodefunction.getFunction().parametersNumber(); i++) {
                             //arguments[i] = NodeArgument.getNodeArgument(Integer.parseInt(t.nextToken()));
                             arguments[i] = NodeArgument.getNodeArgument(t.nextToken());
                         }
                         cost = (Integer.parseInt(t.nextToken()));
-                        functionevaluator.addParametersCost(arguments, cost);
+                        nodefunction.getFunction().addParametersCost(arguments, cost);
                     }
                 }
                 line = in.readLine();

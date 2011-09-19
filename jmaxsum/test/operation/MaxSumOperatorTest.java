@@ -23,6 +23,7 @@ import messages.MessageFactory;
 import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
+import function.TabularFunction;
 
 import java.util.LinkedList;
 
@@ -110,7 +111,7 @@ public class MaxSumOperatorTest {
         params.add(new MessageRArrayDouble(null, null, r3));
         
         double expResult = -9.0;
-        double result = instance.computeAlpha(NodeVariable.getNodeVariable(0), NodeFunction.getNodeFunction(0), params);
+        double result = instance.computeAlpha(NodeVariable.getNodeVariable(0), NodeFunction.getNodeFunction(0, new TabularFunction()), params);
         assertEquals(expResult, result, 0.0);
 
     }

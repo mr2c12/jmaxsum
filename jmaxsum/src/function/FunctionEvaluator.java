@@ -13,6 +13,7 @@ import factorgraph.NodeVariable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import messages.MessageQ;
 
@@ -28,16 +29,24 @@ public abstract class FunctionEvaluator {
     final static int debug = test.DebugVerbosity.debugFunctionEvaluator;
 
     protected ArrayList<NodeVariable> parameters = new ArrayList<NodeVariable>();
+    protected HashSet<NodeVariable> parametersset = new HashSet<NodeVariable>();
 
     protected Double minCost = null;
     protected Double maxCost = null;
 
+
+    public HashSet<NodeVariable> getNeighbour() {
+        return this.parametersset;
+    }
     /**
      * set the NodeVariable parameters of the function
      * @param parameters Arraylist of NodeVariable
      */
     public void setParameters(ArrayList<NodeVariable> parameters){
         this.parameters = parameters;
+        for(NodeVariable x : parameters){
+            this.parametersset.add(x);
+        }
     }
 
     /**
@@ -45,7 +54,9 @@ public abstract class FunctionEvaluator {
      * @param x the parameter to add
      */
     public void addParameter(NodeVariable x){
-        this.parameters.add(x);
+        if (this.parametersset.add(x)) {
+            this.parameters.add(x);
+        }
     }
 
      /**
