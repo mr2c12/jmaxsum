@@ -36,8 +36,13 @@ public class NodeArgument {
         return this.value.toString();
     }
 
-    public boolean equals(NodeArgument n){
-        return this.getValue().equals(n.getValue());
+    public boolean equals(Object n){
+        if (!(n instanceof NodeArgument)){
+            return false;
+        }
+        else {
+            return this.getValue().equals(((NodeArgument)n).getValue());
+        }
     }
 
     public int hashCode(){

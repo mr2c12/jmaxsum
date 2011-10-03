@@ -14,7 +14,8 @@ public interface Node {
 
     public String stringOfNeighbour();
 
-    public boolean equals(Node n);
+    @Override
+    public boolean equals(Object o);
 
     public int getId();
 

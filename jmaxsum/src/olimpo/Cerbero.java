@@ -41,7 +41,7 @@ import system.COP_Instance;
  */
 public class Cerbero {
 
-    public static int debug = test.DebugVerbosity.debugCerbero;
+    public static final int debug = test.DebugVerbosity.debugCerbero;
 
 
     //COP_Instance instance;
@@ -67,7 +67,6 @@ public class Cerbero {
         HashSet<NodeFunction> nodefunctions = new HashSet<NodeFunction>();
         HashSet<NodeArgument> nodeargumens = new HashSet<NodeArgument>();
         HashSet<Agent> agents = new HashSet<Agent>();
-
 
 
 
@@ -202,6 +201,7 @@ public class Cerbero {
                 }
                 line = in.readLine();
             }
+            in.close();
         }catch (IOException e) {
             throw new InvalidInputFileException();
         }catch (Exception e) {

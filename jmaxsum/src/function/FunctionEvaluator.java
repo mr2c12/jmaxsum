@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import messages.MessageQ;
 
 /**
@@ -89,11 +90,12 @@ public abstract class FunctionEvaluator {
         double cost = this.evaluate(params);
 
         // seems to work
-        Iterator<NodeVariable> it = modifierTable.keySet().iterator();
+        Iterator<Entry<NodeVariable, MessageQ>> it = modifierTable.entrySet().iterator();
+                //modifierTable.keySet().iterator();
         NodeVariable nodeVariable = null;
         int indexOfModifier = -15;
         while (it.hasNext()){
-            nodeVariable = it.next();
+            nodeVariable = it.next().getKey();
             if(debug>=3){
                 System.out.println("NodeVariable is "+nodeVariable);
             }

@@ -31,15 +31,15 @@ public abstract class MessageContent {
 
     public abstract MessageContent clone();
 
-    public boolean equals(MessageContent mc){
-        if (mc == null){
+    public boolean equals(Object mc){
+        if ((mc == null)|| !(mc instanceof MessageContent)){
             return false;
         }
-        if (this.size() != mc.size()){
+        if (this.size() != ((MessageContent)mc).size()){
             return false;
         }
         for (int i = 0; i < this.size(); i++) {
-            if (this.getValue(i) != mc.getValue(i)){
+            if (this.getValue(i) != ((MessageContent)mc).getValue(i)){
                 return false;
             }
         }

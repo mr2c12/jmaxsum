@@ -233,7 +233,8 @@ public class MaxSumOperator implements Operator{
         // every new iterator value is a new index in M(i)
         while (iterator.hasNext()){
             variable = iterator.next();
-            if (variable != x) {
+            //if (variable != x) {
+            if (!variable.equals(x)){
                 //qmessages.add(this.mailMan.readQMessage(v, f));
                 //modifierTable.put(f.getFunction().getParameterPosition(v), this.mailMan.readQMessage(v, f));
                 if (postservice.readQMessage(variable, f) != null){

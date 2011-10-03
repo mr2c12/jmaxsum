@@ -41,11 +41,12 @@ public class TabularFunction extends FunctionEvaluator{
     }
 
     public void addParametersCost(NodeArgument[] params, double cost){
-        String key = "";
+        StringBuilder key = new StringBuilder();
+        key.append("");
         for (int i = 0; i < params.length; i++) {
-            key += params[i].toString() + ";";
+            key.append(params[i].toString()).append(";");
         }
-        this.costTable.put(key, cost);
+        this.costTable.put(key.toString(), cost);
         
         // set the min and the max
         if (this.minCost == null || cost < this.minCost) {
@@ -58,11 +59,12 @@ public class TabularFunction extends FunctionEvaluator{
 
     @Override
     public double evaluate(NodeArgument[] params) {
-        String key = "";
+        StringBuilder key = new StringBuilder();
+
         for (int i = 0; i < params.length; i++) {
-            key += params[i].toString() + ";";
+            key.append(params[i].toString()).append(";");
         }
-        return this.costTable.get(key);
+        return this.costTable.get(key.toString());
     }
 
     public int entryNumber(){
@@ -71,14 +73,15 @@ public class TabularFunction extends FunctionEvaluator{
 
     @Override
     public String toString(){
-        String string = "Function evaluator with "+this.entryNumber()+" entries\n";
-        string = "NodeVariable used: ";
+        StringBuilder string = new StringBuilder();
+        StringBuilder append = string.append("Function evaluator with " + this.entryNumber() + " entries\n");
+        string.append("NodeVariable used: ");
         Iterator<NodeVariable> it = this.parameters.iterator();
         while (it.hasNext()) {
             NodeVariable nodeVariable = it.next();
-            string += nodeVariable + " ";
+            StringBuilder append1 = string.append(nodeVariable + " ");
         }
-        string +="\n";
+        string.append("\n");
         /*Iterator<String> keyit = this.costTable.keySet().iterator();
         while (keyit.hasNext()) {
             String key = keyit.next();
@@ -88,14 +91,14 @@ public class TabularFunction extends FunctionEvaluator{
         Iterator<NodeArgument[]> ita = table.keySet().iterator();
         while (ita.hasNext()) {
             NodeArgument[] nodeArguments = ita.next();
-            string += "[ ";
+            string.append("[ ");
             for (int i = 0; i < nodeArguments.length; i++) {
-                string += nodeArguments[i]+" ";
+                string.append(nodeArguments[i]).append(" ");
             }
-            string += "] "+ table.get(nodeArguments)+"\n";
+            string.append("] ").append(table.get(nodeArguments)).append("\n");
         }
 
-        return string;
+        return string.toString();
     }
 
     public HashMap<NodeArgument[], Double> getParametersCost() {
@@ -120,19 +123,19 @@ public class TabularFunction extends FunctionEvaluator{
     }
 
     public String toStringForFile() {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         HashMap<NodeArgument[], Double> table = this.getParametersCost();
         Iterator<NodeArgument[]> ita = table.keySet().iterator();
         while (ita.hasNext()) {
             NodeArgument[] nodeArguments = ita.next();
-            string += "F ";
+            string.append("F ");
             for (int i = 0; i < nodeArguments.length; i++) {
-                string += nodeArguments[i]+" ";
+                string.append(nodeArguments[i]).append(" ");
             }
-            string +=  table.get(nodeArguments)+"\n";
+            string.append(table.get(nodeArguments)).append("\n");
         }
 
-        return string;
+        return string.toString();
     }
 
     @Override

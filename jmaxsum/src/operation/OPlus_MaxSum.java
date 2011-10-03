@@ -193,11 +193,11 @@ public class OPlus_MaxSum implements OPlus{
     public void enumerate(int[] v, int[] max){
         int imax = v.length-1;
         int i=imax;
-        int quanti = 0;
+        //int quanti = 0;
         while(i>=0){
             while ( v[i] < max[i] - 1 ) {
                 //System.out.println(Utils.toString(v));
-                quanti++;
+                //quanti++;
                 v[i]++;
                 for (int j = i+1; j <= imax; j++) {
                     v[j]=0;
@@ -207,7 +207,7 @@ public class OPlus_MaxSum implements OPlus{
             i--;
         }
         //System.out.println(Utils.toString(v));
-        quanti++;
+        //quanti++;
         //System.out.println("prodotti "+quanti+ " array");
     }
 

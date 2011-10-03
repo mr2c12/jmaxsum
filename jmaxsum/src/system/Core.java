@@ -231,23 +231,25 @@ public class Core {
 
     public String stringStatus(int iteration){
         //String status = "";
-        String status = ((iteration >= 0) ? ("iteration_"+iteration+"=") : "final=");
+        String status_i = ((iteration >= 0) ? ("iteration_"+iteration+"=") : "final=");
+        StringBuilder status = new StringBuilder();
+        status.append(status_i);
         try {
-            status += this.cop.actualValue()+";";
+            status.append(this.cop.actualValue()).append(";");
         } catch (VariableNotSetException ex) {
-            status += "err;";
+            status.append("err;");
         }
                 
         for (Agent agent : this.cop.getAgents()){
             for (NodeVariable variable : agent.getVariables()){
                 try {
-                    status += variable.toString() +"="+ variable.getStateArgument().toString()+ ";";
+                    status.append(variable.toString() +"="+ variable.getStateArgument().toString()+ ";");
                 }catch (Exception e) {
-                    status += variable.toString() +"=err;";
+                    status.append(variable.toString() +"=err;");
                 }
             }
         }
 
-        return status;
+        return status.toString();
     }
 }

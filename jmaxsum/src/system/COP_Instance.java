@@ -89,37 +89,37 @@ public abstract class COP_Instance {
     }
 
     public String toTestString(){
-        String string = "";
-        string += "Agents number: " + this.agents.size()+"\n";
+        StringBuilder string = new StringBuilder();
+        string.append("Agents number: ").append(this.agents.size()).append("\n");
         Iterator<Agent> ita = this.agents.iterator();
         while (ita.hasNext()) {
             Agent agent = ita.next();
-            string += "- " + agent+"\n";
-            string += "\twith variables:\n";
+            string.append("- ").append(agent).append("\n");
+            string.append("\twith variables:\n");
             // nodevariable
             Iterator<NodeVariable> itv = agent.getVariables().iterator();
             while (itv.hasNext()) {
                 NodeVariable nodeVariable = itv.next();
-                string += "\t- "+nodeVariable+" with neighbours: "+nodeVariable.stringOfNeighbour()+"\n";
+                string.append("\t- ").append(nodeVariable).append(" with neighbours: ").append(nodeVariable.stringOfNeighbour()).append("\n");
             }
             // nodefunction
-            string += "\twith function:\n";
+            string.append("\twith function:\n");
             Iterator<NodeFunction> itf = agent.getFunctions().iterator();
             while (itf.hasNext()) {
                 NodeFunction nodeFunction = itf.next();
-                string += "\t- "+nodeFunction+" with neighbours: "+nodeFunction.stringOfNeighbour()+"\n";
-                string += "\t\twith function evaluator:\n";
-                string += nodeFunction.getFunction();
+                string.append("\t- ").append(nodeFunction).append(" with neighbours: ").append(nodeFunction.stringOfNeighbour()).append("\n");
+                string.append("\t\twith function evaluator:\n");
+                string.append(nodeFunction.getFunction());
             }
 
         }
 
-        return string;
+        return string.toString();
     }
 
 
     public String toStringFile(){
-        String string = "";
+        StringBuilder string = new StringBuilder();
 
         HashMap<NodeVariable, Integer> nodevariable_agent = new HashMap<NodeVariable, Integer>();
         HashMap<NodeFunction, Integer> nodefunction_agent = new HashMap<NodeFunction, Integer>();
@@ -133,7 +133,7 @@ public abstract class COP_Instance {
         Iterator<Agent> ita = this.agents.iterator();
         while (ita.hasNext()) {
             Agent agent = ita.next();
-            string += "AGENT " + agent.id()+"\n";
+            string.append("AGENT ").append(agent.id()).append("\n");
 
             itnv = agent.getVariables().iterator();
             while (itnv.hasNext()) {
@@ -154,12 +154,7 @@ public abstract class COP_Instance {
         itnv = this.nodevariables.iterator();
         while (itnv.hasNext()) {
             NodeVariable nodeVariable = itnv.next();
-            string += "VARIABLE "+ nodeVariable.id() +
-                    // agent id
-                    " " + nodevariable_agent.get(nodeVariable) +
-                    // number of values
-                    " " + nodeVariable.size()
-                    + "\n";
+            string.append("VARIABLE ").append(nodeVariable.id()).append(" ").append(nodevariable_agent.get(nodeVariable)).append(" ").append(nodeVariable.size()).append("\n");
         }
 
         // FUNCTIONS
@@ -167,26 +162,24 @@ public abstract class COP_Instance {
         itnf = this.nodefunctions.iterator();
         while (itnf.hasNext()) {
             NodeFunction nodeFunction = itnf.next();
-            string += "CONSTRAINT "+ nodeFunction.id() +
-                    // agent id
-                    " " + nodefunction_agent.get(nodeFunction) + " ";
+            string.append("CONSTRAINT ").append(nodeFunction.id()).append(" ").append(nodefunction_agent.get(nodeFunction)).append(" ");
 
             // variables id
             fe = nodeFunction.getFunction();
             for (int i = 0; i < fe.parametersNumber(); i++) {
-                string += fe.getParameter(i).id() + " ";
+                string.append(fe.getParameter(i).id() + " ");
             }
-            string += "\n";
+            string.append("\n");
 
             // variables values and function cost
-            string += fe.toStringForFile();
+            string.append(fe.toStringForFile());
             
         }
 
 
 
 
-        return string;
+        return string.toString();
     }
 
     public void toFile(String path){

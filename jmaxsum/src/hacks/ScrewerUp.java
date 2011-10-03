@@ -139,12 +139,12 @@ public class ScrewerUp {
             int [] v = new int[numArguments.length];
             int imax = v.length-1;
             int i=imax;
-            int quanti = 0;
+            //int quanti = 0;
             while(i>=0){
                 while ( v[i] < numArguments[i] - 1 ) {
                     // HERE in v
                     this.updateCost(v, fe, 1);
-                    quanti++;
+                    //quanti++;
                     v[i]++;
                     for (int j = i+1; j <= imax; j++) {
                         v[j]=0;
@@ -155,7 +155,7 @@ public class ScrewerUp {
             }
             // HERE in v
             this.updateCost(v, fe, 1);
-            quanti++;
+            //quanti++;
         }
 
         this.screwed = true;

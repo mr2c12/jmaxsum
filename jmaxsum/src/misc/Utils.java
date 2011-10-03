@@ -35,31 +35,34 @@ public class Utils {
 
 
     public static String toString(double[] a){
-        String array = "[ ";
+        StringBuilder array = new StringBuilder();
+        array.append("[ ");
         for (int i = 0; i < a.length - 1; i++) {
-            array += a[i]+" ,";
+            array.append(a[i]).append(" ,");
         }
-        array += a[a.length-1]+"]";
-        return array;
+        array.append(a[a.length - 1]).append("]");
+        return array.toString();
     }
 
     public static String toString(Double[] a){
-        String array = "[ ";
+        StringBuilder array = new StringBuilder();
+        array.append("[ ");
         for (int i = 0; i < a.length - 1; i++) {
-            array += a[i]+" ,";
+            StringBuilder append = array.append(a[i] + " ,");
         }
-        array += a[a.length-1]+"]";
-        return array;
+        StringBuilder append = array.append(a[a.length - 1] + "]");
+        return array.toString();
     }
 
 
     public static String toString(int[] a){
-        String array = "[ ";
+        StringBuilder array = new StringBuilder();
+        array.append("[ ");
         for (int i = 0; i < a.length - 1; i++) {
-            array += a[i]+" ,";
+            array.append(a[i]).append(" ,");
         }
-        array += a[a.length-1]+"]";
-        return array;
+        array.append(a[a.length - 1]).append("]");
+        return array.toString();
     }
 
 

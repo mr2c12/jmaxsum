@@ -226,18 +226,30 @@ public class Agent {
     }
 
     public String variableValueToString(){
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (NodeVariable x : this.getVariables() ){
             try {
-                string += "[" + x + "] value: " + x.getStateArgument() + " at position: " + (x.getStateIndex() + 1) + "/" + x.getValues().size() + "\n";
+                //string.append("[" + x + "] value: " + x.getStateArgument() + " at position: " + (x.getStateIndex() + 1) + "/" + x.getValues().size() + "\n");
+                string.append("[").append(x).append("] value: ").append(x.getStateArgument()).append(" at position: ").append(x.getStateIndex() + 1).append("/").append(x.getValues().size()).append("\n");
             } catch (VariableNotSetException ex) {
-                string += "[" + x + "] IS NOT SET\n";
+                string.append("[").append(x).append("] IS NOT SET\n");
             }
         }
-        return string;
+        return string.toString();
     }
 
+    @Override
     public int hashCode(){
         return ("Agent_"+this.id).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Agent) {
+            return ((Agent)o).id() == this.id();
+        }
+        else {
+            return false;
+        }
     }
 }

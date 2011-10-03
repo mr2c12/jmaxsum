@@ -96,18 +96,18 @@ public class NodeVariable implements Node{
     }
 
     public String stringOfNeighbour() {
-        String neighbours = "";
+        StringBuilder neighbours = new StringBuilder();
         Iterator<NodeFunction> itnode = this.neighbours.iterator();
         while (itnode.hasNext()) {
             NodeFunction nodeVariable = itnode.next();
-            neighbours += nodeVariable+" ";
+            neighbours.append(nodeVariable).append(" ");
         }
-        return neighbours;
+        return neighbours.toString();
     }
 
-    public boolean equals(Node n) {
+    public boolean equals(Object n) {
         return (n instanceof NodeVariable)
-                && (this.getId() == n.getId());
+                && (this.getId() == ((NodeVariable)n).getId());
     }
 
     public int getId() {
@@ -137,9 +137,6 @@ public class NodeVariable implements Node{
         return this.id;
     }
 
-    public boolean equals(NodeVariable n){
-        return this.id == n.id();
-    }
 
     public int hashCode(){
         return ("NodeVariable_"+this.id).hashCode();

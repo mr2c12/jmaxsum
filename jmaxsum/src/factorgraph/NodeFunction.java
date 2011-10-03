@@ -84,13 +84,13 @@ public class NodeFunction implements Node{
     }
 
     public String stringOfNeighbour() {
-        String neighbours = "";
+        StringBuilder neighbours = new StringBuilder();
         Iterator<NodeVariable> itnode = this.function.getNeighbour().iterator();
         while (itnode.hasNext()) {
             NodeVariable nodeVariable = itnode.next();
-            neighbours += nodeVariable+" ";
+            neighbours.append(nodeVariable).append(" ");
         }
-        return neighbours;
+        return neighbours.toString();
     }
 
     public boolean equals(Node n) {
@@ -116,5 +116,14 @@ public class NodeFunction implements Node{
 
     public int hashCode(){
         return ("NodeFunction_"+this.id).hashCode();
+    }
+
+    public boolean equals (Object o){
+        if (!(o instanceof NodeFunction)){
+            return false;
+        }
+        else {
+            return this.id() == ((NodeFunction)o).id();
+        }
     }
 }
