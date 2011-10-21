@@ -23,15 +23,17 @@ package test;
  */
 public class DebugVerbosity {
 
-    public static final int debug = -100;
+    public static final int debug = 0;
 
     public static final int debugNodeVariable = 0
+            + DebugVerbosity.debug;
+    public static final int debugNodeFunction = 3
             + DebugVerbosity.debug;
 
     public static final int debugFunctionEvaluator = 0 
             + DebugVerbosity.debug;
 
-    public static final int debugAgent = 1
+    public static final int debugAgent = 0
             + DebugVerbosity.debug;
 
     public static final int debugMessageArrayDouble = 0
@@ -46,7 +48,7 @@ public class DebugVerbosity {
     public static final int debugMessageRArrayDouble = 0
             + DebugVerbosity.debug;
 
-    public static final int debugMaxSumOperator = 1
+    public static final int debugMaxSumOperator = 0
             + DebugVerbosity.debug;
 
     public static final int debugOPlus_MaxSum = 0
@@ -58,15 +60,18 @@ public class DebugVerbosity {
     public static final int debugCerbero = 0
             + DebugVerbosity.debug;
 
-    public static final int debugCore = 1
+    public static final int debugCore = 0
             + DebugVerbosity.debug;
 
-    public static final int debugMain = 1
+    public static final int debugMain = 0
             + DebugVerbosity.debug;
     
     public static final int debugRMessageList = 0
             + DebugVerbosity.debug;
 
     public static final int debugScrewerUp = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugClonedMSInstance = 3
             + DebugVerbosity.debug;
 }

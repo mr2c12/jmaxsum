@@ -15,39 +15,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package maxsum;
-
-import exception.VariableNotSetException;
-import factorgraph.NodeArgument;
-import factorgraph.NodeFunction;
-import factorgraph.NodeVariable;
-import java.util.HashSet;
-import system.COP_Instance;
+package exception;
 
 /**
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class MS_COP_Instance extends COP_Instance{
-
-    public MS_COP_Instance(){
-        super();
-    }
-
-    public MS_COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<NodeArgument> nodeargumens, HashSet<Agent> agents) {
-        super(nodevariables, nodefunctions, nodeargumens, agents);
-    }
-
-    @Override
-    public double actualValue() throws VariableNotSetException {
-        int value = 0;
-        for(NodeFunction nf : this.nodefunctions){
-            value += nf.actualValue();
-        }
-
-        return value;
-    }
-
-
+public class NodeVariableNotInMapException extends Exception {
 
 }

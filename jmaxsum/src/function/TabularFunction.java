@@ -144,4 +144,18 @@ public class TabularFunction extends FunctionEvaluator{
     }
 
 
+    @Override
+    public FunctionEvaluator clone() {
+        TabularFunction clonedT = new TabularFunction();
+        for (NodeVariable parameter : this.getParameters()){
+            clonedT.addParameter(parameter);
+        }
+        for (NodeArgument[] arguments : this.getParametersCost().keySet()) {
+            clonedT.addParametersCost(arguments, this.evaluate(arguments));
+        }
+
+        return clonedT;
+    }
+
+
 }

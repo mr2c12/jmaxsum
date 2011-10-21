@@ -247,4 +247,23 @@ public abstract class FunctionEvaluator {
     public double getDelta() throws ValueNotSetException{
         return this.maxCost() - this.minCost();
     }
+
+    public abstract FunctionEvaluator clone();
+
+
+    public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
+        
+
+        if (this.parameters.contains(oldN)){
+            // oldN is present, swap it with newN
+            this.parameters.remove(oldN);
+            this.parameters.add(newN);
+        }
+        if (this.parametersset.contains(oldN)){
+            // oldN is present, swap it with newN
+            this.parametersset.remove(oldN);
+            this.parametersset.add(newN);
+        }
+
+    }
 }

@@ -38,21 +38,21 @@ public abstract class COP_Instance {
 
     protected HashSet<NodeVariable> nodevariables;
     protected HashSet<NodeFunction> nodefunctions;
-    protected HashSet<NodeArgument> nodeargumens;
+    protected HashSet<NodeArgument> nodearguments;
     protected HashSet<Agent> agents;
 
 
     public COP_Instance() {
         nodevariables = new HashSet<NodeVariable>();
         nodefunctions = new HashSet<NodeFunction>();
-        nodeargumens = new HashSet<NodeArgument>();
+        nodearguments = new HashSet<NodeArgument>();
         agents = new HashSet<Agent>();
     }
 
     public COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<NodeArgument> nodeargumens, HashSet<Agent> agents) {
         this.nodevariables = nodevariables;
         this.nodefunctions = nodefunctions;
-        this.nodeargumens = nodeargumens;
+        this.nodearguments = nodeargumens;
         this.agents = agents;
     }
 
@@ -65,11 +65,11 @@ public abstract class COP_Instance {
     }
 
     public HashSet<NodeArgument> getNodeargumens() {
-        return nodeargumens;
+        return nodearguments;
     }
 
     public void setNodeargumens(HashSet<NodeArgument> nodeargumens) {
-        this.nodeargumens = nodeargumens;
+        this.nodearguments = nodeargumens;
     }
 
     public HashSet<NodeFunction> getNodefunctions() {

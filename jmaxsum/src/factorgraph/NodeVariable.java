@@ -1,5 +1,6 @@
 package factorgraph;
 
+import exception.OutOfNodeVariableNumberException;
 import exception.VariableNotSetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,9 @@ public class NodeVariable implements Node{
     // represent M(i), that is the set of function nodes connected to the variable i
     HashSet<NodeFunction> neighbours;
     private int id;
+
+    // max number of nodevariables
+    private static final int MAXNODEVARIABLENUMBER = 1000;
 
     /**
      * arraylist of the possible values of the variable represented by this node
@@ -87,6 +91,15 @@ public class NodeVariable implements Node{
         return NodeVariable.table.get(id);
     }
 
+    public static NodeVariable getNewNextNodeVariable() throws OutOfNodeVariableNumberException{
+        for (int id = 0; id < NodeVariable.MAXNODEVARIABLENUMBER; id++){
+            if (!NodeVariable.table.containsKey(id)) {
+                return NodeVariable.getNodeVariable(id);
+            }
+        }
+        throw new OutOfNodeVariableNumberException();
+    }
+
     void clearValues() {
         this.values = new ArrayList<NodeArgument>();
     }
@@ -141,5 +154,47 @@ public class NodeVariable implements Node{
     public int hashCode(){
         return ("NodeVariable_"+this.id).hashCode();
     }
-    
+
+    public NodeVariable clone(){
+        try {
+            NodeVariable nv = NodeVariable.getNewNextNodeVariable();
+            // copy the possible values
+            for ( NodeArgument argument : this.getValues() ){
+                nv.addValue(argument);
+            }
+            // copy the neighbours
+            for ( NodeFunction function : this.getNeighbour() ) {
+                nv.addNeighbour(function);
+            }
+            return nv;
+        } catch (OutOfNodeVariableNumberException ex) {
+            return null;
+        }
+    }
+
+    public void changeNeighbour(NodeFunction oldN, NodeFunction newN) {
+        if (this.neighbours.contains(oldN)){
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Function "+oldN+" is present");
+                    System.out.println("---------------------------------------");
+            }
+            
+            // oldN is present, swap it with newN
+            this.neighbours.remove(oldN);
+            this.neighbours.add(newN);
+        }
+        else {
+            if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Function "+oldN+" is not present");
+                        System.out.println("---------------------------------------");
+            }
+        }
+    }
+
 }

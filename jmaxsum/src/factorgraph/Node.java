@@ -22,5 +22,6 @@ public interface Node {
     @Override
     public int hashCode();
 
+    public Node clone();
 
 }

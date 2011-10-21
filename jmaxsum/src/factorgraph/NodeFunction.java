@@ -1,11 +1,13 @@
 package factorgraph;
 
 import exception.FunctionEvaluatorNotSetException;
+import exception.OutOfNodeFunctionNumberException;
 import exception.VariableNotSetException;
 import function.FunctionEvaluator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import test.DebugVerbosity;
 
 /**
  * The node function in the factor graph
@@ -22,6 +24,9 @@ public class NodeFunction implements Node{
 
     private static HashMap<Integer, NodeFunction> table = new HashMap<Integer, NodeFunction>();
     private int id;
+
+    private static final int MAXNODEFUNCTIONNUMBER = 1000;
+    private static final int debug = DebugVerbosity.debugNodeFunction;
 
     private NodeFunction (int id){
         this.id = id;
@@ -79,6 +84,16 @@ public class NodeFunction implements Node{
         return NodeFunction.table.get(id);
     }
 
+
+    public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe) throws OutOfNodeFunctionNumberException{
+        for (int id = 0; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
+            if (!NodeFunction.table.containsKey(id)) {
+                return NodeFunction.getNodeFunction(id, fe);
+            }
+        }
+        throw new OutOfNodeFunctionNumberException();
+    }
+
     public String toString(){
         return "NodeFunction_"+this.id;
     }
@@ -92,11 +107,13 @@ public class NodeFunction implements Node{
         }
         return neighbours.toString();
     }
-
-    public boolean equals(Node n) {
+/*
+    public boolean equals(Object n) {
         return ( n instanceof NodeFunction )
-                && (this.getId() == n.getId());
+                && (this.getId() == ((NodeFunction)n).getId());
     }
+*/
+
 
     public int getId() {
         return this.id;
@@ -104,10 +121,6 @@ public class NodeFunction implements Node{
 
     public int id() {
         return this.id;
-    }
-
-    public boolean equals(NodeVariable n){
-        return this.id == n.id();
     }
 
     public double actualValue() throws VariableNotSetException {
@@ -125,5 +138,24 @@ public class NodeFunction implements Node{
         else {
             return this.id() == ((NodeFunction)o).id();
         }
+    }
+
+    public NodeFunction clone() {
+        try {
+            return NodeFunction.getNewNextNodeFunction(this.function.clone());
+        } catch (OutOfNodeFunctionNumberException ex) {
+            return null;
+        }
+    }
+
+    public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "trying to change "+oldN+" with "+newN);
+                System.out.println("---------------------------------------");
+        }
+        this.function.changeNeighbour(oldN, newN);
     }
 }

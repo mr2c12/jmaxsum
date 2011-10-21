@@ -4,7 +4,9 @@
  */
 
 package test;
+import boundedMaxSum.ClonedMSInstance;
 import hacks.ScrewerUp;
+import maxsum.MS_COP_Instance;
 import misc.Utils;
 import system.COP_Instance;
 import olimpo.Cerbero;
@@ -46,6 +48,32 @@ public class Main {
                     System.out.println("---------------------------------------");
             }
 
+            System.out.println("Original instance value:\n"+cop.toTestString());
+
+            System.out.println("------------------------------------------------");
+
+            //COP_Instance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
+
+            ClonedMSInstance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
+
+            System.out.println("Cloned instance value:\n"+cop2.toTestString());
+
+            System.out.println("------------------------------------------------");
+
+            Core core = new Core(cop2);
+
+            core.setIterationsNumber(50);
+            core.setStepbystep(false);
+
+            core.solve();
+
+            core.conclude();
+
+            cop2.setOriginalVariablesValues();
+            System.out.println("original value= " + cop2.getActualOriginalValue());
+
+
+            /*
             ScrewerUp su = new ScrewerUp(cop);
 
             cop = su.screwItUp();
@@ -60,12 +88,12 @@ public class Main {
 
             Core core = new Core(cop);
 
-            core.setIterationsNumber(5);/*
+            core.setIterationsNumber(5);
             core.setStepbystep(false);
             String report = "reports/cop_";
             report += System.currentTimeMillis();
             report += ".report";
-            core.pleaseReport(report);*/
+            core.pleaseReport(report);
 
             core.solve();
 
@@ -80,7 +108,7 @@ public class Main {
                     System.out.println("---------------------------------------");
                     System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fixed instance is: "+ cop.toTestString());
                     System.out.println("---------------------------------------");
-            }
+            }*/
 
 
         }catch(Exception e){

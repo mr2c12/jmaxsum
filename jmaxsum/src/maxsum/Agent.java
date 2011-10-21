@@ -2,6 +2,7 @@
 
 package maxsum;
 
+import exception.OutOfAgentNumberException;
 import exception.PostServiceNotSetException;
 import exception.VariableNotSetException;
 import factorgraph.NodeFunction;
@@ -29,6 +30,7 @@ public class Agent {
     private PostService postservice = null;
 
     private int id;
+    private static final int MAXAGENTNUMBER = 1000;
 
     private HashSet<NodeVariable> variables;
     private HashSet<NodeFunction> functions;
@@ -45,6 +47,15 @@ public class Agent {
             Agent.table.put(id, new Agent(id));
         }
         return Agent.table.get(id);
+    }
+
+    public static Agent getNewNextAgent() throws OutOfAgentNumberException{
+        for (int id = 0; id < Agent.MAXAGENTNUMBER; id++){
+            if (!Agent.table.containsKey(id)) {
+                return Agent.getAgent(id);
+            }
+        }
+        throw new OutOfAgentNumberException();
     }
 
     public void setOp(Operator op) {
@@ -85,7 +96,7 @@ public class Agent {
         }
 
         Iterator<NodeVariable> iteratorv = this.getVariables().iterator();
-        NodeVariable variable = null;
+        NodeVariable variable; // = null;
         NodeFunction function = null;
         while (iteratorv.hasNext()){
             variable = iteratorv.next();
@@ -163,6 +174,16 @@ public class Agent {
             }
 
         }
+    }
+
+    public void setFunctions(HashSet<NodeFunction> functions) {
+        this.functions = functions;
+    }
+
+
+
+    public void setVariables(HashSet<NodeVariable> variables) {
+        this.variables = variables;
     }
 
 
@@ -252,4 +273,36 @@ public class Agent {
             return false;
         }
     }
+
+    public Agent clone() {
+        try {
+            Agent cloned = Agent.getNewNextAgent();
+            cloned.setOp(this.op);
+            cloned.setPostservice(this.postservice);
+
+            for (NodeVariable oldx : this.getVariables()) {
+                cloned.addNodeVariable(oldx);
+            }
+            
+            for (NodeFunction oldf : this.getFunctions()) {
+                cloned.addNodeFunction(oldf);
+            }
+            
+            return cloned;
+        } catch (OutOfAgentNumberException ex) {
+            return null;
+        }
+    }
+
+
+    public void changeVariable(NodeVariable oldv, NodeVariable newv) {
+        this.variables.remove(oldv);
+        this.variables.add(newv);
+    }
+
+    public void changeFunction(NodeFunction oldv, NodeFunction newv) {
+        this.functions.remove(oldv);
+        this.functions.add(newv);
+    }
+
 }
