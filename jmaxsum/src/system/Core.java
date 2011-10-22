@@ -234,7 +234,7 @@ public class Core {
         String status_i = ((iteration >= 0) ? ("iteration_"+iteration+"=") : "final=");
         StringBuilder status = new StringBuilder();
         status.append(status_i);
-        try {
+        /*try {
             status.append(this.cop.actualValue()).append(";");
         } catch (VariableNotSetException ex) {
             status.append("err;");
@@ -248,8 +248,9 @@ public class Core {
                     status.append(variable.toString() +"=err;");
                 }
             }
-        }
-
+        }*/
+        // string status moved in COP_Instance
+        status.append(this.cop.status());
         return status.toString();
     }
 }

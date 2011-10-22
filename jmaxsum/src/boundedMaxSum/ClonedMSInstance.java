@@ -18,6 +18,9 @@
 package boundedMaxSum;
 
 import exception.NodeVariableNotInMapException;
+import exception.OutOfAgentNumberException;
+import exception.OutOfNodeFunctionNumberException;
+import exception.OutOfNodeVariableNumberException;
 import exception.VariableNotSetException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
@@ -61,138 +64,156 @@ public class ClonedMSInstance extends MS_COP_Instance{
     private HashMap<NodeFunction, NodeFunction> functions_correspondence_original_cloned;
 
     public ClonedMSInstance(MS_COP_Instance originalInstance) {
+        try {
+            // set the original instance
+            this.originalInstance = originalInstance;
 
-        // set the original instance
-        this.originalInstance = originalInstance;
-
-        if (debug>=3) {
-                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Original instance set for cloned one");
-                System.out.println("---------------------------------------");
-        }
-
-        // set all the nodeargumen AS IS
-        for (NodeArgument arg : this.originalInstance.getNodeargumens()) {
             if (debug>=3) {
                     String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                     String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                     System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Adding argument "+arg);
-                    System.out.println("---------------------------------------");
-            }
-            this.nodearguments.add(arg);
-        }
-
-        this.variables_correspondence_cloned_original = new HashMap<NodeVariable, NodeVariable>();
-        this.variables_correspondence_original_cloned = new HashMap<NodeVariable, NodeVariable>();
-        // clone variables
-        // keep a link beetwin a cloned variable and the original one
-        NodeVariable newx;
-        for (NodeVariable oldx : this.originalInstance.getNodevariables()) {
-            newx = oldx.clone();
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Old variable: "+oldx + "\nNew variable: "+newx);
-                    System.out.println("---------------------------------------");
-            }
-            this.nodevariables.add(newx);
-            this.variables_correspondence_cloned_original.put(newx, oldx);
-            this.variables_correspondence_original_cloned.put(oldx, newx);
-        }
-
-
-        this.functions_correspondence_original_cloned = new HashMap<NodeFunction, NodeFunction>();
-        // clone functions
-        // keep a link beetwin a cloned function and the original one
-        NodeFunction newf;
-        for (NodeFunction oldf : this.originalInstance.getNodefunctions()) {
-            newf = oldf.clone();
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Old function: "+oldf + "\nNew function: "+newf);
-                    System.out.println("---------------------------------------");
-            }
-            this.nodefunctions.add(newf);
-            this.functions_correspondence_original_cloned.put(oldf, newf);
-        }
-
-        // connect new variables to new function
-        for (NodeVariable x : this.nodevariables) {
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Variable "+x+" has "+x.getNeighbour().size()+ " neighbours");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Original instance set for cloned one");
                     System.out.println("---------------------------------------");
             }
 
-            ConcurrentLinkedQueue<NodeFunction> n_queue = new ConcurrentLinkedQueue<NodeFunction>();
-
-            for (NodeFunction oldNeighbour: x.getNeighbour()) {
+            // set all the nodeargumen AS IS
+            for (NodeArgument arg : this.originalInstance.getNodeargumens()) {
                 if (debug>=3) {
                         String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                         String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                         System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Trying to change "+oldNeighbour + " with "+this.functions_correspondence_original_cloned.get(oldNeighbour));
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Adding argument "+arg);
+                        System.out.println("---------------------------------------");
+                }
+                this.nodearguments.add(arg);
+            }
+
+            this.variables_correspondence_cloned_original = new HashMap<NodeVariable, NodeVariable>();
+            this.variables_correspondence_original_cloned = new HashMap<NodeVariable, NodeVariable>();
+            // clone variables
+            // keep a link beetwin a cloned variable and the original one
+            NodeVariable newx;
+            for (NodeVariable oldx : this.originalInstance.getNodevariables()) {
+                newx = oldx.getClone();
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Old variable: "+oldx + "\nNew variable: "+newx);
+                        System.out.println("---------------------------------------");
+                }
+                this.nodevariables.add(newx);
+                this.variables_correspondence_cloned_original.put(newx, oldx);
+                this.variables_correspondence_original_cloned.put(oldx, newx);
+            }
+
+
+            this.functions_correspondence_original_cloned = new HashMap<NodeFunction, NodeFunction>();
+            // clone functions
+            // keep a link beetwin a cloned function and the original one
+            NodeFunction newf;
+            for (NodeFunction oldf : this.originalInstance.getNodefunctions()) {
+                newf = oldf.getClone();
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Old function: "+oldf + "\nNew function: "+newf);
+                        System.out.println("---------------------------------------");
+                }
+                this.nodefunctions.add(newf);
+                this.functions_correspondence_original_cloned.put(oldf, newf);
+            }
+
+            // connect new variables to new function
+            for (NodeVariable x : this.nodevariables) {
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Variable "+x+" has "+x.getNeighbour().size()+ " neighbours");
                         System.out.println("---------------------------------------");
                 }
 
-                n_queue.add(oldNeighbour);
+                ConcurrentLinkedQueue<NodeFunction> n_queue = new ConcurrentLinkedQueue<NodeFunction>();
 
-            }
-            while (!n_queue.isEmpty()){
-                x.changeNeighbour(n_queue.peek(), this.functions_correspondence_original_cloned.get(n_queue.poll()));
-            }
-        }
+                for (NodeFunction oldNeighbour: x.getNeighbour()) {
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Trying to change "+oldNeighbour + " with "+this.functions_correspondence_original_cloned.get(oldNeighbour));
+                            System.out.println("---------------------------------------");
+                    }
 
-        // connect functions to variable
-        for (NodeFunction f : this.nodefunctions) {
-            ConcurrentLinkedQueue<NodeVariable> n_queue = new ConcurrentLinkedQueue<NodeVariable>();
-            for (NodeVariable oldNeighbour : f.getNeighbour()) {
-                n_queue.add(oldNeighbour);
-            }
+                    n_queue.add(oldNeighbour);
 
-            while (!n_queue.isEmpty()) {
-                f.changeNeighbour(n_queue.peek(), this.variables_correspondence_original_cloned.get(n_queue.poll()));
-            }
-
-
-        }
-
-
-        // clone agents
-        for (Agent oldAgent : this.originalInstance.getAgents()) {
-
-            Agent clonedA = oldAgent.clone();
-            this.agents.add(clonedA);
-
-            // change agent old variables
-            ConcurrentLinkedQueue<NodeVariable> x_queue = new ConcurrentLinkedQueue<NodeVariable>();
-            for (NodeVariable x : clonedA.getVariables()) {
-                x_queue.add(x);
-            }
-            while (!x_queue.isEmpty()) {
-                clonedA.changeVariable(x_queue.peek(), this.variables_correspondence_original_cloned.get(x_queue.poll()));
+                }
+                while (!n_queue.isEmpty()){
+                    x.changeNeighbour(n_queue.peek(), this.functions_correspondence_original_cloned.get(n_queue.poll()));
+                }
             }
 
-            // change agents old functions
-            ConcurrentLinkedQueue<NodeFunction> f_queue = new ConcurrentLinkedQueue<NodeFunction>();
-            for (NodeFunction f : clonedA.getFunctions()) {
-                f_queue.add(f);
+            // connect functions to variable
+            for (NodeFunction f : this.nodefunctions) {
+                ConcurrentLinkedQueue<NodeVariable> n_queue = new ConcurrentLinkedQueue<NodeVariable>();
+                for (NodeVariable oldNeighbour : f.getNeighbour()) {
+                    n_queue.add(oldNeighbour);
+                }
+
+                while (!n_queue.isEmpty()) {
+                    f.changeNeighbour(n_queue.peek(), this.variables_correspondence_original_cloned.get(n_queue.poll()));
+                }
+
+
             }
-            while (!f_queue.isEmpty()) {
-                clonedA.changeFunction(f_queue.peek(), this.functions_correspondence_original_cloned.get(f_queue.poll()));
+
+
+            // clone agents
+            for (Agent oldAgent : this.originalInstance.getAgents()) {
+
+                Agent clonedA = oldAgent.getClone();
+                this.agents.add(clonedA);
+
+                // change agent old variables
+                ConcurrentLinkedQueue<NodeVariable> x_queue = new ConcurrentLinkedQueue<NodeVariable>();
+                for (NodeVariable x : clonedA.getVariables()) {
+                    x_queue.add(x);
+                }
+                while (!x_queue.isEmpty()) {
+                    clonedA.changeVariable(x_queue.peek(), this.variables_correspondence_original_cloned.get(x_queue.poll()));
+                }
+
+                // change agents old functions
+                ConcurrentLinkedQueue<NodeFunction> f_queue = new ConcurrentLinkedQueue<NodeFunction>();
+                for (NodeFunction f : clonedA.getFunctions()) {
+                    f_queue.add(f);
+                }
+                while (!f_queue.isEmpty()) {
+                    clonedA.changeFunction(f_queue.peek(), this.functions_correspondence_original_cloned.get(f_queue.poll()));
+                }
             }
-        }
 
         
+        } catch (OutOfAgentNumberException a){
+            System.out.println("Out of the maximum number of Agents (more than "
+                    +Agent.MAXAGENTNUMBER+"?)\n"
+                    + "If this should not be an error, please change the field Agent.MAXAGENTNUMBER");
+            System.exit(1);
 
+        } catch (OutOfNodeFunctionNumberException f) {
+            System.out.println("Out of the maximum number of Functions (more than "
+                    +NodeFunction.MAXNODEFUNCTIONNUMBER+"?)\n"
+                    + "If this should not be an error, please change the field NodeFunction.MAXNODEFUNCTIONNUMBER");
+            System.exit(1);
+
+        } catch (OutOfNodeVariableNumberException x) {
+            System.out.println("Out of the maximum number of Variables (more than "
+                    +NodeVariable.MAXNODEVARIABLENUMBER+"?)\n"
+                    + "If this should not be an error, please change the field NodeVariable.MAXNODEVARIABLENUMBER");
+            System.exit(1);
+
+        }
     }
 
     

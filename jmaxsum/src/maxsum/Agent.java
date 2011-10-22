@@ -30,7 +30,7 @@ public class Agent {
     private PostService postservice = null;
 
     private int id;
-    private static final int MAXAGENTNUMBER = 1000;
+    public static final int MAXAGENTNUMBER = 1000;
 
     private HashSet<NodeVariable> variables;
     private HashSet<NodeFunction> functions;
@@ -274,24 +274,22 @@ public class Agent {
         }
     }
 
-    public Agent clone() {
-        try {
-            Agent cloned = Agent.getNewNextAgent();
-            cloned.setOp(this.op);
-            cloned.setPostservice(this.postservice);
+    public Agent getClone() throws OutOfAgentNumberException{
 
-            for (NodeVariable oldx : this.getVariables()) {
-                cloned.addNodeVariable(oldx);
-            }
-            
-            for (NodeFunction oldf : this.getFunctions()) {
-                cloned.addNodeFunction(oldf);
-            }
-            
-            return cloned;
-        } catch (OutOfAgentNumberException ex) {
-            return null;
+        Agent cloned = Agent.getNewNextAgent();
+        cloned.setOp(this.op);
+        cloned.setPostservice(this.postservice);
+
+        for (NodeVariable oldx : this.getVariables()) {
+            cloned.addNodeVariable(oldx);
         }
+
+        for (NodeFunction oldf : this.getFunctions()) {
+            cloned.addNodeFunction(oldf);
+        }
+
+        return cloned;
+
     }
 
 

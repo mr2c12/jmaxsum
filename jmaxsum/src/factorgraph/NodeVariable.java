@@ -22,7 +22,7 @@ public class NodeVariable implements Node{
     private int id;
 
     // max number of nodevariables
-    private static final int MAXNODEVARIABLENUMBER = 1000;
+    public static final int MAXNODEVARIABLENUMBER = 1000;
 
     /**
      * arraylist of the possible values of the variable represented by this node
@@ -155,21 +155,19 @@ public class NodeVariable implements Node{
         return ("NodeVariable_"+this.id).hashCode();
     }
 
-    public NodeVariable clone(){
-        try {
-            NodeVariable nv = NodeVariable.getNewNextNodeVariable();
-            // copy the possible values
-            for ( NodeArgument argument : this.getValues() ){
-                nv.addValue(argument);
-            }
-            // copy the neighbours
-            for ( NodeFunction function : this.getNeighbour() ) {
-                nv.addNeighbour(function);
-            }
-            return nv;
-        } catch (OutOfNodeVariableNumberException ex) {
-            return null;
+    public NodeVariable getClone() throws OutOfNodeVariableNumberException{
+        
+        NodeVariable nv = NodeVariable.getNewNextNodeVariable();
+        // copy the possible values
+        for ( NodeArgument argument : this.getValues() ){
+            nv.addValue(argument);
         }
+        // copy the neighbours
+        for ( NodeFunction function : this.getNeighbour() ) {
+            nv.addNeighbour(function);
+        }
+        return nv;
+        
     }
 
     public void changeNeighbour(NodeFunction oldN, NodeFunction newN) {

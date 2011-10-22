@@ -25,7 +25,7 @@ public class NodeFunction implements Node{
     private static HashMap<Integer, NodeFunction> table = new HashMap<Integer, NodeFunction>();
     private int id;
 
-    private static final int MAXNODEFUNCTIONNUMBER = 1000;
+    public static final int MAXNODEFUNCTIONNUMBER = 1000;
     private static final int debug = DebugVerbosity.debugNodeFunction;
 
     private NodeFunction (int id){
@@ -140,12 +140,10 @@ public class NodeFunction implements Node{
         }
     }
 
-    public NodeFunction clone() {
-        try {
-            return NodeFunction.getNewNextNodeFunction(this.function.clone());
-        } catch (OutOfNodeFunctionNumberException ex) {
-            return null;
-        }
+    public NodeFunction getClone() throws OutOfNodeFunctionNumberException{
+        
+       return NodeFunction.getNewNextNodeFunction(this.function.clone());
+        
     }
 
     public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {

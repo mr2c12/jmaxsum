@@ -1,5 +1,6 @@
 package factorgraph;
 
+import exception.OutOfNodeNumberException;
 import java.util.HashSet;
 
 /**
@@ -22,6 +23,6 @@ public interface Node {
     @Override
     public int hashCode();
 
-    public Node clone();
+    public Node getClone() throws OutOfNodeNumberException;
 
 }

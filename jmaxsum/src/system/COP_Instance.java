@@ -227,4 +227,24 @@ public abstract class COP_Instance {
     public abstract double actualValue() throws VariableNotSetException;
 
 
+    public String status(){
+        StringBuilder status = new StringBuilder();
+        try {
+            status.append(this.actualValue()).append(";");
+        } catch (VariableNotSetException ex) {
+            status.append("err;");
+        }
+
+        for (Agent agent : this.getAgents()){
+            for (NodeVariable variable : agent.getVariables()){
+                try {
+                    status.append(variable.toString()).append("=").append(variable.getStateArgument().toString()).append(";");
+                }catch (Exception e) {
+                    status.append(variable.toString()).append("=err;");
+                }
+            }
+        }
+
+        return status.toString();
+    }
 }

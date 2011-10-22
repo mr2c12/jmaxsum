@@ -21,6 +21,6 @@ package exception;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class OutOfNodeVariableNumberException extends Exception{
+public class OutOfNodeVariableNumberException extends OutOfNodeNumberException{
 
 }
