@@ -64,12 +64,19 @@ public abstract class COP_Instance {
         this.agents = agents;
     }
 
+    public boolean addAgent(Agent a){
+        return this.agents.add(a);
+    }
     public HashSet<NodeArgument> getNodeargumens() {
         return nodearguments;
     }
 
     public void setNodeargumens(HashSet<NodeArgument> nodeargumens) {
         this.nodearguments = nodeargumens;
+    }
+
+    public boolean addNodeArgument(NodeArgument na){
+        return this.nodearguments.add(na);
     }
 
     public HashSet<NodeFunction> getNodefunctions() {
@@ -80,12 +87,20 @@ public abstract class COP_Instance {
         this.nodefunctions = nodefunctions;
     }
 
+    public boolean addNodeFunction(NodeFunction nf){
+        return this.nodefunctions.add(nf);
+    }
+
     public HashSet<NodeVariable> getNodevariables() {
         return nodevariables;
     }
 
     public void setNodevariables(HashSet<NodeVariable> nodevariables) {
         this.nodevariables = nodevariables;
+    }
+
+    public boolean addNodeVariable(NodeVariable nv){
+        return this.nodevariables.add(nv);
     }
 
     public String toTestString(){
@@ -247,4 +262,10 @@ public abstract class COP_Instance {
 
         return status.toString();
     }
+
+    /**
+     * Factory method. It should return a new object of the same class of this
+     * @return new instance of this.Class
+     */
+    public abstract COP_Instance getNewMe();
 }

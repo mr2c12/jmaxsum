@@ -74,4 +74,6 @@ public class DebugVerbosity {
 
     public static final int debugClonedMSInstance = 3
             + DebugVerbosity.debug;
+    public static final int debugInstanceCloner = 3
+            + DebugVerbosity.debug;
 }

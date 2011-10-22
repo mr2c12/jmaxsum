@@ -48,6 +48,11 @@ public class MS_COP_Instance extends COP_Instance{
         return value;
     }
 
+    @Override
+    public COP_Instance getNewMe() {
+        return new MS_COP_Instance();
+    }
+
 
 
 }

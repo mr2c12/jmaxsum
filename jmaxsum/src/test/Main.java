@@ -5,6 +5,7 @@
 
 package test;
 import boundedMaxSum.ClonedMSInstance;
+import boundedMaxSum.InstanceCloner;
 import hacks.ScrewerUp;
 import maxsum.MS_COP_Instance;
 import misc.Utils;
@@ -54,7 +55,10 @@ public class Main {
 
             //COP_Instance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
 
-            ClonedMSInstance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
+            //ClonedMSInstance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
+
+            InstanceCloner ic = new InstanceCloner(cop);
+            COP_Instance cop2 = ic.getClonedInstance();
 
             System.out.println("Cloned instance value:\n"+cop2.toTestString());
 
@@ -69,9 +73,9 @@ public class Main {
 
             core.conclude();
 
-            cop2.setOriginalVariablesValues();
-            System.out.println("original value= " + cop2.getActualOriginalValue());
-
+            ic.setOriginalVariablesValues();
+            System.out.println("original value(ic)= " + ic.getActualOriginalValue());
+            System.out.println("original value(cop)= " + cop.actualValue());
 
             /*
             ScrewerUp su = new ScrewerUp(cop);
