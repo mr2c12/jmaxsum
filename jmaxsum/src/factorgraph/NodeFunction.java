@@ -86,7 +86,7 @@ public class NodeFunction implements Node{
 
 
     public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe) throws OutOfNodeFunctionNumberException{
-        for (int id = 0; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
+        for (int id = 1; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
             if (!NodeFunction.table.containsKey(id)) {
                 return NodeFunction.getNodeFunction(id, fe);
             }
@@ -142,7 +142,7 @@ public class NodeFunction implements Node{
 
     public NodeFunction getClone() throws OutOfNodeFunctionNumberException{
         
-       return NodeFunction.getNewNextNodeFunction(this.function.clone());
+       return NodeFunction.getNewNextNodeFunction(this.function.getClone());
         
     }
 

@@ -27,10 +27,13 @@ public class DebugVerbosity {
 
     public static final int debugNodeVariable = 0
             + DebugVerbosity.debug;
-    public static final int debugNodeFunction = 3
+    public static final int debugNodeFunction = 0
             + DebugVerbosity.debug;
 
-    public static final int debugFunctionEvaluator = 0 
+    public static final int debugFunctionEvaluator = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugTabularFunction = 3
             + DebugVerbosity.debug;
 
     public static final int debugAgent = 0
@@ -63,7 +66,7 @@ public class DebugVerbosity {
     public static final int debugCore = 0
             + DebugVerbosity.debug;
 
-    public static final int debugMain = 0
+    public static final int debugMain = 1
             + DebugVerbosity.debug;
     
     public static final int debugRMessageList = 0
@@ -72,7 +75,7 @@ public class DebugVerbosity {
     public static final int debugScrewerUp = 0
             + DebugVerbosity.debug;
 
-    public static final int debugClonedMSInstance = 3
+    public static final int debugClonedMSInstance = 0
             + DebugVerbosity.debug;
     public static final int debugInstanceCloner = 3
             + DebugVerbosity.debug;

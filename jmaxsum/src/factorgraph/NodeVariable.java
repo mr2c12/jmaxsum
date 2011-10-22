@@ -92,7 +92,7 @@ public class NodeVariable implements Node{
     }
 
     public static NodeVariable getNewNextNodeVariable() throws OutOfNodeVariableNumberException{
-        for (int id = 0; id < NodeVariable.MAXNODEVARIABLENUMBER; id++){
+        for (int id = 1; id < NodeVariable.MAXNODEVARIABLENUMBER; id++){
             if (!NodeVariable.table.containsKey(id)) {
                 return NodeVariable.getNodeVariable(id);
             }

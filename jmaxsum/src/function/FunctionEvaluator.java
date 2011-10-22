@@ -248,17 +248,24 @@ public abstract class FunctionEvaluator {
         return this.maxCost() - this.minCost();
     }
 
-    public abstract FunctionEvaluator clone();
+    public abstract FunctionEvaluator getClone();
 
 
     public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
         
 
-        if (this.parameters.contains(oldN)){
+        /* COMPLETELY WRONG, IT CHANGES THE ORDER!
+         if (this.parameters.contains(oldN)){
             // oldN is present, swap it with newN
             this.parameters.remove(oldN);
             this.parameters.add(newN);
+        }*/
+        
+        if (this.parameters.contains(oldN)){
+            this.parameters.set(this.parameters.indexOf(oldN), newN);
         }
+
+
         if (this.parametersset.contains(oldN)){
             // oldN is present, swap it with newN
             this.parametersset.remove(oldN);

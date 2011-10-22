@@ -50,7 +50,7 @@ public class Agent {
     }
 
     public static Agent getNewNextAgent() throws OutOfAgentNumberException{
-        for (int id = 0; id < Agent.MAXAGENTNUMBER; id++){
+        for (int id = 1; id < Agent.MAXAGENTNUMBER; id++){
             if (!Agent.table.containsKey(id)) {
                 return Agent.getAgent(id);
             }

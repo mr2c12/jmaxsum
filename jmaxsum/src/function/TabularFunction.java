@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
  */
 public class TabularFunction extends FunctionEvaluator{
 
-
+    final static int debug = test.DebugVerbosity.debugTabularFunction;
 
     protected HashMap<String, Double> costTable;
 
@@ -76,10 +76,13 @@ public class TabularFunction extends FunctionEvaluator{
         StringBuilder string = new StringBuilder();
         StringBuilder append = string.append("Function evaluator with " + this.entryNumber() + " entries\n");
         string.append("NodeVariable used: ");
-        Iterator<NodeVariable> it = this.parameters.iterator();
+        /*Iterator<NodeVariable> it = this.parameters.iterator();
         while (it.hasNext()) {
             NodeVariable nodeVariable = it.next();
             StringBuilder append1 = string.append(nodeVariable + " ");
+        }*/
+        for (int i = 0; i< this.parameters.size(); i++){
+            StringBuilder append1 = string.append(this.parameters.get(i) + " ");
         }
         string.append("\n");
         /*Iterator<String> keyit = this.costTable.keySet().iterator();
@@ -145,13 +148,51 @@ public class TabularFunction extends FunctionEvaluator{
 
 
     @Override
-    public FunctionEvaluator clone() {
+    public FunctionEvaluator getClone() {
         TabularFunction clonedT = new TabularFunction();
         for (NodeVariable parameter : this.getParameters()){
             clonedT.addParameter(parameter);
         }
+
+        if (debug>=2) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "original parameters:");
+                System.out.print("Originals: ");
+                for (int i = 0; i<this.parameters.size(); i++) {
+                    System.out.print(this.parameters.get(i)+",");
+                }
+                System.out.println("\ncloned:");
+                System.out.print("Cloned: ");
+                for (int i = 0; i< clonedT.getParameters().size(); i++) {
+                    System.out.print(clonedT.getParameters().get(i)+",");
+                }
+                System.out.println("---------------------------------------");
+        }
+
         for (NodeArgument[] arguments : this.getParametersCost().keySet()) {
             clonedT.addParametersCost(arguments, this.evaluate(arguments));
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.print("[class: "+dclass+" method: " + dmethod+ "] " + "adding for [");
+                    for (NodeArgument arg : arguments){
+                        System.out.print(arg+",");
+                    }
+                    System.out.println("] {"+this.evaluate(arguments)+"}");
+
+                    System.out.print("Now is: [");
+                    for (NodeArgument arg : arguments){
+                        System.out.print(arg+",");
+                    }
+                    System.out.println("] {"+clonedT.evaluate(arguments)+"}");
+                    if (this.evaluate(arguments)!=clonedT.evaluate(arguments)){
+                        System.exit(-1);
+                    }
+                    System.out.println("---------------------------------------");
+            }
         }
 
         return clonedT;

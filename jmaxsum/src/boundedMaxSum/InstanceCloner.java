@@ -33,7 +33,21 @@ import system.COP_Instance;
 import test.DebugVerbosity;
 
 /**
+ * Class to clone a COP problem instance.
+ * It ask for the original instance, and keep a pointer to the originale
+ * and to the cloned one.
+ * Example of use:
  *
+ *  COP_Instance cop = new MS_COP_Instance(path_to_file);
+ *  InstanceCloner ic = new InstanceCloner(cop);
+ *  COP_Instance cop_cloned = ic.getClonedInstance();
+ *  // do whatever you like on cop_cloned, like solving it
+ *  // now it's time to set the original variables with to the values computed
+ *  ic.setOriginalVariablesValues();
+ *  // ok, you're ready to evaluate original instance
+ *  System.out.println("Utility is: " + cop.actualValue()
+ *
+ * 
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class InstanceCloner{
@@ -68,6 +82,10 @@ public class InstanceCloner{
      */
     private HashMap<NodeFunction, NodeFunction> functions_correspondence_original_cloned;
 
+    /**
+     * Constructor. It prepares the cloned instance and set its pointer to that.
+     * @param originalInstance the instance to be cloned
+     */
     public InstanceCloner(COP_Instance originalInstance) {
         try {
             // set the original instance
@@ -82,7 +100,7 @@ public class InstanceCloner{
                     System.out.println("---------------------------------------");
             }
 
-            // set all the nodeargumen AS IS
+            // set all the nodeargumen AS IS, no need to change
             for (NodeArgument arg : this.originalInstance.getNodeargumens()) {
                 if (debug>=3) {
                         String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -165,7 +183,7 @@ public class InstanceCloner{
             }
 
             // connect functions to variable
-            //for (NodeFunction f : this.nodefunctions) {
+
             for (NodeFunction f : this.clonedInstance.getNodefunctions()) {
                 ConcurrentLinkedQueue<NodeVariable> n_queue = new ConcurrentLinkedQueue<NodeVariable>();
                 for (NodeVariable oldNeighbour : f.getNeighbour()) {
@@ -249,10 +267,21 @@ public class InstanceCloner{
     
 
 
+    /**
+     * Compute the utility function of the original instance
+     * @return the utility function value
+     * @throws VariableNotSetException if at least one of the original instance variable is not set
+     */
     public double getActualOriginalValue() throws VariableNotSetException {
         return this.originalInstance.actualValue();
     }
 
+    /**
+     * It updates the values of the original instance variables with respect to the cloned instance ones
+     * @return true if everything goes right
+     * @throws VariableNotSetException if at least one of the original instance variable is not set
+     * @throws NodeVariableNotInMapException if at least one of the cloned instance variable has no entry in the current map pointing its original instance variable
+     */
     public boolean setOriginalVariablesValues() throws VariableNotSetException, NodeVariableNotInMapException{
         //Iterator<NodeVariable> it = this.nodevariables.iterator();
         Iterator<NodeVariable> it = this.clonedInstance.getNodevariables().iterator();
@@ -267,5 +296,32 @@ public class InstanceCloner{
 
         }
         return true;
+    }
+
+
+    /**
+     * Only for test.
+     * Setting debug to 3 should be better.
+     * @return a string representing the three hashmap used by this cloner
+     */
+    public String testString(){
+        String test = "";
+        test += "variables_correspondence_cloned_original\n";
+        for (NodeVariable key : this.variables_correspondence_cloned_original.keySet()) {
+            test += "["+key+"] "+ this.variables_correspondence_cloned_original.get(key) +"\n";
+        }
+        test += "\n\n";
+        test += "variables_correspondence_original_cloned\n";
+        for (NodeVariable key : this.variables_correspondence_original_cloned.keySet()) {
+            test += "["+key+"] "+ this.variables_correspondence_original_cloned.get(key) +"\n";
+        }
+        test += "\n\n";
+        test += "functions_correspondence_original_cloned\n";
+        for (NodeFunction key : this.functions_correspondence_original_cloned.keySet()) {
+            test += "["+key+"] "+ this.functions_correspondence_original_cloned.get(key) +"\n";
+        }
+
+        return test;
+
     }
 }
