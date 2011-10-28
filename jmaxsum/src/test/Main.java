@@ -4,7 +4,6 @@
  */
 
 package test;
-import boundedMaxSum.ClonedMSInstance;
 import boundedMaxSum.InstanceCloner;
 import hacks.ScrewerUp;
 import maxsum.MS_COP_Instance;

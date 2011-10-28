@@ -21,15 +21,10 @@ package exception;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class ParameterNotFoundException extends Exception {
+public class NodeTypeException extends Exception{
 
-    public ParameterNotFoundException(String message) {
-        super(message);
+    public NodeTypeException(String string) {
+        super(string);
     }
-
-    public ParameterNotFoundException() {
-    }
-
-    
 
 }

@@ -32,10 +32,12 @@ public class NodeArgument {
         this.value = value;
     }
 
+    @Override
     public String toString(){
         return this.value.toString();
     }
 
+    @Override
     public boolean equals(Object n){
         if (!(n instanceof NodeArgument)){
             return false;
@@ -45,6 +47,7 @@ public class NodeArgument {
         }
     }
 
+    @Override
     public int hashCode(){
         return this.value.hashCode();
     }

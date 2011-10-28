@@ -18,6 +18,7 @@
 package system;
 
 import exception.VariableNotSetException;
+import factorgraph.FactorGraph;
 import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
@@ -36,23 +37,34 @@ import operation.Operator;
  */
 public abstract class COP_Instance {
 
-    protected HashSet<NodeVariable> nodevariables;
+    /*protected HashSet<NodeVariable> nodevariables;
     protected HashSet<NodeFunction> nodefunctions;
-    protected HashSet<NodeArgument> nodearguments;
+    protected HashSet<NodeArgument> nodearguments;*/
+    protected FactorGraph factorgraph;
+
+    public FactorGraph getFactorgraph() {
+        return factorgraph;
+    }
+
+    public void setFactorgraph(FactorGraph factorgraph) {
+        this.factorgraph = factorgraph;
+    }
     protected HashSet<Agent> agents;
 
 
     public COP_Instance() {
-        nodevariables = new HashSet<NodeVariable>();
+        /*nodevariables = new HashSet<NodeVariable>();
         nodefunctions = new HashSet<NodeFunction>();
-        nodearguments = new HashSet<NodeArgument>();
+        nodearguments = new HashSet<NodeArgument>();*/
+        factorgraph = new FactorGraph();
         agents = new HashSet<Agent>();
     }
 
-    public COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<NodeArgument> nodeargumens, HashSet<Agent> agents) {
-        this.nodevariables = nodevariables;
+    public COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<Agent> agents) {
+        /*this.nodevariables = nodevariables;
         this.nodefunctions = nodefunctions;
-        this.nodearguments = nodeargumens;
+        this.nodearguments = nodeargumens;*/
+        this.factorgraph = new FactorGraph(nodevariables, nodefunctions);
         this.agents = agents;
     }
 
@@ -67,40 +79,29 @@ public abstract class COP_Instance {
     public boolean addAgent(Agent a){
         return this.agents.add(a);
     }
-    public HashSet<NodeArgument> getNodeargumens() {
-        return nodearguments;
-    }
 
-    public void setNodeargumens(HashSet<NodeArgument> nodeargumens) {
-        this.nodearguments = nodeargumens;
+    /*public HashSet<NodeArgument> getNodeargumens() {
+        return this.factorgraph.getNodearguments();
     }
 
     public boolean addNodeArgument(NodeArgument na){
-        return this.nodearguments.add(na);
-    }
+        return this.factorgraph.addNodeArgument(na);
+    }*/
 
     public HashSet<NodeFunction> getNodefunctions() {
-        return nodefunctions;
-    }
-
-    public void setNodefunctions(HashSet<NodeFunction> nodefunctions) {
-        this.nodefunctions = nodefunctions;
+        return this.factorgraph.getNodefunctions();
     }
 
     public boolean addNodeFunction(NodeFunction nf){
-        return this.nodefunctions.add(nf);
+        return this.factorgraph.addNode(nf);
     }
 
     public HashSet<NodeVariable> getNodevariables() {
-        return nodevariables;
-    }
-
-    public void setNodevariables(HashSet<NodeVariable> nodevariables) {
-        this.nodevariables = nodevariables;
+        return this.factorgraph.getNodevariables();
     }
 
     public boolean addNodeVariable(NodeVariable nv){
-        return this.nodevariables.add(nv);
+        return this.factorgraph.addNode(nv);
     }
 
     public String toTestString(){
@@ -166,7 +167,7 @@ public abstract class COP_Instance {
 
         // VARIABLES
 
-        itnv = this.nodevariables.iterator();
+        itnv = this.factorgraph.getNodevariables().iterator();
         while (itnv.hasNext()) {
             NodeVariable nodeVariable = itnv.next();
             string.append("VARIABLE ").append(nodeVariable.id()).append(" ").append(nodevariable_agent.get(nodeVariable)).append(" ").append(nodeVariable.size()).append("\n");
@@ -174,7 +175,7 @@ public abstract class COP_Instance {
 
         // FUNCTIONS
 
-        itnf = this.nodefunctions.iterator();
+        itnf = this.factorgraph.getNodefunctions().iterator();
         while (itnf.hasNext()) {
             NodeFunction nodeFunction = itnf.next();
             string.append("CONSTRAINT ").append(nodeFunction.id()).append(" ").append(nodefunction_agent.get(nodeFunction)).append(" ");

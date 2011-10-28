@@ -21,15 +21,13 @@ package exception;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class ParameterNotFoundException extends Exception {
+public class FunctionNotPresentException extends Exception{
 
-    public ParameterNotFoundException(String message) {
+    public FunctionNotPresentException(String message) {
         super(message);
     }
 
-    public ParameterNotFoundException() {
+    public FunctionNotPresentException() {
     }
-
     
-
 }

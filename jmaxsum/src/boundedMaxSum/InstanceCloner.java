@@ -100,6 +100,8 @@ public class InstanceCloner{
                     System.out.println("---------------------------------------");
             }
 
+
+            /* NODEARGUMENT DEEP CHANGE: they disappear
             // set all the nodeargumen AS IS, no need to change
             for (NodeArgument arg : this.originalInstance.getNodeargumens()) {
                 if (debug>=3) {
@@ -112,6 +114,8 @@ public class InstanceCloner{
                 //this.nodearguments.add(arg);
                 this.clonedInstance.addNodeArgument(arg);
             }
+
+             */
 
             this.variables_correspondence_cloned_original = new HashMap<NodeVariable, NodeVariable>();
             this.variables_correspondence_original_cloned = new HashMap<NodeVariable, NodeVariable>();

@@ -21,15 +21,6 @@ package exception;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class ParameterNotFoundException extends Exception {
-
-    public ParameterNotFoundException(String message) {
-        super(message);
-    }
-
-    public ParameterNotFoundException() {
-    }
-
-    
+public class WeightNotSetException extends Exception{
 
 }

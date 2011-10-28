@@ -33,7 +33,7 @@ public class DebugVerbosity {
     public static final int debugFunctionEvaluator = 0
             + DebugVerbosity.debug;
 
-    public static final int debugTabularFunction = 3
+    public static final int debugTabularFunction = 0
             + DebugVerbosity.debug;
 
     public static final int debugAgent = 0
@@ -77,6 +77,9 @@ public class DebugVerbosity {
 
     public static final int debugClonedMSInstance = 0
             + DebugVerbosity.debug;
-    public static final int debugInstanceCloner = 3
+    public static final int debugInstanceCloner = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugBoundedMaxSum = 2
             + DebugVerbosity.debug;
 }

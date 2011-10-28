@@ -77,6 +77,18 @@ public class NodeVariable implements Node{
 
 
     public NodeArgument getArgument ( int index ){
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.print("[class: "+dclass+" method: " + dmethod+ "] " + "node=" + this+ " index=" + index +" of [");
+                for (NodeArgument arg : this.values) {
+                    System.out.print(arg+",");
+                }
+                System.out.println("]");
+
+                System.out.println("---------------------------------------");
+        }
         return this.values.get(index);
     }
 

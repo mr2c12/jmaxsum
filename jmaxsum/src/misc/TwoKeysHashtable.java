@@ -24,7 +24,7 @@ import java.util.Iterator;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class TwoKeysHashtable<K1, K2, TV> {
+public class TwoKeysHashtable<K1, K2, TV>  {
     
     private HashMap<K1, HashMap<K2, TV>> bigtable;
 
@@ -40,11 +40,11 @@ public class TwoKeysHashtable<K1, K2, TV> {
             return this.bigtable.get(k1).containsKey(k2);
     }
 
-    public void put (K1 k1, K2 k2, TV tv) {
+    public TV put (K1 k1, K2 k2, TV tv) {
         if (!this.bigtable.containsKey(k1)) {
             this.bigtable.put(k1, new HashMap<K2, TV>());
         }
-        (this.bigtable.get(k1)).put(k2, tv);
+        return (this.bigtable.get(k1)).put(k2, tv);
     }
 
     public TV get(K1 k1, K2 k2){
@@ -77,6 +77,6 @@ public class TwoKeysHashtable<K1, K2, TV> {
     }
 
     public boolean isEmpty(){
-        return this.size()==0;
+        return this.isEmpty();
     }
 }

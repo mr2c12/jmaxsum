@@ -1,6 +1,7 @@
 package factorgraph;
 
 import exception.FunctionEvaluatorNotSetException;
+import exception.FunctionNotPresentException;
 import exception.OutOfNodeFunctionNumberException;
 import exception.VariableNotSetException;
 import function.FunctionEvaluator;
@@ -76,7 +77,7 @@ public class NodeFunction implements Node{
         return NodeFunction.table.get(id);
     }*/
 
-    public static NodeFunction getNodeFunction(Integer id, FunctionEvaluator fe){
+    public static NodeFunction putNodeFunction(Integer id, FunctionEvaluator fe){
         if (!(NodeFunction.table.containsKey(id))){
             NodeFunction.table.put(id, new NodeFunction(id));
         }
@@ -84,11 +85,18 @@ public class NodeFunction implements Node{
         return NodeFunction.table.get(id);
     }
 
+    public static NodeFunction getNodeFunction(Integer id) throws FunctionNotPresentException{
+        if (!(NodeFunction.table.containsKey(id))){
+            throw new FunctionNotPresentException("id "+id +" does NOT exists. Sorry.");
+        }
+        return NodeFunction.table.get(id);
+    }
+
 
     public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe) throws OutOfNodeFunctionNumberException{
         for (int id = 1; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
             if (!NodeFunction.table.containsKey(id)) {
-                return NodeFunction.getNodeFunction(id, fe);
+                return NodeFunction.putNodeFunction(id, fe);
             }
         }
         throw new OutOfNodeFunctionNumberException();

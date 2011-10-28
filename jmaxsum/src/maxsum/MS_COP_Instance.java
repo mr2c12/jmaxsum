@@ -34,14 +34,14 @@ public class MS_COP_Instance extends COP_Instance{
         super();
     }
 
-    public MS_COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<NodeArgument> nodeargumens, HashSet<Agent> agents) {
-        super(nodevariables, nodefunctions, nodeargumens, agents);
+    public MS_COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions,  HashSet<Agent> agents) {
+        super(nodevariables, nodefunctions, agents);
     }
 
     @Override
     public double actualValue() throws VariableNotSetException {
         int value = 0;
-        for(NodeFunction nf : this.nodefunctions){
+        for(NodeFunction nf : this.factorgraph.getNodefunctions()){
             value += nf.actualValue();
         }
 

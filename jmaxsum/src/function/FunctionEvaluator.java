@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import messages.MessageQ;
+import misc.Utils;
 
 /**
  * Function evaluator for MaxSum.
@@ -273,4 +274,143 @@ public abstract class FunctionEvaluator {
         }
 
     }
+
+
+    public NodeArgument[] functionArgument (int[] argumentsNumber){
+        NodeArgument[] fzArgument = new NodeArgument[argumentsNumber.length];
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Looking for "+argumentsNumber.length+" arguments: "+ Utils.toString(argumentsNumber));
+                System.out.println("---------------------------------------");
+        }
+        for (int i = 0; i < fzArgument.length; i++) {
+            fzArgument[i] = this.getParameter(i).getArgument(argumentsNumber[i]);
+        }
+        return fzArgument;
+    }
+
+
+
+    public double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
+        if (!this.parameters.contains(x)) {
+            throw new ParameterNotFoundException(this+" does NOT contain "+x);
+        }
+
+        int fixed_x_position = this.getParameterPosition(x);
+        int x_number_of_values = x.size();
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "x position is:"+fixed_x_position + " and has "+x_number_of_values+" number of values");
+                System.out.println("---------------------------------------");
+        }
+        
+        int maxes_size = 1;
+        for (NodeVariable param : this.parameters){
+            if (!param.equals(x)){
+                maxes_size *= param.size();
+            }
+        }
+
+
+
+
+        double[] maxes = new double[maxes_size];
+        // TODO: initialization?
+        for (int i = 0; i< maxes.length; i++) {
+            maxes[i] = -100000;
+        }
+
+
+        if (debug>=3) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "maxes is: "+Utils.toString(maxes));
+            System.out.println("---------------------------------------");
+        }
+
+        int[] arg_size = new int[this.parametersNumber()];
+        for (int index = 0; index < this.parameters.size(); index++){
+            if (index == fixed_x_position) {
+                arg_size[index] = 0;
+            }
+            else {
+                arg_size[index] = this.parameters.get(index).size() - 1;
+            }
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "arg_size is: "+Utils.toString(arg_size));
+                System.out.println("---------------------------------------");
+        }
+
+        int maxes_index_to_change = 0;
+        double temp_evaluation;
+        // enumerate all the possible arguments
+        int[] values = new int[arg_size.length];
+        int imax = values.length-1;
+        int i=imax;
+        while(i>=0){
+            while ( values[i] <= arg_size[i] - 1 ) {
+                // here we are
+                // maximization starts
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Maximization level 1, with values="+Utils.toString(values)+" and maxes_to_change="+maxes_index_to_change);
+                        System.out.println("---------------------------------------");
+                }
+                for (int n_arg = 0; n_arg < x_number_of_values; n_arg++){
+                    values[fixed_x_position] = n_arg;
+                    temp_evaluation = this.evaluate(this.functionArgument(values));
+                    if (maxes[maxes_index_to_change] < temp_evaluation ){
+                        maxes[maxes_index_to_change] = temp_evaluation;
+                    }
+                }
+                maxes_index_to_change++;
+                // maximization ends
+                values[i]++;
+                for (int j = i+1; j <= imax; j++) {
+                    values[j]=0;
+                }
+                i=imax;
+            }
+            i--;
+        }
+        // here we are, again
+        // maximization starts
+        if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Maximization level 2, with values="+Utils.toString(values)+" and maxes_to_change="+maxes_index_to_change);
+                        System.out.println("---------------------------------------");
+                }
+        for (int n_arg = 0; n_arg < x_number_of_values; n_arg++){
+            values[fixed_x_position] = n_arg;
+            temp_evaluation = this.evaluate(this.functionArgument(values));
+            if (maxes[maxes_index_to_change] < temp_evaluation ){
+                maxes[maxes_index_to_change] = temp_evaluation;
+            }
+        }
+        // maximization ends
+
+
+
+
+
+
+        return maxes;
+
+    }
+
 }

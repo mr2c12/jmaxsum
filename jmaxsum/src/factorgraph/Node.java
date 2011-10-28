@@ -1,7 +1,7 @@
 package factorgraph;
 
 import exception.OutOfNodeNumberException;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Interface for a node of factor graph
@@ -11,7 +11,7 @@ public interface Node {
 
     public void addNeighbour(Node n);
 
-    public HashSet getNeighbour();
+    public Set<? extends Node> getNeighbour();
 
     public String stringOfNeighbour();
 

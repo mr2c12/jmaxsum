@@ -17,6 +17,7 @@
 
 package operation;
 
+import exception.FunctionNotPresentException;
 import exception.InvalidInputFileException;
 import messages.MessageFactoryArrayDouble;
 import messages.MessageFactory;
@@ -101,18 +102,21 @@ public class MaxSumOperatorTest {
      */
     @Test
     public void testComputeAlpha() {
-        System.out.println("computeAlpha");
-        LinkedList<MessageR> params = new LinkedList<MessageR>();
-        double[] r1 = {1,2,3};
-        params.add(new MessageRArrayDouble(null, null, r1));
-        double[] r2 = {-1,-2,-3};
-        params.add(new MessageRArrayDouble(null, null, r2));
-        double[] r3 = {10,15,2};
-        params.add(new MessageRArrayDouble(null, null, r3));
-        
-        double expResult = -9.0;
-        double result = instance.computeAlpha(NodeVariable.getNodeVariable(0), NodeFunction.getNodeFunction(0, new TabularFunction()), params);
-        assertEquals(expResult, result, 0.0);
+        try {
+            System.out.println("computeAlpha");
+            LinkedList<MessageR> params = new LinkedList<MessageR>();
+            double[] r1 = {1, 2, 3};
+            params.add(new MessageRArrayDouble(null, null, r1));
+            double[] r2 = {-1, -2, -3};
+            params.add(new MessageRArrayDouble(null, null, r2));
+            double[] r3 = {10, 15, 2};
+            params.add(new MessageRArrayDouble(null, null, r3));
+            double expResult = -9.0;
+            double result = instance.computeAlpha(NodeVariable.getNodeVariable(0), NodeFunction.getNodeFunction(0), params);
+            assertEquals(expResult, result, 0.0);
+        } catch (FunctionNotPresentException ex) {
+            ex.printStackTrace();
+        }
 
     }
 

@@ -1,5 +1,6 @@
 package misc;
 
+import exception.LengthMismatchException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,7 +34,15 @@ public class Utils {
         return res;
     }
 
-
+    public static String toString(Object[] a){
+        StringBuilder array = new StringBuilder();
+        array.append("[ ");
+        for (int i = 0; i < a.length - 1; i++) {
+            array.append(a[i]).append(" ,");
+        }
+        array.append(a[a.length - 1]).append("]");
+        return array.toString();
+    }
     public static String toString(double[] a){
         StringBuilder array = new StringBuilder();
         array.append("[ ");
@@ -48,7 +57,11 @@ public class Utils {
         StringBuilder array = new StringBuilder();
         array.append("[ ");
         for (int i = 0; i < a.length - 1; i++) {
-            StringBuilder append = array.append(a[i] + " ,");
+            if (a[i] != null){
+                StringBuilder append = array.append(a[i] + " ,");
+            } else {
+                StringBuilder append = array.append("null,");
+            }
         }
         StringBuilder append = array.append(a[a.length - 1] + "]");
         return array.toString();
@@ -103,5 +116,34 @@ public class Utils {
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         out.write(string);
         out.close();
+    }
+
+    /**
+     * It manages two arrays and produces a new one, using the rule:
+     *
+     * new[i] = array1[i] + operation * array2[i]
+     *
+     * @param operation an integer, should be 1 for sum or -1 for difference
+     * @param a1 the first array
+     * @param a2 the second array
+     * @return the new array
+     * @throws LengthMismatchException if a1 has a different lenght wrt a2
+     * @throws NullPointerException if a1 (or a2) has a null value
+     */
+    public static Double[] opArray (int operation, Double[] a1, Double[] a2) throws LengthMismatchException, NullPointerException{
+       if (a1.length != a2.length){
+           throw new LengthMismatchException();
+       }
+       Double[] res = new Double[a1.length];
+       for(int index = 0; index < a1.length; index++){
+           if (a1[index] == null){
+               throw new NullPointerException("Null found in a1");
+           }
+           if (a2[index] == null){
+               throw new NullPointerException("Null found in a2");
+           }
+           res[index] = a1[index] + ( a2[index]*operation);
+       }
+       return res;
     }
 }

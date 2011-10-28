@@ -138,7 +138,7 @@ public class Cerbero {
                             function_id = Integer.parseInt(t.nextToken());
                         }
                         // tabular function
-                        nodefunction = NodeFunction.getNodeFunction(function_id, new TabularFunction());
+                        nodefunction = NodeFunction.putNodeFunction(function_id, new TabularFunction());
                         nodefunctions.add(nodefunction);
                         if(debug>=3){
                             System.out.println("nodefunction of id: "+function_id);
@@ -217,7 +217,7 @@ public class Cerbero {
             }
         }
 
-        return new MS_COP_Instance(nodevariables, nodefunctions, nodeargumens, agents);
+        return new MS_COP_Instance(nodevariables, nodefunctions, agents);
     }
 
 }
