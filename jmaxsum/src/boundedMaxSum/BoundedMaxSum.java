@@ -27,7 +27,9 @@ import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import misc.DisjointSetEdge;
 import misc.Utils;
+import system.COP_Instance;
 import test.DebugVerbosity;
 
 /**
@@ -38,6 +40,10 @@ public class BoundedMaxSum {
 
     protected FactorGraph factorgraph;
     private static final int debug = DebugVerbosity.debugBoundedMaxSum;
+
+    public BoundedMaxSum(COP_Instance cop){
+        this.factorgraph = cop.getFactorgraph();
+    }
 
     public BoundedMaxSum(FactorGraph factorgraph) {
         this.factorgraph = factorgraph;
@@ -135,7 +141,7 @@ public class BoundedMaxSum {
 
         Double[] maxes = new Double[maxes_size];// new double[maxes_size];
         Double[] minis = new Double[maxes_size];
-        // TODO: initialization?
+
         for (int i = 0; i< maxes.length; i++) {
             maxes[i] = null;
             minis[i] = null;
@@ -304,6 +310,25 @@ public class BoundedMaxSum {
             pq.add(e);
         }
         return pq;
+    }
+
+    /**
+     * It takes the factor graph, weight his edges, compure the maximum spanning
+     * tree, remove the edge and update the functions.
+     */
+    public void letsBound(){
+        
+        // first: weight the graph!
+        this.weightTheGraph();
+        
+        // now, on the factor graph, compute the maximum spanning tree
+        // and save the list of edges to be removed
+
+        // priority queue, the first has biggest cost
+        PriorityQueue<Edge> edges = this.getEdgeQueue(-1);
+        
+        // Disjoint sets
+        DisjointSetEdge.initDS(this.getFactorgraph().getEdges());
     }
 
 }

@@ -5,6 +5,7 @@ import exception.FunctionNotPresentException;
 import exception.OutOfNodeFunctionNumberException;
 import exception.VariableNotSetException;
 import function.FunctionEvaluator;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +48,10 @@ public class NodeFunction implements Node{
          if ((x instanceof NodeVariable)){
             this.function.addParameter((NodeVariable) x);
         }
+    }
+
+    public void removeNeighbours(Collection<NodeVariable> c){
+        this.function.removeArgs(c);
     }
 
     /**

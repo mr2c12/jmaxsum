@@ -19,9 +19,11 @@ package factorgraph;
 
 import exception.NodeTypeException;
 import exception.WeightNotSetException;
+import function.FunctionEvaluator;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import misc.TwoKeysHashtable;
 
 /**
@@ -60,7 +62,7 @@ public class FactorGraph{
         this.weightTable = new TwoKeysHashtable<NodeFunction, NodeVariable, Double>();
     }
 
-    // TODO: please check
+
     public HashSet<Edge> getEdges(){
         HashSet<Edge> edges = new HashSet<Edge>();
         for (NodeFunction f : this.getNodefunctions()){
@@ -222,12 +224,49 @@ public class FactorGraph{
 
 
     // TODO: VERY IMPORTANT
-    public void removeEdge(Edge e){
-        // step 1
+    public void removeEdge(Collection<Edge> e_list){
+        NodeFunction f;// = e.getSource();
+        NodeVariable x;// = e.getDest();
+        FunctionEvaluator fe;// = f.getFunction();
+        
+        HashMap<NodeFunction, LinkedList<NodeVariable>> f_xs = new HashMap<NodeFunction, LinkedList<NodeVariable>>();
+        HashMap<NodeVariable, LinkedList<NodeFunction>> x_fs = new HashMap<NodeVariable, LinkedList<NodeFunction>>();
+
+        for (Edge e:e_list){
+            f = e.getSource();
+            x = e.getDest();
+
+
+            // add f -> x1,x2,..,xn
+            // of variables to be removed from f
+            if (!f_xs.containsKey(f)){
+                f_xs.put(f, new LinkedList<NodeVariable>());
+            }
+            f_xs.get(f).add(x);
+
+            // add x -> f1,f2,..fn
+            // of functions to be removed from x
+            if (!x_fs.containsKey(x)){
+                x_fs.put(x, new LinkedList<NodeFunction>());
+            }
+            x_fs.get(x).add(f);
+
+        }
+
+        // step 1&2
         // minimize function on remaining args
-        // step 2
         // remove NodeVariable from function
+        for (NodeFunction key_f : f_xs.keySet()){
+            key_f.removeNeighbours(
+                    f_xs.get(key_f)
+                    );
+        }
         // step 3
         // remove NodeFunction from variable
+        for (NodeVariable key_x : x_fs.keySet()){
+            key_x.removeNeighbours(
+                    x_fs.get(key_x)
+                    );
+        }
     }
 }

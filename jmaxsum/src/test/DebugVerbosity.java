@@ -30,7 +30,7 @@ public class DebugVerbosity {
     public static final int debugNodeFunction = 0
             + DebugVerbosity.debug;
 
-    public static final int debugFunctionEvaluator = 3
+    public static final int debugFunctionEvaluator = 0
             + DebugVerbosity.debug;
 
     public static final int debugTabularFunction = 0

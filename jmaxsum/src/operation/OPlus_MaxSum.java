@@ -217,14 +217,6 @@ public class OPlus_MaxSum implements OPlus{
         this.enumerate(new int[max.length], max);
     }
 
-    // TODO: move to funzionevaluator
-    /*public NodeArgument[] functionArgument (int[] argumentsNumber, FunctionEvaluator fe){
-        NodeArgument[] fzArgument = new NodeArgument[argumentsNumber.length];
-        for (int i = 0; i < fzArgument.length; i++) {
-            fzArgument[i] = fe.getParameter(i).getArgument(argumentsNumber[i]);
-        }
-        return fzArgument;
-    }*/
 
 
     public double[] maximizeMod(double[] max, int[] numberOfValues, NodeVariable x, int xIndex, FunctionEvaluator fe, HashMap<NodeVariable, MessageQ> modifierTable){

@@ -3,6 +3,7 @@ package factorgraph;
 import exception.OutOfNodeVariableNumberException;
 import exception.VariableNotSetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,6 +57,11 @@ public class NodeVariable implements Node{
             this.neighbours.add((NodeFunction) (x));
     }
 
+    public void removeNeighbours(Collection<NodeFunction> c){
+        for (NodeFunction f : c){
+            this.neighbours.remove(f);
+        }
+    }
     /**
      * @return the number of possible values of this variable
      */

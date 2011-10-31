@@ -17,6 +17,7 @@
 
 package olimpo;
 
+import boundedMaxSum.InstanceCloner;
 import exception.InvalidInputFileException;
 import exception.PostServiceNotSetException;
 import hacks.ScrewerUp;
@@ -88,14 +89,20 @@ public class Mercurio {
 
 
         try {
-            COP_Instance cop = Cerbero.getInstanceFromFile(filepath,oldformatV);
-            
+
+            COP_Instance original_cop = Cerbero.getInstanceFromFile(filepath,oldformatV);
+
+            InstanceCloner ic = new InstanceCloner(original_cop);
+            COP_Instance cop = ic.getClonedInstance();
+
             ScrewerUp screwerup = null;
             
             if(screwupV){
                 screwerup = new ScrewerUp(cop);
                 cop = screwerup.screwItUp();
             }
+
+            // time for BoundedMaxSum to do his best!
 
             Core core = new Core(cop);
 
@@ -111,11 +118,15 @@ public class Mercurio {
 
             core.solve();
 
-            if(screwupV){
+            /*if(screwupV){
                 cop = screwerup.fixItUp();
-            }
+            }*/
             
             core.conclude();
+
+            ic.setOriginalVariablesValues();
+
+            System.out.println("Conclusion on original cop:\n"+cop.status());
 
         } catch (PostServiceNotSetException pse) {
             System.out.println("Fatal problem in the process of initialization: no PostService set!");

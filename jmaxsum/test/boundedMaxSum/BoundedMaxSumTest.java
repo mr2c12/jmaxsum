@@ -164,7 +164,7 @@ public class BoundedMaxSumTest {
     @Test
     public void testGetEdgeQueue() {
         System.out.println("getEdgeQueue");
-        PriorityQueue<Edge> result = instance.getEdgeQueue(1);
+        PriorityQueue<Edge> result = instance.getEdgeQueue(-1);
         int pos = 1;
         System.out.println("Queue has "+result.size()+" elements.");
         while(result.size()>0){

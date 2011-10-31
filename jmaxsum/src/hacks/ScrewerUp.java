@@ -35,7 +35,11 @@ public class ScrewerUp {
     
     static final int debug = test.DebugVerbosity.debugScrewerUp;
 
+    /**
+     * the cop instance on which the ScrewerUp works
+     */
     protected COP_Instance cop;
+
     protected HashMap<NodeVariable, Double> intervalTable;
     protected HashMap<NodeVariable, Double[]> modifierTable;
     protected boolean screwed = false;
@@ -46,6 +50,11 @@ public class ScrewerUp {
         this.modifierTable = new HashMap<NodeVariable, Double[]>();
     }
 
+    /**
+     * Alter the value of the utility function.
+     * Using the modifierTable it lets to get back the original cop
+     * @return the reference to the cop modified.
+     */
     public COP_Instance screwItUp(){
         FunctionEvaluator fe = null;
         Double delta = null;
@@ -164,6 +173,12 @@ public class ScrewerUp {
     }
 
 
+    /**
+     * Take an array with parameters index, and turn it into an array of NodeArgument
+     * @param argumentsNumber
+     * @param fe the function evaluator
+     * @return
+     */
     public NodeArgument[] functionArgument (int[] argumentsNumber, FunctionEvaluator fe){
         NodeArgument[] fzArgument = new NodeArgument[argumentsNumber.length];
         for (int i = 0; i < fzArgument.length; i++) {
@@ -172,6 +187,12 @@ public class ScrewerUp {
         return fzArgument;
     }
 
+    /**
+     * Update the utility function for arguments number. A modifier is allowed.
+     * @param argumentsNumber
+     * @param fe the function evaluator
+     * @param mult the modifier
+     */
     public void updateCost(int[] argumentsNumber, FunctionEvaluator fe, int mult){
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -204,10 +225,18 @@ public class ScrewerUp {
                 );
     }
 
+    /**
+     * Is the cop screwed?
+     * @return true if screwed.
+     */
     public boolean isScrewed() {
         return screwed;
     }
 
+    /**
+     * Bring the cop instance to original values.
+     * @return the cop as it was at the very beginning
+     */
     public COP_Instance fixItUp(){
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -251,8 +280,10 @@ public class ScrewerUp {
                 quanti++;
             }
 
-        this.screwed = true;
+        this.screwed = false;
         }
         return this.cop;
     }
+
+
 }

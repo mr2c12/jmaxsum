@@ -329,7 +329,7 @@ public abstract class FunctionEvaluator {
 
 
         double[] maxes = new double[maxes_size];
-        // TODO: initialization?
+
         for (int i = 0; i< maxes.length; i++) {
             maxes[i] = -100000;
         }
