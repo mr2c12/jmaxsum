@@ -19,6 +19,8 @@ package factorgraph;
 
 import exception.NodeTypeException;
 import exception.WeightNotSetException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import misc.TwoKeysHashtable;
 
@@ -26,7 +28,7 @@ import misc.TwoKeysHashtable;
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class FactorGraph {
+public class FactorGraph{
 
     protected HashSet<Node> nodes;
     protected HashSet<NodeVariable> nodevariables;
@@ -201,7 +203,31 @@ public class FactorGraph {
         return this.getWeight(e.getSource(), e.getDest());
     }
 
+    public HashMap<Edge, Double> getEdgeWeights(){
+        HashMap<Edge, Double> map = new HashMap<Edge, Double>();
+        for (NodeFunction k1 : this.weightTable.firstKeySet()){
+            
+            for (NodeVariable k2 : this.weightTable.secondKeySet(k1)){
+                
+                map.put(Edge.getEdge(k1, k2), this.weightTable.get(k1, k2));
+                
+                
+            }
+            
+            
+        }
+
+        return map;
+    }
 
 
-
+    // TODO: VERY IMPORTANT
+    public void removeEdge(Edge e){
+        // step 1
+        // minimize function on remaining args
+        // step 2
+        // remove NodeVariable from function
+        // step 3
+        // remove NodeFunction from variable
+    }
 }

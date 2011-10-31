@@ -207,4 +207,8 @@ public class NodeVariable implements Node{
         }
     }
 
+    public static void resetIds(){
+        NodeVariable.table = new HashMap<Integer, NodeVariable>();
+    }
+
 }

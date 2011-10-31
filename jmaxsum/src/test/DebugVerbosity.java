@@ -30,7 +30,7 @@ public class DebugVerbosity {
     public static final int debugNodeFunction = 0
             + DebugVerbosity.debug;
 
-    public static final int debugFunctionEvaluator = 0
+    public static final int debugFunctionEvaluator = 3
             + DebugVerbosity.debug;
 
     public static final int debugTabularFunction = 0
@@ -80,6 +80,6 @@ public class DebugVerbosity {
     public static final int debugInstanceCloner = 0
             + DebugVerbosity.debug;
 
-    public static final int debugBoundedMaxSum = 2
+    public static final int debugBoundedMaxSum = 3
             + DebugVerbosity.debug;
 }

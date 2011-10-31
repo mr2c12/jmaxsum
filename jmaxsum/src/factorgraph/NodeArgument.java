@@ -52,4 +52,8 @@ public class NodeArgument {
         return this.value.hashCode();
     }
 
+    public static void resetIds(){
+        NodeArgument.table = new HashMap<Integer, NodeArgument>();
+    }
+
 }

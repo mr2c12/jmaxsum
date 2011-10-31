@@ -198,5 +198,10 @@ public class TabularFunction extends FunctionEvaluator{
         return clonedT;
     }
 
+    @Override
+    public void clearCosts() {
+        this.costTable = new HashMap<String, Double>();
+    }
+
 
 }

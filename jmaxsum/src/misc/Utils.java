@@ -87,7 +87,16 @@ public class Utils {
 
 
             while ( v[i] < max[i] - 1 ) {
-                System.out.println(Utils.toString(v));
+                //System.out.println(Utils.toString(v));
+
+                System.out.print("F ");
+                for (int index= 0; index < v.length; index++) {
+                    System.out.print(v[index]+ " ");
+                    
+                }
+                System.out.print((int)(Math.random()*100)+"\n");
+
+
                 quanti++;
                 v[i]++;
                 for (int j = i+1; j <= imax; j++) {
@@ -100,7 +109,15 @@ public class Utils {
             i--;
 
         }
-        System.out.println(Utils.toString(v));
+        //System.out.println(Utils.toString(v));
+
+        System.out.print("F ");
+        for (int index= 0; index < v.length; index++) {
+            System.out.print(v[index]+ " ");
+
+        }
+        System.out.print((int)(Math.random()*100)+"\n");
+
         quanti++;
         System.out.println("prodotti "+quanti+ " array");
     }

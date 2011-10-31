@@ -17,9 +17,12 @@
 
 package boundedMaxSum;
 
+import exception.NodeTypeException;
+import exception.WeightNotSetException;
 import factorgraph.NodeVariable;
 import factorgraph.NodeFunction;
 import exception.InvalidInputFileException;
+import java.util.PriorityQueue;
 import olimpo.Cerbero;
 import system.COP_Instance;
 import factorgraph.Edge;
@@ -117,6 +120,7 @@ public class BoundedMaxSumTest {
                 ok = false;
             }
         }
+        
 
         /*
         // w11 == 7
@@ -152,6 +156,27 @@ public class BoundedMaxSumTest {
 
         System.out.println(result);
         assertEquals(ok, true);
+    }
+
+    /**
+     * Test of getEdgeQueue method, of class BoundedMaxSum.
+     */
+    @Test
+    public void testGetEdgeQueue() {
+        System.out.println("getEdgeQueue");
+        PriorityQueue<Edge> result = instance.getEdgeQueue(1);
+        int pos = 1;
+        System.out.println("Queue has "+result.size()+" elements.");
+        while(result.size()>0){
+            try {
+                System.out.println("[1] " + result.peek() + "w=" + instance.getFactorgraph().getWeight(result.poll()));
+            } catch (WeightNotSetException ex) {
+                ex.printStackTrace();
+            } catch (NodeTypeException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
     }
 
 }

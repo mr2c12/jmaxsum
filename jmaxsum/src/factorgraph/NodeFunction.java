@@ -164,4 +164,9 @@ public class NodeFunction implements Node{
         }
         this.function.changeNeighbour(oldN, newN);
     }
+
+
+    public static void resetIds(){
+        NodeFunction.table = new HashMap<Integer, NodeFunction>();
+    }
 }

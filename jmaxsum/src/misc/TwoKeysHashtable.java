@@ -19,6 +19,7 @@ package misc;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
@@ -78,5 +79,13 @@ public class TwoKeysHashtable<K1, K2, TV>  {
 
     public boolean isEmpty(){
         return this.isEmpty();
+    }
+
+    public Set<K1> firstKeySet(){
+        return bigtable.keySet();
+    }
+
+    public Set<K2> secondKeySet(K1 firstKey){
+        return this.bigtable.get(firstKey).keySet();
     }
 }

@@ -25,6 +25,8 @@ import factorgraph.FactorGraph;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 import misc.Utils;
 import test.DebugVerbosity;
 
@@ -264,6 +266,44 @@ public class BoundedMaxSum {
 
         this.factorgraph.setWeight(e, weight);
 
+    }
+
+    /**
+     * Compute the PriorityQueue, changing the values of the weight like:
+     * w' = modifier * w
+     * @param modifier the int modifier
+     * @return the priority queue
+     */
+    public PriorityQueue<Edge> getEdgeQueue(int modifier){
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Edges number: "+this.getFactorgraph().getEdges().size());
+                System.out.println("---------------------------------------");
+        }
+
+        PriorityQueue<Edge> pq;
+
+        if (modifier == 1){
+            pq = new PriorityQueue<Edge>(this.getFactorgraph().getEdges().size(), new EdgeComparator(this.getFactorgraph().getEdgeWeights()));
+        }
+        else {
+            HashMap<Edge, Double> newMap = new HashMap<Edge, Double>();
+            for (Edge k : this.getFactorgraph().getEdgeWeights().keySet()){
+                newMap.put(k,
+                        (this.getFactorgraph().getEdgeWeights().get(k)*modifier)
+                        );
+            }
+            pq = new PriorityQueue<Edge>(this.getFactorgraph().getEdges().size(), new EdgeComparator(newMap));
+
+        }
+
+
+        for (Edge e:this.getFactorgraph().getEdges()){
+            pq.add(e);
+        }
+        return pq;
     }
 
 }

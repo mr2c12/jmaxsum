@@ -17,6 +17,8 @@
 
 package function;
 
+import java.util.LinkedList;
+import java.util.Collection;
 import misc.Utils;
 import exception.InvalidInputFileException;
 import factorgraph.NodeFunction;
@@ -80,7 +82,7 @@ public class FunctionEvaluatorTest {
     /**
      * Test of evaluate method, of class FunctionEvaluator.
      */
-    @Test
+    //@Test
     public void testEvaluate() {
         System.out.println("evaluate");
         /*int[] args_pos = new int[3];
@@ -96,7 +98,7 @@ public class FunctionEvaluatorTest {
     /**
      * Test of parametersNumber method, of class FunctionEvaluator.
      */
-    @Test
+    //@Test
     public void testParametersNumber() {
         System.out.println("parametersNumber");
         int expResult = 3;
@@ -110,7 +112,7 @@ public class FunctionEvaluatorTest {
     /**
      * Test of functionArgument method, of class FunctionEvaluator.
      */
-    @Test
+    //@Test
     public void testFunctionArgument() {
         System.out.println("functionArgument");
         int[] argumentsNumber = {0,0,0};
@@ -125,7 +127,7 @@ public class FunctionEvaluatorTest {
     /**
      * Test of maxFfixedX method, of class FunctionEvaluator.
      */
-    @Test
+    //@Test
     public void testMaxFfixedX() throws Exception {
         System.out.println("maxFfixedX");
         NodeVariable x = NodeVariable.getNodeVariable(2);
@@ -134,6 +136,79 @@ public class FunctionEvaluatorTest {
         double[] result = instance.maxFfixedX(x);
         System.out.println("Result: "+Utils.toString(result));
         assertEquals(Utils.toString(result),Utils.toString(expResult));
+    }
+
+    /**
+     * Test of removeArgs method, of class FunctionEvaluator.
+     */
+    @Test
+    public void testRemoveArgs() {
+        System.out.println("removeArgs");
+
+
+        NodeVariable.resetIds();
+        NodeFunction.resetIds();
+        NodeArgument.resetIds();
+
+
+        COP_Instance cop = null;
+        try {
+            cop = Cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_arity5.cop2");
+        } catch (InvalidInputFileException ex) {
+            ex.printStackTrace();
+        }
+        for (NodeFunction f : cop.getNodefunctions()) {
+            if (f.id() == 4){
+                System.out.println("Found f: "+f);
+                instance = f.getFunction();
+            }
+
+        }
+        System.out.println("Function selected:\n"+instance);
+
+        LinkedList<NodeVariable> args = new LinkedList<NodeVariable>();
+        args.add(NodeVariable.getNodeVariable(1));
+        args.add(NodeVariable.getNodeVariable(5));
+        args.add(NodeVariable.getNodeVariable(2));
+        args.add(NodeVariable.getNodeVariable(2));
+        args.add(NodeVariable.getNodeVariable(13));
+        
+        instance.removeArgs(args);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    public class FunctionEvaluatorImpl extends FunctionEvaluator {
+
+        public double evaluate(NodeArgument[] params) {
+            return 0.0;
+        }
+
+        public void addParametersCost(NodeArgument[] params, double cost) {
+        }
+
+        public void clearCosts() {
+        }
+
+        public HashMap<NodeArgument[], Double> getParametersCost() {
+            return null;
+        }
+
+        public String toStringForFile() {
+            return "";
+        }
+
+        public int entryNumber() {
+            return 0;
+        }
+
+        public ArrayList<Double> getCostValues() {
+            return null;
+        }
+
+        public FunctionEvaluator getClone() {
+            return null;
+        }
     }
 
     

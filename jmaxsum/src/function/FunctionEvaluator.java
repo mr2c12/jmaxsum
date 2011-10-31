@@ -11,11 +11,14 @@ import exception.VariableNotSetException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeVariable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
+import java.util.concurrent.LinkedBlockingQueue;
 import messages.MessageQ;
 import misc.Utils;
 
@@ -155,6 +158,10 @@ public abstract class FunctionEvaluator {
 
         }
     }
+
+    public boolean hasParameter( NodeVariable x ){
+        return this.parameters.contains(x);
+    }
     /**
      * Return the array of parameters. Remember that order MATTERS!
      * @return arraylist of the parameters of the functions
@@ -185,6 +192,8 @@ public abstract class FunctionEvaluator {
      * @param cost the cost corresponding to these parameters
      */
     public abstract void addParametersCost(NodeArgument[] params, double cost);
+
+    public abstract void clearCosts();
 
     /**
      * Return an hashmap that represents all the possible cost of the function
@@ -411,6 +420,403 @@ public abstract class FunctionEvaluator {
 
         return maxes;
 
+    }
+
+    public void removeArgs(Collection<NodeVariable> args){
+        ArrayList<NodeVariable> to_remove = new ArrayList<NodeVariable>();
+        for (NodeVariable nv : args ){
+            if ((this.hasParameter(nv)) && (!to_remove.contains(nv))) {
+                    to_remove.add(nv);
+            }
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_array:");
+                for (NodeVariable x : to_remove){
+                    System.out.print(x + " ");
+                }
+                System.out.println("---------------------------------------");
+        }
+
+        ArrayList<NodeVariable> still_present = new ArrayList<NodeVariable>();
+        for (NodeVariable nv :this.getParameters()){
+            if (!to_remove.contains(nv)){
+                still_present.add(nv);
+            }
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_keep_array:");
+                for (NodeVariable x : still_present){
+                    System.out.print(x + " ");
+                }
+                System.out.println("---------------------------------------");
+        }
+
+
+        int[] to_remove_number_of_values = new int[to_remove.size()];
+        int[] to_remove_values = new int[to_remove.size()];
+        for (int index= 0; index < to_remove_number_of_values.length; index++) {
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + to_remove.get(index) + " has "+ to_remove.get(index).size() + " values");
+                    System.out.println("---------------------------------------");
+            }
+            to_remove_number_of_values[index] = to_remove.get(index).size();
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_number_of_values: "+Utils.toString(to_remove_number_of_values));
+                System.out.println("---------------------------------------");
+        }
+
+
+        int[] still_present_number_of_values = new int[still_present.size()];
+        int[] still_present_values = new int[still_present.size()];
+        for (int index= 0; index < still_present_number_of_values.length; index++) {
+            still_present_number_of_values[index] = still_present.get(index).size();
+
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "still_present_number_of_values: "+Utils.toString(still_present_number_of_values));
+                System.out.println("---------------------------------------");
+        }
+
+
+        int[] args_param = new int[this.parametersNumber()];
+        double fevaluate;
+
+
+        int tableSize = 1;
+        for (int size : still_present_number_of_values) {
+            tableSize *= size;
+        }
+        HashMap<String, Double> newCostTable = new HashMap<String,Double>();
+
+
+
+        int still_present_values_length_minus_one = still_present_values.length-1;
+        int i_present=still_present_values_length_minus_one;
+        while(i_present>=0){
+
+
+            while ( still_present_values[i_present] < still_present_number_of_values[i_present] - 1 ) {
+
+                //System.out.println(Utils.toString(still_present_values2));
+                // here it comes the inner function for variables to remove.
+                ///////////////////////////////////////////////////////////////////////////////////
+                int to_remove_values_length_minus_one = to_remove_values.length-1;
+                int i_remove=to_remove_values_length_minus_one;
+                int quanti = 0;
+                while(i_remove>=0){
+
+
+                    while ( to_remove_values[i_remove] < to_remove_number_of_values[i_remove] - 1 ) {
+                        //System.out.println(Utils.toString(to_remove_values2));
+
+                        if (debug>=3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "still_present_values: "+Utils.toString(still_present_values));
+                                System.out.println("---------------------------------------");
+                        }
+                        if (debug>=3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_values: "+Utils.toString(to_remove_values));
+                                System.out.println("---------------------------------------");
+                        }
+
+                        // populate the args_param
+                        try {
+                            for (int x_to_remove_index = 0; x_to_remove_index < to_remove.size(); x_to_remove_index++) {
+
+                                    args_param[this.getParameterPosition(to_remove.get(x_to_remove_index))] = to_remove_values[x_to_remove_index];
+
+                            }
+                            for (int x_still_index = 0; x_still_index < still_present.size(); x_still_index++) {
+                                args_param[this.getParameterPosition(still_present.get(x_still_index))] =
+                                        still_present_values[x_still_index];
+                            }
+                        } catch (ParameterNotFoundException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        fevaluate = this.evaluate(this.functionArgument(args_param));
+                        if (newCostTable.containsKey(buildString(still_present_values))){
+                            if (newCostTable.get(buildString(still_present_values)) > fevaluate){
+                                newCostTable.put(buildString(still_present_values)
+                                        , fevaluate);
+                            }
+                        }
+                        else {
+                            newCostTable.put(buildString(still_present_values)
+                                        , fevaluate);
+                        }
+
+                        if (debug>=3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fevaluate on "+Utils.toString(args_param)+"="+fevaluate);
+                                System.out.println("---------------------------------------");
+                        }
+                        //end with evaluate
+                        to_remove_values[i_remove]++;
+                        for (int j_remove = i_remove+1; j_remove <= to_remove_values_length_minus_one; j_remove++) {
+                            to_remove_values[j_remove]=0;
+                        }
+                        i_remove=to_remove_values_length_minus_one;
+
+                    }
+
+                    i_remove--;
+
+                }
+                //System.out.println(Utils.toString(to_remove_values2));
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "still_present_values: "+Utils.toString(still_present_values));
+                        System.out.println("---------------------------------------");
+                }
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_values: "+Utils.toString(to_remove_values));
+                        System.out.println("---------------------------------------");
+                }
+                // populate the args_param
+                try {
+                    for (int x_to_remove_index = 0; x_to_remove_index < to_remove.size(); x_to_remove_index++) {
+
+                            args_param[this.getParameterPosition(to_remove.get(x_to_remove_index))] = to_remove_values[x_to_remove_index];
+
+                    }
+                    for (int x_still_index = 0; x_still_index < still_present.size(); x_still_index++) {
+                        args_param[this.getParameterPosition(still_present.get(x_still_index))] =
+                                still_present_values[x_still_index];
+                    }
+                } catch (ParameterNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+
+                fevaluate = this.evaluate(this.functionArgument(args_param));
+                if (newCostTable.containsKey(buildString(still_present_values))){
+                    if (newCostTable.get(buildString(still_present_values)) > fevaluate){
+                        newCostTable.put(buildString(still_present_values)
+                                , fevaluate);
+                    }
+                }
+                else {
+                    newCostTable.put(buildString(still_present_values)
+                                , fevaluate);
+                }
+
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fevaluate on "+Utils.toString(args_param)+"="+fevaluate);
+                        System.out.println("---------------------------------------");
+                }
+                //end with evaluate
+
+
+                //////////////////////////////////////////////////////////////////////////////////
+                // inner function is over
+
+
+                still_present_values[i_present]++;
+                for (int j_present = i_present+1; j_present <= still_present_values_length_minus_one; j_present++) {
+                    still_present_values[j_present]=0;
+                }
+                i_present=still_present_values_length_minus_one;
+
+            }
+
+            i_present--;
+
+        }
+        //System.out.println(Utils.toString(still_present_values2));
+        // REPEAT THE INNER FUNCTION
+
+
+
+        // here it comes the inner function for variables to remove.
+        ///////////////////////////////////////////////////////////////////////////////////
+        int to_remove_values_length_minus_one = to_remove_values.length-1;
+        int i_remove=to_remove_values_length_minus_one;
+        int quanti = 0;
+        while(i_remove>=0){
+
+
+            while ( to_remove_values[i_remove] < to_remove_number_of_values[i_remove] - 1 ) {
+                //System.out.println(Utils.toString(to_remove_values2));
+                // populate the args_param
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "still_present_values: "+Utils.toString(still_present_values));
+                        System.out.println("---------------------------------------");
+                }
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_values: "+Utils.toString(to_remove_values));
+                        System.out.println("---------------------------------------");
+                }
+
+                try {
+                    for (int x_to_remove_index = 0; x_to_remove_index < to_remove.size(); x_to_remove_index++) {
+
+                            args_param[this.getParameterPosition(to_remove.get(x_to_remove_index))] = to_remove_values[x_to_remove_index];
+
+                    }
+                    for (int x_still_index = 0; x_still_index < still_present.size(); x_still_index++) {
+                        args_param[this.getParameterPosition(still_present.get(x_still_index))] =
+                                still_present_values[x_still_index];
+                    }
+                } catch (ParameterNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+
+                fevaluate = this.evaluate(this.functionArgument(args_param));
+                if (newCostTable.containsKey(buildString(still_present_values))){
+                    if (newCostTable.get(buildString(still_present_values)) > fevaluate){
+                        newCostTable.put(buildString(still_present_values)
+                                , fevaluate);
+                    }
+                }
+                else {
+                    newCostTable.put(buildString(still_present_values)
+                                , fevaluate);
+                }
+
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fevaluate on "+Utils.toString(args_param)+"="+fevaluate);
+                        System.out.println("---------------------------------------");
+                }
+                //end with evaluate
+                to_remove_values[i_remove]++;
+                for (int j_remove = i_remove+1; j_remove <= to_remove_values_length_minus_one; j_remove++) {
+                    to_remove_values[j_remove]=0;
+                }
+                i_remove=to_remove_values_length_minus_one;
+
+            }
+
+            i_remove--;
+
+        }
+        //System.out.println(Utils.toString(to_remove_values2));
+        // populate the args_param
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "still_present_values: "+Utils.toString(still_present_values));
+                System.out.println("---------------------------------------");
+        }
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "to_remove_values: "+Utils.toString(to_remove_values));
+                System.out.println("---------------------------------------");
+        }
+        try {
+            for (int x_to_remove_index = 0; x_to_remove_index < to_remove.size(); x_to_remove_index++) {
+
+                    args_param[this.getParameterPosition(to_remove.get(x_to_remove_index))] = to_remove_values[x_to_remove_index];
+
+            }
+            for (int x_still_index = 0; x_still_index < still_present.size(); x_still_index++) {
+                args_param[this.getParameterPosition(still_present.get(x_still_index))] =
+                        still_present_values[x_still_index];
+            }
+        } catch (ParameterNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        fevaluate = this.evaluate(this.functionArgument(args_param));
+        if (newCostTable.containsKey(buildString(still_present_values))){
+            if (newCostTable.get(buildString(still_present_values)) > fevaluate){
+                newCostTable.put(buildString(still_present_values)
+                        , fevaluate);
+            }
+        }
+        else {
+            newCostTable.put(buildString(still_present_values)
+                        , fevaluate);
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fevaluate on "+Utils.toString(args_param)+"="+fevaluate);
+                System.out.println("---------------------------------------");
+        }
+        //end with evaluate
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "newCostTable is:");
+                for (String key : newCostTable.keySet()){
+                    System.out.print("["+key+"] = "+newCostTable.get(key)+"\n");
+                }
+                System.out.println("---------------------------------------");
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////
+        // inner function is over
+
+    }
+
+    public static String buildString(int[] values){
+        String string ="";
+        for (int i :values) {
+            string+=i+";";
+        }
+        return string;
+    }
+
+    public static int[] getInts(String string){
+        StringTokenizer t = new StringTokenizer(string, ";");
+        int [] ret = new int[t.countTokens()];
+        int index = 0;
+        while (t.hasMoreTokens()){
+            ret[index] = Integer.valueOf(t.nextToken());
+            index++;
+        }
+        return ret;
     }
 
 }
