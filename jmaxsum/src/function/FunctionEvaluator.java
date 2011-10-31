@@ -647,6 +647,8 @@ public abstract class FunctionEvaluator {
 
 
                 still_present_values[i_present]++;
+                // reset inner array
+                to_remove_values = new int[to_remove.size()];
                 for (int j_present = i_present+1; j_present <= still_present_values_length_minus_one; j_present++) {
                     still_present_values[j_present]=0;
                 }
@@ -798,6 +800,25 @@ public abstract class FunctionEvaluator {
         //////////////////////////////////////////////////////////////////////////////////
         // inner function is over
 
+        // remove parameter!
+
+        this.newParameters(still_present);
+        this.clearCosts();
+        for (String key : newCostTable.keySet()){
+            NodeArgument[] arguments = this.functionArgument( getInts(key));
+            this.addParametersCost(
+                    arguments,
+                    newCostTable.get(key)
+                    );
+        }
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "..and the NEW FUNCTION IS:\n"+this);
+                System.out.println("---------------------------------------");
+        }
+
     }
 
     public static String buildString(int[] values){
@@ -817,6 +838,20 @@ public abstract class FunctionEvaluator {
             index++;
         }
         return ret;
+    }
+
+    private void newParameters(ArrayList<NodeVariable> still_present) {
+        this.parametersset = new HashSet<NodeVariable>();
+        this.parameters = new ArrayList<NodeVariable>( still_present.size() );
+        for (int index= 0; index < still_present.size(); index++) {
+            this.parametersset.add(
+                        still_present.get(index)
+                    );
+            this.parameters.add(
+                    index,
+                    still_present.get(index)
+                    );
+        }
     }
 
 }

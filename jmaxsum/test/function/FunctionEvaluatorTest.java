@@ -174,8 +174,54 @@ public class FunctionEvaluatorTest {
         args.add(NodeVariable.getNodeVariable(13));
         
         instance.removeArgs(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        NodeArgument[] arguments = {
+            NodeArgument.getNodeArgument("0"),
+            NodeArgument.getNodeArgument("0")
+        };
+        assertEquals(instance.evaluate(arguments), 2.0, 0.0);
+
+        arguments[0]=NodeArgument.getNodeArgument("0");
+        arguments[1]=NodeArgument.getNodeArgument("1");
+        assertEquals(instance.evaluate(arguments), 3.0, 0.0);
+
+        arguments[0]=NodeArgument.getNodeArgument("1");
+        arguments[1]=NodeArgument.getNodeArgument("0");
+        assertEquals(instance.evaluate(arguments), 43.0, 0.0);
+
+        arguments[0]=NodeArgument.getNodeArgument("1");
+        arguments[1]=NodeArgument.getNodeArgument("1");
+        assertEquals(instance.evaluate(arguments), 15.0, 0.0);
+
+
+        for (NodeFunction f : cop.getNodefunctions()) {
+            if (f.id() == 2){
+                System.out.println("Found f: "+f);
+                instance = f.getFunction();
+            }
+
+        }
+        System.out.println("Function selected:\n"+instance);
+
+         args = new LinkedList<NodeVariable>();
+        args.add(NodeVariable.getNodeVariable(1));
+        args.add(NodeVariable.getNodeVariable(5));
+        args.add(NodeVariable.getNodeVariable(2));
+        args.add(NodeVariable.getNodeVariable(2));
+        args.add(NodeVariable.getNodeVariable(13));
+
+        instance.removeArgs(args);
+
+        NodeArgument[] arguments2 = {
+            NodeArgument.getNodeArgument("0")
+        };
+
+        assertEquals(instance.evaluate(arguments2), 8.0, 0.0);
+
+        arguments2[0]=NodeArgument.getNodeArgument("1");
+
+        assertEquals(instance.evaluate(arguments2), 2.0, 0.0);
+
     }
 
     public class FunctionEvaluatorImpl extends FunctionEvaluator {
