@@ -36,41 +36,60 @@ public class FactorGraph{
     protected HashSet<NodeVariable> nodevariables;
     protected HashSet<NodeFunction> nodefunctions;
     // TODO: create the edge list!
+    protected HashSet<Edge> edges;
     // TODO: edges starts from functions?
-    protected TwoKeysHashtable<NodeFunction, NodeVariable, Double> weightTable;
-    
+    //protected TwoKeysHashtable<NodeFunction, NodeVariable, Double> weightTable;
+    protected HashMap<Edge, Double> weightTable;
     
     
     public FactorGraph() {
         this.nodes = new HashSet<Node>();
         this.nodevariables = new HashSet<NodeVariable>();
         this.nodefunctions = new HashSet<NodeFunction>();
-        this.weightTable = new TwoKeysHashtable<NodeFunction, NodeVariable, Double>();
+        //this.weightTable = new TwoKeysHashtable<NodeFunction, NodeVariable, Double>();
+        this.weightTable = new HashMap<Edge, Double>();
+        this.edges = new HashSet<Edge>();
     }
 
     public FactorGraph(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions) {
         this.nodevariables = nodevariables;
         this.nodefunctions = nodefunctions;
         this.nodes = new HashSet<Node>();
+        this.edges = new HashSet<Edge>();
         // initialize the nodes set
         for (NodeFunction f : this.nodefunctions){
             this.nodes.add(f);
+            for (NodeVariable arg : f.getNeighbour()){
+                this.edges.add(Edge.getEdge(f, arg));
+            }
         }
         for (NodeVariable x : this.nodevariables){
             this.nodes.add(x);
         }
-        this.weightTable = new TwoKeysHashtable<NodeFunction, NodeVariable, Double>();
+        //this.weightTable = new TwoKeysHashtable<NodeFunction, NodeVariable, Double>();
+        this.weightTable = new HashMap<Edge, Double>();
     }
 
+    /**
+     * It adds all the edges (from f to x) to the set of edges of the factorgraph
+     */
+    public void createTheEdges(){
+        for (NodeFunction f : this.nodefunctions){
+            for (NodeVariable arg : f.getNeighbour()){
+                this.edges.add(Edge.getEdge(f, arg));
+            }
+        }
+    }
 
     public HashSet<Edge> getEdges(){
-        HashSet<Edge> edges = new HashSet<Edge>();
+        /*HashSet<Edge> edges = new HashSet<Edge>();
         for (NodeFunction f : this.getNodefunctions()){
             for (NodeVariable x : f.getNeighbour()) {
                 edges.add(Edge.getEdge(f, x));
             }
         }
-        return edges;
+        return edges;*/
+        return this.edges;
     }
 
 
@@ -103,10 +122,14 @@ public class FactorGraph{
 
     public double getWeight(Node n1, Node n2) throws WeightNotSetException, NodeTypeException{
         if ((n1 instanceof NodeFunction) && (n2 instanceof NodeVariable)) {
-            return this.weightTable.get((NodeFunction)n1, (NodeVariable)n2);
+            return this.getWeight(
+                    Edge.getEdge((NodeFunction)n1, (NodeVariable)n2)
+                    );
         }
         else if ((n2 instanceof NodeFunction) && (n1 instanceof NodeVariable)) {
-            return this.weightTable.get((NodeFunction)n2, (NodeVariable)n1);
+            return this.getWeight(
+                    Edge.getEdge((NodeFunction)n2, (NodeVariable)n1)
+                    );
         }
         else {
             throw new NodeTypeException("Wrong type of n1:"+n1+" and/or n2:"+n2);
@@ -115,27 +138,37 @@ public class FactorGraph{
 
     public boolean isWeighted(Node n1, Node n2) throws NodeTypeException{
         if ((n1 instanceof NodeFunction) && (n2 instanceof NodeVariable)) {
-            return this.weightTable.containsKey((NodeFunction)n1, (NodeVariable)n2);
+            return this.isWeighted(
+                    Edge.getEdge((NodeFunction)n1, (NodeVariable)n2)
+                    );
         }
         else if ((n2 instanceof NodeFunction) && (n1 instanceof NodeVariable)) {
-            return this.weightTable.containsKey((NodeFunction)n2, (NodeVariable)n1);
+            return this.isWeighted(
+                    Edge.getEdge((NodeFunction)n2, (NodeVariable)n1)
+                    );
         }
         else {
             throw new NodeTypeException("Wrong type of n1:"+n1+" and/or n2:"+n2);
         }
     }
 
-    public boolean isWeighted(Edge e) throws NodeTypeException{
-        return this.isWeighted(e.getSource(), e.getDest());
+    public boolean isWeighted(Edge e){
+        return this.weightTable.containsKey(e);
     }
 
 
    public void setWeight(Node n1, Node n2, double w) throws NodeTypeException{
         if ((n1 instanceof NodeFunction) && (n2 instanceof NodeVariable)) {
-            this.weightTable.put((NodeFunction)n1, (NodeVariable)n2,w);
+            this.setWeight(
+                    Edge.getEdge((NodeFunction)n1, (NodeVariable)n2),
+                    w
+                    );
         }
         else if ((n2 instanceof NodeFunction) && (n1 instanceof NodeVariable)) {
-            this.weightTable.put((NodeFunction)n2, (NodeVariable)n1,w);
+            this.setWeight(
+                    Edge.getEdge((NodeFunction)n2, (NodeVariable)n1),
+                    w
+                    );
         }
         else {
             throw new NodeTypeException("Wrong type of n1:"+n1+" and/or n2:"+n2);
@@ -188,38 +221,21 @@ public class FactorGraph{
         this.nodevariables = nodevariables;
     }
 
-    public TwoKeysHashtable<NodeFunction, NodeVariable, Double> getWeightTable() {
-        return weightTable;
+    public void setWeight(Edge e, double weight) {
+        this.weightTable.put(e, weight);
     }
 
-    public void setWeightTable(TwoKeysHashtable<NodeFunction, NodeVariable, Double> weightTable) {
-        this.weightTable = weightTable;
-    }
-
-
-    public void setWeight(Edge e, double weight) throws NodeTypeException {
-        this.setWeight(e.getSource(), e.getDest(), weight);
-    }
-
-    public double getWeight(Edge e) throws WeightNotSetException, NodeTypeException {
-        return this.getWeight(e.getSource(), e.getDest());
+    public double getWeight(Edge e) throws WeightNotSetException{
+        if (this.weightTable.containsKey(e)){
+            return this.weightTable.get(e);
+        }
+        else {
+            throw new WeightNotSetException();
+        }
     }
 
     public HashMap<Edge, Double> getEdgeWeights(){
-        HashMap<Edge, Double> map = new HashMap<Edge, Double>();
-        for (NodeFunction k1 : this.weightTable.firstKeySet()){
-            
-            for (NodeVariable k2 : this.weightTable.secondKeySet(k1)){
-                
-                map.put(Edge.getEdge(k1, k2), this.weightTable.get(k1, k2));
-                
-                
-            }
-            
-            
-        }
-
-        return map;
+        return this.weightTable;
     }
 
 
@@ -251,6 +267,9 @@ public class FactorGraph{
             }
             x_fs.get(x).add(f);
 
+            // remove e from this factorgraph edges set
+            this.edges.remove(e);
+
         }
 
         // step 1&2
@@ -268,5 +287,26 @@ public class FactorGraph{
                     x_fs.get(key_x)
                     );
         }
+    }
+
+    public String toString(){
+        /*  protected HashSet<Node> nodes;
+            protected HashSet<NodeVariable> nodevariables;
+            protected HashSet<NodeFunction> nodefunctions;
+            // TODO: create the edge list!
+            protected HashSet<Edge> edges;
+         */
+        StringBuilder string = new StringBuilder();
+
+        for (NodeVariable x : this.getNodevariables()){
+            string.append(x).append(" with neighbours:"+x.stringOfNeighbour()+"\n");
+        }
+        for (NodeFunction f: this.getNodefunctions()){
+            string.append(f).append(" with neighbours:"+f.stringOfNeighbour()+"\n");
+        }
+        for (Edge e: this.getEdges()){
+            string.append(e).append("\n");
+        }
+        return string.toString();
     }
 }

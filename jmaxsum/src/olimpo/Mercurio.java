@@ -17,12 +17,15 @@
 
 package olimpo;
 
+import boundedMaxSum.BoundedMaxSum;
 import boundedMaxSum.InstanceCloner;
 import exception.InvalidInputFileException;
 import exception.PostServiceNotSetException;
 import hacks.ScrewerUp;
 import jargs.gnu.CmdLineParser;
 import java.io.File;
+import java.io.IOException;
+import misc.Utils;
 import system.COP_Instance;
 import system.Core;
 
@@ -43,6 +46,8 @@ public class Mercurio {
         CmdLineParser.Option report = parser.addStringOption('R', "report");
         CmdLineParser.Option screwup = parser.addBooleanOption("screw-it-up");
         CmdLineParser.Option updateel = parser.addBooleanOption('U',"update-each-iteration");
+        CmdLineParser.Option noBounded = parser.addBooleanOption("no-bounded-max-sum");
+        CmdLineParser.Option printFactorGraph = parser.addBooleanOption('F',"print-factor-graph");
 
         try {
             parser.parse(args);
@@ -58,6 +63,9 @@ public class Mercurio {
         Boolean stepbystepV = (Boolean)parser.getOptionValue(stepbystep,false);
         Boolean screwupV = (Boolean)parser.getOptionValue(screwup,false);
         Boolean updateelV = (Boolean)parser.getOptionValue(updateel,false);
+        Boolean noBoundedV = (Boolean)parser.getOptionValue(noBounded,false);
+        Boolean printFactorGraphV = (Boolean)parser.getOptionValue(printFactorGraph,false);
+
         // what if no report? -> null!
         String reportV = (String)parser.getOptionValue(report);
 
@@ -95,6 +103,7 @@ public class Mercurio {
             InstanceCloner ic = new InstanceCloner(original_cop);
             COP_Instance cop = ic.getClonedInstance();
 
+
             ScrewerUp screwerup = null;
             
             if(screwupV){
@@ -102,7 +111,12 @@ public class Mercurio {
                 cop = screwerup.screwItUp();
             }
 
-            // time for BoundedMaxSum to do his best!
+            if (!noBoundedV){
+                // time for BoundedMaxSum to do his best!
+                BoundedMaxSum BMax = new BoundedMaxSum(cop.getFactorgraph());
+                //BMax.weightTheGraph();
+                BMax.letsBound();
+            }
 
             Core core = new Core(cop);
 
@@ -126,7 +140,30 @@ public class Mercurio {
 
             ic.setOriginalVariablesValues();
 
-            System.out.println("Conclusion on original cop:\n"+cop.status());
+
+            String finale = "";
+
+            if (printFactorGraphV){
+                finale+="==========================================\n"
+                        + "Original factor graph:\n"+original_cop.getFactorgraph().toString()
+                        +"==========================================\n";
+                finale+="==========================================\n"
+                        + "Bounded factor graph:\n"+cop.getFactorgraph().toString()
+                        +"==========================================\n";
+            }
+
+            finale += "Conclusion for original cop:\n"+cop.status();
+
+            if (reportV != null){
+                try {
+                    Utils.stringToFile(finale, reportV);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            else {
+                System.out.println(finale);
+            }
 
         } catch (PostServiceNotSetException pse) {
             System.out.println("Fatal problem in the process of initialization: no PostService set!");
@@ -149,6 +186,7 @@ public class Mercurio {
         usage += "\t--iterations-number <n> | -i <n>\n\t\tset the number of iterations of the algorithm\n";
         usage += "\t--update-each-iteration <n> | -U <n>\n\t\tprint the utility value and variables value at every iteration\n";
         usage += "\t--screw-it-up\tto use the preferences-on-values hack\n";
+        usage += "\t--no-bounded-max-sum\tskip the Bounded Max Sum phase\n";
         usage += "\t--report <file>\twrite the report of the execution on <file>";
 
         System.out.println(usage);

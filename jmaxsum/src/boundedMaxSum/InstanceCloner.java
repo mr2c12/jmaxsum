@@ -201,6 +201,11 @@ public class InstanceCloner{
 
             }
 
+            // create the edges
+            // version 1
+            this.clonedInstance.getFactorgraph().createTheEdges();
+            // version 2: create the edges from the cloned nodes. More complex than FactorGraph.createTheEdge()
+
 
             // clone agents
             for (Agent oldAgent : this.originalInstance.getAgents()) {

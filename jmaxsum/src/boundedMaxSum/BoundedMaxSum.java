@@ -26,8 +26,10 @@ import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.PriorityQueue;
 import misc.DisjointSetEdge;
+import misc.DisjointSetNode;
 import misc.Utils;
 import system.COP_Instance;
 import test.DebugVerbosity;
@@ -43,10 +45,24 @@ public class BoundedMaxSum {
 
     public BoundedMaxSum(COP_Instance cop){
         this.factorgraph = cop.getFactorgraph();
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "BoundedMaxSum initialization with factorgraph:\n"+this.factorgraph);
+                System.out.println("---------------------------------------");
+        }
     }
 
     public BoundedMaxSum(FactorGraph factorgraph) {
         this.factorgraph = factorgraph;
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "BoundedMaxSum initialization with factorgraph:\n"+this.factorgraph);
+                System.out.println("---------------------------------------");
+        }
     }
 
     public FactorGraph getFactorgraph() {
@@ -325,10 +341,66 @@ public class BoundedMaxSum {
         // and save the list of edges to be removed
 
         // priority queue, the first has biggest cost
+        // -1 -> MAXIMUM spanning tree
         PriorityQueue<Edge> edges = this.getEdgeQueue(-1);
         
         // Disjoint sets
-        DisjointSetEdge.initDS(this.getFactorgraph().getEdges());
+        //DisjointSetEdge.initDS(this.getFactorgraph().getEdges());
+        DisjointSetNode.initDS(this.getFactorgraph().getNodes());
+
+        HashSet<Edge> edges_to_keep = new HashSet<Edge>();
+        HashSet<Edge> edges_to_remove = new HashSet<Edge>();
+        
+        Edge edge_extracted;
+
+
+        // mst with kruskal
+        while (!edges.isEmpty()) {
+
+            edge_extracted = edges.poll();
+
+            if (!DisjointSetNode.sameDS(
+                    edge_extracted.getSource(),
+                    edge_extracted.getDest()
+                    )){
+                // different sets -> keep the edge
+                edges_to_keep.add(edge_extracted);
+                // join the sets
+                DisjointSetNode.union(
+                        edge_extracted.getSource(),
+                        edge_extracted.getDest()
+                        );
+            }
+            else {
+                // same sets -> trash the edge
+                edges_to_remove.add(edge_extracted);
+            }
+
+
+        }
+        // kruskal is over
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "After Kruskal, these are the edges to be removed:");
+                for (Edge er : edges_to_remove){
+                    System.out.println("To remove: "+er);
+                }
+                System.out.println("---------------------------------------");
+        }
+
+        // do remove the edges
+        this.getFactorgraph().removeEdge(edges_to_remove);
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "After the remove, the factorgraph is:\n"+this.getFactorgraph());
+                System.out.println("---------------------------------------");
+        }
+
     }
 
 }

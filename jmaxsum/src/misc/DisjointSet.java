@@ -35,7 +35,7 @@ public class DisjointSet<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        // next line make compiler complain for unsafe check
+        // next line makes compiler complain for unsafe check
         // but seems right to me: if obj is not instance of T
         // then line above return false
         // and cast will never be executed

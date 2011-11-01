@@ -172,11 +172,23 @@ public class BoundedMaxSumTest {
                 System.out.println("[1] " + result.peek() + "w=" + instance.getFactorgraph().getWeight(result.poll()));
             } catch (WeightNotSetException ex) {
                 ex.printStackTrace();
-            } catch (NodeTypeException ex) {
-                ex.printStackTrace();
             }
         }
         
+    }
+
+    /**
+     * Test of letsBound method, of class BoundedMaxSum.
+     */
+    @Test
+    public void testLetsBound() {
+        System.out.println("letsBound");
+        
+        instance.letsBound();
+
+        
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
 }

@@ -66,7 +66,7 @@ public class DebugVerbosity {
     public static final int debugCore = 0
             + DebugVerbosity.debug;
 
-    public static final int debugMain = 1
+    public static final int debugMain = 0
             + DebugVerbosity.debug;
     
     public static final int debugRMessageList = 0
@@ -80,6 +80,6 @@ public class DebugVerbosity {
     public static final int debugInstanceCloner = 0
             + DebugVerbosity.debug;
 
-    public static final int debugBoundedMaxSum = 3
+    public static final int debugBoundedMaxSum = 0
             + DebugVerbosity.debug;
 }
