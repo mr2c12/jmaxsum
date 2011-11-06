@@ -25,7 +25,7 @@ import java.util.HashMap;
 import misc.TwoKeysHashtable;
 
 /**
- *
+ * Class implementing Comparator, to be used in a priority queue of edges.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class EdgeComparator implements Comparator<Edge>{

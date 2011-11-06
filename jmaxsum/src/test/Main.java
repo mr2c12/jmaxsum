@@ -10,7 +10,7 @@ import maxsum.MS_COP_Instance;
 import misc.Utils;
 import system.COP_Instance;
 import olimpo.Cerbero;
-import system.Core;
+import olimpo.Athena;
 
 /**
  *
@@ -77,14 +77,14 @@ public class Main {
                 
 
                 
-                Core core = new Core(cop);
+                Athena core = new Athena(cop);
                 core.setIterationsNumber(500);
                 core.setStepbystep(false);
                 core.solve();
                 core.conclude();
 
 
-                Core core2 = new Core(cop2);
+                Athena core2 = new Athena(cop2);
                 core2.setIterationsNumber(500);
                 core2.setStepbystep(false);
                 core2.solve();
@@ -92,7 +92,7 @@ public class Main {
                 
                 /*
                 ClonedMSInstance cop3 = new ClonedMSInstance((MS_COP_Instance) cop);
-                Core core3 = new Core(cop3);
+                Athena core3 = new Athena(cop3);
                 core3.setIterationsNumber(500);
                 core3.setStepbystep(false);
                 core3.solve();
@@ -136,7 +136,7 @@ public class Main {
                     System.out.println("---------------------------------------");
             }
 
-            Core core = new Core(cop);
+            Athena core = new Athena(cop);
 
             core.setIterationsNumber(5);
             core.setStepbystep(false);

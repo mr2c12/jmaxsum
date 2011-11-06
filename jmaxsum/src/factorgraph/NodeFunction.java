@@ -12,21 +12,30 @@ import java.util.Iterator;
 import test.DebugVerbosity;
 
 /**
- * The node function in the factor graph
- * @author mik
+ * The NodeFunction of Factor Graph.<br/>
+ * The object that implement the function is a Function Evaluator.<br/>
+ * Each NodeFunction has a Function Evaluator.
+ * @author Michele Roncalli
  */
 public class NodeFunction implements Node{
 
 
-    // order is represented in functionevaluator
-    // the set of neighbours, representing N(j), is retrieved from functionevaluator
-
-
+    /**
+     * The FunctionEvaluator that implements the function represented by this NodeFunction.
+     */
     private FunctionEvaluator function;
 
+    /**
+     * Like Node or Edge. Look at their doc, please.
+     */
     private static HashMap<Integer, NodeFunction> table = new HashMap<Integer, NodeFunction>();
+    /**
+     * id.. what else?
+     */
     private int id;
-
+    /**
+     * max number of NodeFunction. Used in getNextNodeFunction.
+     */
     public static final int MAXNODEFUNCTIONNUMBER = 1000;
     private static final int debug = DebugVerbosity.debugNodeFunction;
 
@@ -82,6 +91,13 @@ public class NodeFunction implements Node{
         return NodeFunction.table.get(id);
     }*/
 
+    /**
+     * Save the NodeFunction with id and fe.<br/>
+     * Used in initialization and for creating a new object.
+     * @param id NodeFunction's id
+     * @param fe NodeFunction FunctionEvaluator
+     * @return the NodeFunction of id and fe requested
+     */
     public static NodeFunction putNodeFunction(Integer id, FunctionEvaluator fe){
         if (!(NodeFunction.table.containsKey(id))){
             NodeFunction.table.put(id, new NodeFunction(id));
@@ -90,6 +106,12 @@ public class NodeFunction implements Node{
         return NodeFunction.table.get(id);
     }
 
+    /**
+     * Just to retrieve an existing NodeFunction
+     * @param id the id requested
+     * @return the desired NodeFunction
+     * @throws FunctionNotPresentException if a NodeFunction with requested id does not exists.
+     */
     public static NodeFunction getNodeFunction(Integer id) throws FunctionNotPresentException{
         if (!(NodeFunction.table.containsKey(id))){
             throw new FunctionNotPresentException("id "+id +" does NOT exists. Sorry.");
@@ -98,6 +120,12 @@ public class NodeFunction implements Node{
     }
 
 
+    /**
+     * Get a new NodeFunction with the first id available.
+     * @param fe FunctionEvaluator for the new NodeFunction
+     * @return the new NodeFunction
+     * @throws OutOfNodeFunctionNumberException if there are more than NodeFunction.MAXNODEFUNCTIONNUMBER NodeFunctions.
+     */
     public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe) throws OutOfNodeFunctionNumberException{
         for (int id = 1; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
             if (!NodeFunction.table.containsKey(id)) {
@@ -153,12 +181,22 @@ public class NodeFunction implements Node{
         }
     }
 
+    /**
+     *
+     * @return a clone of this
+     * @throws OutOfNodeFunctionNumberException if there are more than NodeFunction.MAXNODEFUNCTIONNUMBER NodeFunctions.
+     */
     public NodeFunction getClone() throws OutOfNodeFunctionNumberException{
         
        return NodeFunction.getNewNextNodeFunction(this.function.getClone());
         
     }
 
+    /**
+     * Change neighbour oldN with newN
+     * @param oldN
+     * @param newN
+     */
     public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();

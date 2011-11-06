@@ -27,18 +27,30 @@ import java.util.LinkedList;
 import misc.TwoKeysHashtable;
 
 /**
- *
+ * Class that represents a Factor Graph.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class FactorGraph{
 
+    /**
+     * Set of Nodes in the Factor Graph
+     */
     protected HashSet<Node> nodes;
+    /**
+     * NodeVariables
+     */
     protected HashSet<NodeVariable> nodevariables;
+    /**
+     * NodeFunctions
+     */
     protected HashSet<NodeFunction> nodefunctions;
-    // TODO: create the edge list!
+    /**
+     * Edges
+     */
     protected HashSet<Edge> edges;
-    // TODO: edges starts from functions?
-    //protected TwoKeysHashtable<NodeFunction, NodeVariable, Double> weightTable;
+    /**
+     * Weight table. It usually is filled up by BoundedMaxSum
+     */
     protected HashMap<Edge, Double> weightTable;
     
     
@@ -152,6 +164,11 @@ public class FactorGraph{
         }
     }
 
+    /**
+     * Does edge <i>e</i> has a weight?
+     * @param e
+     * @return
+     */
     public boolean isWeighted(Edge e){
         return this.weightTable.containsKey(e);
     }
@@ -174,27 +191,6 @@ public class FactorGraph{
             throw new NodeTypeException("Wrong type of n1:"+n1+" and/or n2:"+n2);
         }
     }
-
-
-
-    /*public double getWeight(NodeFunction f, NodeVariable x) throws WeightNotSetException{
-        if (!this.weightTable.containsKey(f, x)) {
-            throw new WeightNotSetException();
-        }
-        return this.weightTable.get(f, x);
-    }
-
-    public double getWeight(NodeVariable x, NodeFunction f) throws WeightNotSetException {
-        return this.getWeight(f, x);
-    }
-
-    public void setWeight(NodeFunction f, NodeVariable x, double w){
-        this.weightTable.put(f, x, w);
-    }*/
-
-
-
-
 
 
     public HashSet<NodeFunction> getNodefunctions() {
@@ -239,7 +235,16 @@ public class FactorGraph{
     }
 
 
-    // TODO: VERY IMPORTANT
+    /**
+     * Remove the edges listed in e_list from the Factor Graph.<br/>
+     * Removing an edge from f to x means:
+     * <ol>
+     * <li>remove x to the neighbours of f</li>
+     * <li>remove f to the neighbours of x</li>
+     * <li>remove e from the edges of the Factor Graph</li>
+     * </ol>
+     * @param e_list list of edges to remove
+     */
     public void removeEdge(Collection<Edge> e_list){
         NodeFunction f;// = e.getSource();
         NodeVariable x;// = e.getDest();
@@ -290,12 +295,7 @@ public class FactorGraph{
     }
 
     public String toString(){
-        /*  protected HashSet<Node> nodes;
-            protected HashSet<NodeVariable> nodevariables;
-            protected HashSet<NodeFunction> nodefunctions;
-            // TODO: create the edge list!
-            protected HashSet<Edge> edges;
-         */
+
         StringBuilder string = new StringBuilder();
 
         for (NodeVariable x : this.getNodevariables()){

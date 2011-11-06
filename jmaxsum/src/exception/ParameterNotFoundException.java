@@ -18,7 +18,7 @@
 package exception;
 
 /**
- *
+ * Exception thrown if you're looking for a variable in a function that doesn't have it as its parameter.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class ParameterNotFoundException extends Exception {

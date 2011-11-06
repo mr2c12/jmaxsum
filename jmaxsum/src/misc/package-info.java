@@ -15,16 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package exception;
-
 /**
- * If the value of an instance (its utility function) is called and at least one of its variables is not set.
- * @author Michele Roncalli <roncallim at gmail dot com>
+ * Several utility and support classes for this project.
  */
-public class ValueNotSetException extends Exception{
-
-    public ValueNotSetException(String string) {
-        super(string);
-    }
-
-}
+package misc;

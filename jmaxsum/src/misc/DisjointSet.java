@@ -26,6 +26,58 @@ import java.util.LinkedList;
  */
 public class DisjointSet<T> {
 
+
+
+    protected LinkedList<T> elements;
+    protected T representant;
+
+    public DisjointSet(T element){
+        this.elements = new LinkedList<T>();
+        this.representant = element;
+        this.elements.add(element);
+    }
+
+
+    public T find(){
+        return this.representant;
+    }
+
+    public int size(){
+        return this.elements.size();
+    }
+
+    public DisjointSet<T> union(DisjointSet<T> set2){
+        if (!(this.find().equals(set2.find()))){
+            if (this.size()<set2.size()){
+                set2.elements.addAll(this.elements);
+                this.representant = set2.getRepresentant();
+                this.elements = set2.getElements();
+                return set2;
+            }
+            else {
+                this.elements.addAll(set2.elements);
+                set2.setRepresentant(this.getRepresentant());
+                set2.setElements(this.getElements());
+                return this;
+            }
+        }
+        return this;
+
+    }
+
+    public void setElements(LinkedList<T> elements) {
+        this.elements = elements;
+    }
+
+    public void setRepresentant(T representant) {
+        this.representant = representant;
+    }
+
+    @Override
+    public String toString() {
+        return "DisjointSet { [representant=" + representant  + "] elements=" + elements + '}';
+    }
+
     @SuppressWarnings(value = "unchecked")
     @Override
     public boolean equals(Object obj) {
@@ -54,48 +106,14 @@ public class DisjointSet<T> {
         return hash;
     }
 
-    protected LinkedList<T> elements;
-    protected T representant;
 
-    public DisjointSet(T element){
-        this.elements = new LinkedList<T>();
-        this.representant = element;
-        this.elements.add(element);
-    }
-
-
-    public T find(){
+    public T getRepresentant(){
         return this.representant;
     }
 
-    public int size(){
-        return this.elements.size();
+    public LinkedList<T> getElements(){
+        return this.elements;
     }
-
-    public DisjointSet<T> union(DisjointSet<T> set2){
-        if (!(this.find().equals(set2.find()))){
-            if (this.size()<set2.size()){
-                set2.elements.addAll(this.elements);
-                // TODO: update representant?
-                
-                return set2;
-            }
-            else {
-                this.elements.addAll(set2.elements);
-                // TODO: update representant?
-                return this;
-            }
-        }
-        return this;
-
-    }
-
-    @Override
-    public String toString() {
-        return "DisjointSet { [representant=" + representant  + "] elements=" + elements + '}';
-    }
-
-
 
 
 }

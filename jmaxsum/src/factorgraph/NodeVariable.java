@@ -9,20 +9,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- * The node variable of the factor graph
- * @author mik
+ * The NodeVariable of the Factor Graph.
+ * @author Michele Roncalli
  */
 public class NodeVariable implements Node{
 
+    /**
+     * Static map of NodeVariables created. Like NodeFunction, NodeArgument, Edge.
+     */
     private static HashMap<Integer, NodeVariable> table = new HashMap<Integer, NodeVariable>();
 
     private static int debug = test.DebugVerbosity.debugNodeVariable;
 
-    // represent M(i), that is the set of function nodes connected to the variable i
+    /**
+     * represent M(i), that is the set of function nodes connected to the variable i
+     */
     HashSet<NodeFunction> neighbours;
+    /**
+     * id, old story..
+     */
     private int id;
 
-    // max number of nodevariables
+    /**
+     * max number of NodeVariables
+     */
     public static final int MAXNODEVARIABLENUMBER = 1000;
 
     /**
@@ -30,6 +40,9 @@ public class NodeVariable implements Node{
      */
     protected ArrayList<NodeArgument> values;
 
+    /**
+     * The index of the actual value of this NodeVariable.
+     */
     protected int index_actual_argument = -1;
 
     private NodeVariable (int id){
@@ -38,10 +51,19 @@ public class NodeVariable implements Node{
         this.neighbours = new HashSet<NodeFunction>();
     }
 
+    /**
+     * Add a new possible value
+     * @param v new NodeArgument for this
+     */
     public void addValue(NodeArgument v){
         this.values.add(v);
     }
 
+    /**
+     * Utility that, given a number of values, creates for this variables the corresponding NodeArguments.<br/>
+     * E.g. x.addIntegerValues(3) means that x = { 0 | 1 | 2 }
+     * @param number_of_values number of integer values for this.
+     */
     public void addIntegerValues(int number_of_values){
         for (int i = 0; i < number_of_values; i++) {
             this.addValue(NodeArgument.getNodeArgument(i));
@@ -145,10 +167,18 @@ public class NodeVariable implements Node{
         return this.id;
     }
 
+    /**
+     * Set the index of actual parameter
+     * @param index index of actual parameter
+     */
     public void setStateIndex(int index){
         this.index_actual_argument = index;
     }
 
+    /**
+     * Set the actual NodeArgument
+     * @param n the actual NodeArgument
+     */
     public void setStateArgument(NodeArgument n){
         this.index_actual_argument = this.numberOfArgument(n);
     }
@@ -173,6 +203,11 @@ public class NodeVariable implements Node{
         return ("NodeVariable_"+this.id).hashCode();
     }
 
+    /**
+     * Get a clone of this NodeVariable
+     * @return a new this
+     * @throws OutOfNodeVariableNumberException
+     */
     public NodeVariable getClone() throws OutOfNodeVariableNumberException{
         
         NodeVariable nv = NodeVariable.getNewNextNodeVariable();
@@ -188,6 +223,11 @@ public class NodeVariable implements Node{
         
     }
 
+    /**
+     * Change neighbour oldN to newN
+     * @param oldN
+     * @param newN
+     */
     public void changeNeighbour(NodeFunction oldN, NodeFunction newN) {
         if (this.neighbours.contains(oldN)){
             if (debug>=3) {

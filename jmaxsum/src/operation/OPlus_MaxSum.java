@@ -113,7 +113,7 @@ public class OPlus_MaxSum implements OPlus{
         /**
      * It compute the r message from a function f to a variable x
      * @param x the node variable representing x
-     * @param f the function evaluator
+     * @param fe the function evaluator
      * @param modifierTable the hash map used to change the value of f. It maps an integer, that is the position of a argument of f, to the array of value to pass to f. The i-th cell of the array is the quantity to give to apply to the function cost corrisponding to the i-th value of the variable
      * @return the r-message
      */

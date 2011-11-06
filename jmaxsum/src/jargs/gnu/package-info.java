@@ -14,17 +14,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package exception;
-
 /**
- * If the value of an instance (its utility function) is called and at least one of its variables is not set.
- * @author Michele Roncalli <roncallim at gmail dot com>
+ * Package that contains the CMDLineParse framework.<br/>
+ * Used in Olimpo.Mercurio to get parameters from command line.<br/>
+ *<br/>
+ * You can find more information about it here:<br/>
+ * <a href="http://jargs.sourceforge.net/doc/api/jargs/gnu/CmdLineParser.Option.html">http://jargs.sourceforge.net/doc/api/jargs/gnu/CmdLineParser.Option.html</a>
  */
-public class ValueNotSetException extends Exception{
-
-    public ValueNotSetException(String string) {
-        super(string);
-    }
-
-}
+package jargs.gnu;

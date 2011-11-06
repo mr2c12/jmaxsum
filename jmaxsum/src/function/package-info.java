@@ -14,17 +14,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package exception;
-
 /**
- * If the value of an instance (its utility function) is called and at least one of its variables is not set.
- * @author Michele Roncalli <roncallim at gmail dot com>
+ * A good place for classes that represent the possibles function related
+ * to the NodeFunction nodes in the factor graph.
  */
-public class ValueNotSetException extends Exception{
-
-    public ValueNotSetException(String string) {
-        super(string);
-    }
-
-}
+package function;

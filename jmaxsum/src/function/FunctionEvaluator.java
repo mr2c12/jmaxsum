@@ -120,7 +120,7 @@ public abstract class FunctionEvaluator {
 
     /**
      * Returns the number of parameters used by the function
-     * @returnthe number of parameters used by the function
+     * @return the number of parameters used by the function
      */
     public int parametersNumber(){
         return this.parameters.size();

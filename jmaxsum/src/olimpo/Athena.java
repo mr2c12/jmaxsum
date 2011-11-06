@@ -14,13 +14,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package system;
+package olimpo;
 
 import exception.PostServiceNotSetException;
-import exception.VariableNotSetException;
-import factorgraph.NodeVariable;
 import java.io.IOException;
 import java.util.Iterator;
+import maxsum.Agent;
 import maxsum.Agent;
 import messages.MailMan;
 import messages.MessageFactory;
@@ -33,12 +32,13 @@ import operation.OPlus_MaxSum;
 import operation.OTimes;
 import operation.OTimes_MaxSum;
 import operation.Operator;
+import system.COP_Instance;
 
 /**
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class Core {
+public class Athena {
 
     private COP_Instance cop;
     private PostService ps;
@@ -56,7 +56,7 @@ public class Core {
     private String reportpath = "";
     private String report = "";
 
-    public Core(COP_Instance cop) {
+    public Athena(COP_Instance cop) {
         this.cop = cop;
         this.ps = new MailMan();
         this.mfactory = new MessageFactoryArrayDouble();
@@ -201,7 +201,7 @@ public class Core {
 
         }
 
-        // REMEMBER TO CALL Core.Conclude()
+        // REMEMBER TO CALL Athena.Conclude()
 
     }
 
@@ -223,7 +223,7 @@ public class Core {
             try {
                 Utils.stringToFile(this.report, this.reportpath);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.out.println("Sorry but I'm unable to write the report to the file "+this.reportpath);
             }
         }
         

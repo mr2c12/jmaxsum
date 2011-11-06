@@ -214,7 +214,7 @@ public abstract class COP_Instance {
 
     }
 
-    void setPostService(PostService ps) {
+    public void setPostService(PostService ps) {
         Iterator<Agent> it = this.agents.iterator();
         while (it.hasNext()) {
             Agent agent = it.next();
@@ -222,7 +222,7 @@ public abstract class COP_Instance {
         }
     }
 
-    void setOperator(Operator op) {
+    public void setOperator(Operator op) {
         Iterator<Agent> it = this.agents.iterator();
         while (it.hasNext()) {
             Agent agent = it.next();
@@ -230,7 +230,7 @@ public abstract class COP_Instance {
         }
     }
 
-    void setPostServiceAndOperator(PostService ps, Operator op) {
+    public void setPostServiceAndOperator(PostService ps, Operator op) {
         Iterator<Agent> it = this.agents.iterator();
         while (it.hasNext()) {
             Agent agent = it.next();

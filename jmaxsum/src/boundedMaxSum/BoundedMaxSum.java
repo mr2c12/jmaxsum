@@ -20,6 +20,7 @@ package boundedMaxSum;
 import exception.LengthMismatchException;
 import exception.NodeTypeException;
 import exception.ParameterNotFoundException;
+import exception.WeightNotSetException;
 import factorgraph.Edge;
 import factorgraph.FactorGraph;
 import factorgraph.NodeFunction;
@@ -28,20 +29,30 @@ import function.FunctionEvaluator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
-import misc.DisjointSetEdge;
 import misc.DisjointSetNode;
 import misc.Utils;
 import system.COP_Instance;
 import test.DebugVerbosity;
 
 /**
+ * Class that implements the "bounded" phase of Bounded Max Sum.<br/>
+ * It takes a factor graph, weights each edge and computes the maximum spanning tree.<br/>
+ * Once that a solution is available, this class can compute the Approximation Ratio, too.<br/>
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class BoundedMaxSum {
 
+    /**
+     * The original Factor Graph, on which a maximum spanning tree is going to be estimated.
+     */
     protected FactorGraph factorgraph;
     private static final int debug = DebugVerbosity.debugBoundedMaxSum;
+    /**
+     * The sum of weights of removed edges.<br/>
+     * It is null until the factor graph is weighted.
+     */
+    private Double weight_removed = null;
 
     public BoundedMaxSum(COP_Instance cop){
         this.factorgraph = cop.getFactorgraph();
@@ -77,6 +88,10 @@ public class BoundedMaxSum {
 
 
 
+    /**
+     * Evalutes the weight of each edge in the Factor Graph of this instance.<br/>
+     * It simply call method weightTheEdge on each edge.
+     */
     public void weightTheGraph(){
         // for each edge
         for (Edge e : this.factorgraph.getEdges()) {
@@ -119,6 +134,16 @@ public class BoundedMaxSum {
         }
     }
 
+    /**
+     * Weight the edge.<br/>
+     * It's a very complex to understand method. It's worth to take a look to the
+     * comments in the code to understand its behaviour.
+     * @param e the edge whose weight is going to be evaluated.
+     * @throws ParameterNotFoundException
+     * @throws LengthMismatchException
+     * @throws NullPointerException
+     * @throws NodeTypeException
+     */
 
     public void weightTheEdge(Edge e) throws ParameterNotFoundException, LengthMismatchException, NullPointerException, NodeTypeException{
 
@@ -130,11 +155,16 @@ public class BoundedMaxSum {
                 System.out.println("---------------------------------------");
         }
 
+        // destination node of edge e
         NodeVariable x = e.getDest();
+        // source node
         NodeFunction f = e.getSource();
+        // function evaluator related to f
         FunctionEvaluator fe = f.getFunction();
 
+        // position of parameter x in fe
         int fixed_x_position = fe.getParameterPosition(x);
+        // number of possible values of x (its domain)
         int x_number_of_values = x.size();
 
         if (debug>=3) {
@@ -145,6 +175,7 @@ public class BoundedMaxSum {
                 System.out.println("---------------------------------------");
         }
 
+        // this is the length of array of max (or min) values
         int maxes_size = 1;
         for (NodeVariable param : fe.getParameters()){
             if (!param.equals(x)){
@@ -154,10 +185,11 @@ public class BoundedMaxSum {
 
 
 
-
+        // used for maximization of f over its arguments, except x
         Double[] maxes = new Double[maxes_size];// new double[maxes_size];
+        // used for minimization of f over its arguments, except x
         Double[] minis = new Double[maxes_size];
-
+        // both initializated to null (special value that represent -infinite or +infinite)
         for (int i = 0; i< maxes.length; i++) {
             maxes[i] = null;
             minis[i] = null;
@@ -172,13 +204,19 @@ public class BoundedMaxSum {
             System.out.println("---------------------------------------");
         }
 
+        // arg_size[i] is the number of possible values of i-th parameter of fe
         int[] arg_size = new int[fe.parametersNumber()];
         for (int index = 0; index < fe.parametersNumber(); index++){
             if (index == fixed_x_position) {
                 arg_size[index] = 0;
             }
             else {
-                arg_size[index] = fe.getParameter(index).size() -1 ; // this.parameters.get(index).size() - 1;
+                // the -1 because:
+                // x = { a | b | c }
+                // x.size() = 3
+                // x[0] = a, .. ,x[2] =b
+                // so arg_size[position_of_x] should be 2 (you'll understand why later)
+                arg_size[index] = fe.getParameter(index).size() -1 ;
             }
         }
 
@@ -190,10 +228,21 @@ public class BoundedMaxSum {
                 System.out.println("---------------------------------------");
         }
 
+        // index to change (to valuate if lower or greater) in max (or min) array
         int maxes_index_to_change = 0;
         double temp_evaluation;
         // enumerate all the possible arguments
+        // values = { 1, 3, 2 }
+        // fe is a function of x1,x2,x3
+        // x_i = {a,b,c,d,e} foreach i
+        // e.g. x1[0] = a
+        // fe.evaluate(fe.functionArgument(values)) means:
+        //      fe.functionArgument(values) = { b, d, c }
+        //      fe.evaluate( { b, d, c } );
         int[] values = new int[arg_size.length];
+
+        // these lines of code is a algorithm that compute all the possible array, given a maximum value foreach position.
+        // look at class util for a clearer explanation.
         int imax = values.length-1;
         int i=imax;
         while(i>=0){
@@ -291,8 +340,9 @@ public class BoundedMaxSum {
     }
 
     /**
-     * Compute the PriorityQueue, changing the values of the weight like:
-     * w' = modifier * w
+     * Compute the PriorityQueue, changing the values of the weight like:<br/>
+     * w' = modifier * w<br/>
+     * With -1, the queue's head has the biggest weight.
      * @param modifier the int modifier
      * @return the priority queue
      */
@@ -330,12 +380,15 @@ public class BoundedMaxSum {
 
     /**
      * It takes the factor graph, weight his edges, compure the maximum spanning
-     * tree, remove the edge and update the functions.
+     * tree, remove the edge and update the functions.<br/>
+     * It compute the Approximation Ratio, too.
      */
     public void letsBound(){
         
         // first: weight the graph!
         this.weightTheGraph();
+        // initialize the removed weight
+        this.weight_removed = 0.0;
         
         // now, on the factor graph, compute the maximum spanning tree
         // and save the list of edges to be removed
@@ -373,7 +426,15 @@ public class BoundedMaxSum {
             }
             else {
                 // same sets -> trash the edge
-                edges_to_remove.add(edge_extracted);
+                if (edges_to_remove.add(edge_extracted)){
+                    try {
+                        // the edge is added to the to-be-removed set, so:
+                        this.weight_removed += this.getFactorgraph().getWeight(edge_extracted);
+                    } catch (WeightNotSetException ex) {
+                        // do not add anything
+                        // is it possible?!
+                    }
+                }
             }
 
 
@@ -403,4 +464,25 @@ public class BoundedMaxSum {
 
     }
 
+    /**
+     * Approximation ratio for this instance.
+     * Computed as the formula:
+     * rho_{FG} = 1 + ( V^{m} + B + V ) / V
+     * where:
+     * V^{m}    is the optimal solution to the tree structured constraint network
+     * B        is the sum of weights of removed edges
+     * V        is the approximate solution on the original graph
+     * 
+     * @param solutionOnTree is the optimal solution to the tree structured constraint network
+     * @param solutionOnOriginalGraph is the approximate solution on the original graph
+     * @return the approximation ratio for this instance
+     * @throws WeightNotSetException if the sum of weights of removed edges is not set
+     */
+    public double getApproximationRatio(double solutionOnTree, double solutionOnOriginalGraph) throws WeightNotSetException{
+        if (this.weight_removed == null) {
+            throw new WeightNotSetException("Unable to compute the approximation: no weight-removed set. This is not supposed to happen. Did you run letsBound() before calling getApproximationRatio()?");
+        }
+        double ratio = 1 + ( ( solutionOnTree + this.weight_removed + solutionOnOriginalGraph) / solutionOnOriginalGraph);
+        return ratio;
+    }
 }

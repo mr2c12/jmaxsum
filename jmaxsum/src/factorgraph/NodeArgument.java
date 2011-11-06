@@ -10,8 +10,16 @@ public class NodeArgument {
 
     Object value = null;
 
+    /**
+     * Static table to keep a unique instance of a given argument.
+     */
     private static HashMap<Integer, NodeArgument> table = new HashMap<Integer, NodeArgument>();
 
+    /**
+     *
+     * @param value
+     * @return the NodeArgument with requested value, that could be retrieved from the static map or created brand new it doesn't exist yet.
+     */
     public static NodeArgument getNodeArgument(Object value){
         if (!(NodeArgument.table.containsKey(value.hashCode()))){
             NodeArgument.table.put(value.hashCode(), new NodeArgument(value));

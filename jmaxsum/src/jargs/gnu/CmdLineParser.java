@@ -15,7 +15,6 @@ import java.util.Locale;
  *
  * @author Steve Purcell
  * @version $Revision: 1.10 $
- * @see jargs.examples.gnu.OptionTest
  */
 public class CmdLineParser {
 

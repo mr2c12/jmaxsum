@@ -177,7 +177,7 @@ public class ScrewerUp {
      * Take an array with parameters index, and turn it into an array of NodeArgument
      * @param argumentsNumber
      * @param fe the function evaluator
-     * @return
+     * @return NodeArgument array parameter of the function
      */
     public NodeArgument[] functionArgument (int[] argumentsNumber, FunctionEvaluator fe){
         NodeArgument[] fzArgument = new NodeArgument[argumentsNumber.length];

@@ -18,6 +18,8 @@
 package exception;
 
 /**
+ * The edges of Factor Graph are meant from a NodeFunction to a NodeVariable.<br/>
+ * This exception is used if an edge is trying to be identified from wrong types of nodes.
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */

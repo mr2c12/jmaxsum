@@ -23,4 +23,12 @@ package exception;
  */
 public class WeightNotSetException extends Exception{
 
+    public WeightNotSetException(String string) {
+        super(string);
+    }
+
+    public WeightNotSetException() {
+    }
+    
+
 }

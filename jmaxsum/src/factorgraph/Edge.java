@@ -20,14 +20,25 @@ package factorgraph;
 import misc.TwoKeysHashtable;
 
 /**
- *
+ * Representation of an edge of the Factor Graph.<br/>
+ * Since in a Factor Graph edges are only from NodeFunction to NodeVariable (or viceversa, they are undirected link),
+ * an edge source is a NodeFunction and the destination is a NodeVariable.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class Edge {
 
+    /**
+     * Edge's source, always a NodeFunction.
+     */
     protected NodeFunction source;
+    /**
+     * Edge's destination, always a NodeVariable.
+     */
     protected NodeVariable dest;
 
+    /**
+     * Static hashtable to have unique edge from f to x. Costructor is private.
+     */
     public static TwoKeysHashtable<NodeFunction, NodeVariable, Edge> edgeList = new TwoKeysHashtable<NodeFunction, NodeVariable, Edge>();
 
     @Override
@@ -35,6 +46,13 @@ public class Edge {
         return "Edge{" + "source=" + source + "dest=" + dest + '}';
     }
 
+    /**
+     * This is the only way to get a new or an existing edge.<br/>
+     * Looking for edge from f to x, this method returns a new edge if it has not been created yet.
+     * @param source NodeFunction
+     * @param dest NodeVariable
+     * @return Edge from f to x
+     */
     public static Edge getEdge(NodeFunction source, NodeVariable dest) {
         if (Edge.edgeList.containsKey(source, dest)){
             return Edge.edgeList.get(source, dest);
@@ -46,10 +64,16 @@ public class Edge {
         }
     }
 
+    /**
+     * The costructor is private.
+     * @param source NodeFunction
+     * @param dest NodeVariable
+     */
     private Edge(NodeFunction source, NodeVariable dest) {
         this.source = source;
         this.dest = dest;
     }
+
 
 
 
@@ -61,9 +85,11 @@ public class Edge {
         this.dest = dest;
     }
 
+
     public NodeFunction getSource() {
         return source;
     }
+
 
     public void setSource(NodeFunction source) {
         this.source = source;
