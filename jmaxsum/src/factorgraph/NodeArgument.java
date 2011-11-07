@@ -36,7 +36,8 @@ public class NodeArgument {
         return value;
     }
 
-    public void setValue(Object value) {
+    // change it and you'll break the static map
+    private void setValue(Object value) {
         this.value = value;
     }
 

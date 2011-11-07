@@ -48,7 +48,8 @@ public class Edge {
 
     /**
      * This is the only way to get a new or an existing edge.<br/>
-     * Looking for edge from f to x, this method returns a new edge if it has not been created yet.
+     * Looking for edge from f to x, this method returns a new edge if it has not been created yet.<br/>
+     * This is something like the Singleton design pattern.
      * @param source NodeFunction
      * @param dest NodeVariable
      * @return Edge from f to x
@@ -81,17 +82,19 @@ public class Edge {
         return dest;
     }
 
-    public void setDest(NodeVariable dest) {
-        this.dest = dest;
-    }
+    
 
 
     public NodeFunction getSource() {
         return source;
     }
 
-
-    public void setSource(NodeFunction source) {
+    // change it and you'll break the static map
+    private void setDest(NodeVariable dest) {
+        this.dest = dest;
+    }
+    // change it and you'll break the static map
+    private void setSource(NodeFunction source) {
         this.source = source;
     }
 

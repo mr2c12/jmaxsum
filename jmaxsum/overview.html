@@ -45,6 +45,16 @@
         Anyway, this code can be improved a lot.
     </p>
     <p>
+        NodeFunction, NodeVariable, and Edge doesn't have a public constructor.<br/>
+        A public method is used to get a new instance or an already-created instance.<br/>
+        This happens because we want NodeVariable of id 3 to be unique, like having only one Edge from f to x.        This happens because we want NodeVariable of id 3 to be unique, like having only one Edge from f to x.<br/>
+        The code here implements a sort of Singleton design pattern.
+    </p>
+    <p>
+        For cloning an instance, a method getCloned has been created on classes that needed to be cloned.<br/>
+        Using the clone() instead caused a bunch of problems, sometimes the default clone() of Object was called and messed up everything.
+    </p>
+    <p>
         Lower time-complexity has been always preferred rather than space-complexity.<br/>
         So there are a lot of supporting data structures to reduce the time taken during execution to access objects or class fields.<br/>
         This choice slows down initialization, but the gain obtained during the execution of the algorithm is better.
