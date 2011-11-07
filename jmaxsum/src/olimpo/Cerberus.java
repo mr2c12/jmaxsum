@@ -35,11 +35,13 @@ import maxsum.MS_COP_Instance;
 import system.COP_Instance;
 
 /**
- * The input module.
- * First, it can read a file and take out an instance
+ * Cerberus is a multi-headed hound (usually three-headed) which guards the gates of the Underworld, to prevent those who have crossed the river Styx from ever escaping.<br/>
+ * <br/>
+ * The input module.<br/>
+ * It can read a file and take out an instance.<br/>
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class Cerbero {
+public class Cerberus {
 
     public static final int debug = test.DebugVerbosity.debugCerbero;
 

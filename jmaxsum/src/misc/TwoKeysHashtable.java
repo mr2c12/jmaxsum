@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- *
+ * Hash table with 2 key for an element.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class TwoKeysHashtable<K1, K2, TV>  {

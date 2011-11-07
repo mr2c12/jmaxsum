@@ -20,7 +20,6 @@ import exception.PostServiceNotSetException;
 import java.io.IOException;
 import java.util.Iterator;
 import maxsum.Agent;
-import maxsum.Agent;
 import messages.MailMan;
 import messages.MessageFactory;
 import messages.MessageFactoryArrayDouble;
@@ -35,7 +34,10 @@ import operation.Operator;
 import system.COP_Instance;
 
 /**
- *
+ * Athena is the goddess of wisdom, courage, inspiration, civilization, warfare, strength, strategy, the arts, crafts, justice, and skill.<br/>
+ * <br/>
+ * This is the solver module.<br/>
+ * It implements the Max Sum Algorithm.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class Athena {
@@ -67,6 +69,10 @@ public class Athena {
         this.op = new MaxSumOperator(otimes, oplus);
     }
 
+    /**
+     * How many steps to do?
+     * @param n number of steps.
+     */
     public void setIterationsNumber(int n) {
         this.iterationsNumber = n;
     }
@@ -96,6 +102,10 @@ public class Athena {
     }
 
 
+    /**
+     * Please report all the information and put them in file
+     * @param file report path
+     */
     public void pleaseReport(String file){
     /*private boolean updateOnlyAtEnd = true;
     private boolean pleaseReport = false;
@@ -106,12 +116,20 @@ public class Athena {
 
     }
 
+    /**
+     * Set if the update is only after the algorithm is finished or after each step.
+     * @param updateOnlyAtEnd yes if to update only when finished.
+     */
     public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
         this.updateOnlyAtEnd = updateOnlyAtEnd;
     }
 
     
 
+    /**
+     * Apply the Max Sum algorithm.
+     * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
+     */
     public void solve() throws PostServiceNotSetException {
         if (debug >= 3) {
             System.out.println("Core: init()");

@@ -21,7 +21,8 @@ package misc;
 import java.util.LinkedList;
 
 /**
- *
+ * Class for creating DisjointSet of type T.<br/>
+ * Provide standard methods find and union (but please take a look at UNION implementation).
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class DisjointSet<T> {
@@ -46,6 +47,12 @@ public class DisjointSet<T> {
         return this.elements.size();
     }
 
+    /**
+     * Note that:<br/>
+     * ds1.union(ds2) return the disjoint set of ds1 merging ds2.
+     * @param set2 the second disjoint set
+     * @return the merged disjoint set.
+     */
     public DisjointSet<T> union(DisjointSet<T> set2){
         if (!(this.find().equals(set2.find()))){
             if (this.size()<set2.size()){
@@ -63,6 +70,28 @@ public class DisjointSet<T> {
         }
         return this;
 
+    }
+
+    /**
+     * More formal-correct implementation of UNION
+     * @param set1 first disjoint set
+     * @param set2 second disjoint set
+     */
+    public static void union(DisjointSet set1, DisjointSet set2) {
+        if (!(set1.find().equals(set2.find()))){
+            if (set1.size()<set2.size()){
+                set2.getElements().addAll(set1.getElements());
+                /*set1.setRepresentant(set2.getRepresentant());
+                set1.setElements(set2.getElements());*/
+                set1 = set2;
+            }
+            else {
+                set1.getElements().addAll(set2.getElements());
+                /*set1.setRepresentant(set2.getRepresentant());
+                set1.setElements(set2.getElements());*/
+                set2 = set1;
+            }
+        }
     }
 
     public void setElements(LinkedList<T> elements) {

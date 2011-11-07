@@ -18,11 +18,15 @@
 package test;
 
 /**
- *
+ * This class collects all the debug-related variables for classes in this project.<br/>
+ * It has not methods, just public static fields that are accessed from within the right destination class.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class DebugVerbosity {
 
+    /**
+     * Global modifier. Use this if you want to change easily all the debug settings.
+     */
     public static final int debug = 0;
 
     public static final int debugNodeVariable = 0

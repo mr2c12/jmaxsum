@@ -23,7 +23,7 @@ import factorgraph.NodeVariable;
 import factorgraph.NodeFunction;
 import exception.InvalidInputFileException;
 import java.util.PriorityQueue;
-import olimpo.Cerbero;
+import olimpo.Cerberus;
 import system.COP_Instance;
 import factorgraph.Edge;
 import factorgraph.FactorGraph;
@@ -52,7 +52,7 @@ public class BoundedMaxSumTest {
     public static void setUpClass() throws Exception {
         COP_Instance cop = null;
         try {
-            cop = Cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
+            cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
         } catch (InvalidInputFileException ex) {
             ex.printStackTrace();
         }
@@ -74,17 +74,6 @@ public class BoundedMaxSumTest {
 
 
 
-    /**
-     * Test of weightTheGraph method, of class BoundedMaxSum.
-     */
-    //@Test
-    public void testWeightTheGraph() {
-        System.out.println("weightTheGraph");
-        //BoundedMaxSum instance = null;
-        instance.weightTheGraph();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
     /**
      * Test of weightTheEdge method, of class BoundedMaxSum.
@@ -186,9 +175,6 @@ public class BoundedMaxSumTest {
         
         instance.letsBound();
 
-        
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
 }

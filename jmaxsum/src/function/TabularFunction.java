@@ -27,19 +27,30 @@ import java.util.StringTokenizer;
 
 
 /**
- *
+ * Tabular Function, implementation of abstract Function Evaluator.<br/>
+ * Used for discrete functions.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class TabularFunction extends FunctionEvaluator{
 
     final static int debug = test.DebugVerbosity.debugTabularFunction;
 
+    /**
+     * Correspondence between parameters and function values.<br/>
+     * The parameters are represented in a String.
+     */
     protected HashMap<String, Double> costTable;
 
     public TabularFunction() {
         this.costTable = new HashMap<String, Double>();
     }
 
+    /**
+     * Save the function value for NodeArgument[] of parameter.<br/>
+     * The params become the key of the cost table. A string is builded, where each parameter is followed by a ";".
+     * @param params the array of NodeArgument
+     * @param cost the cost for the params
+     */
     public void addParametersCost(NodeArgument[] params, double cost){
         StringBuilder key = new StringBuilder();
         key.append("");
@@ -67,6 +78,10 @@ public class TabularFunction extends FunctionEvaluator{
         return this.costTable.get(key.toString());
     }
 
+    /**
+     * How much values does this function have?
+     * @return
+     */
     public int entryNumber(){
         return this.costTable.size();
     }

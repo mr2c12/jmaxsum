@@ -30,10 +30,12 @@ import misc.Utils;
 import system.COP_Instance;
 
 /**
- * Command-line control interface for maxsum
+ * Hermes is the great messenger of the gods in Greek mythology and a guide to the Underworld.<br/>
+ * <br/>
+ * Command-line control interface for Max Sum<br/>
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class Mercurio {
+public class Hermes {
 
     public static void main(String[] args) {
 
@@ -95,7 +97,7 @@ public class Mercurio {
 
         try {
 
-            COP_Instance original_cop = Cerbero.getInstanceFromFile(filepath, oldformatV);
+            COP_Instance original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
 
             InstanceCloner ic = new InstanceCloner(original_cop);
             COP_Instance cop = ic.getClonedInstance();

@@ -9,12 +9,12 @@ import hacks.ScrewerUp;
 import maxsum.MS_COP_Instance;
 import misc.Utils;
 import system.COP_Instance;
-import olimpo.Cerbero;
+import olimpo.Cerberus;
 import olimpo.Athena;
 
 /**
- *
- * @author mik
+ * Class used for test executions.
+ * @author Michele Roncalli
  */
 public class Main {
 
@@ -48,8 +48,8 @@ public class Main {
                         System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Main: creating the COP instance from " + path);
                         System.out.println("---------------------------------------");
                 }
-                COP_Instance cop = Cerbero.getInstanceFromFile(path);
-                //COP_Instance cop = Cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/problem.cop2",true);
+                COP_Instance cop = Cerberus.getInstanceFromFile(path);
+                //COP_Instance cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/problem.cop2",true);
 
                 if (debug>=3) {
                         String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();

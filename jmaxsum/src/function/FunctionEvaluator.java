@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright (C) 2011 Michele Roncalli <roncallim at gmail dot com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package function;
@@ -18,14 +30,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-import java.util.concurrent.LinkedBlockingQueue;
 import messages.MessageQ;
 import misc.Utils;
 
 /**
- * Function evaluator for MaxSum.
- * This is an abstract class that gives the implementation of evaluateMod.
- * Other methods must be implemented.
+ * Function evaluator for MaxSum.<br/>
+ * This is an abstract class that gives the implementation of evaluateMod.<br/>
+ * Other methods must be implemented.<br/>
  *
  * @author Michele Roncalli < roncallim at gmail dot com >
  */
@@ -40,6 +51,10 @@ public abstract class FunctionEvaluator {
     protected Double maxCost = null;
 
 
+    /**
+     * The NodeFunction's neighbours are stored in its FunctionEvaluator.
+     * @return the neighbours of NodeFunction that owns this FunctionEvaluator
+     */
     public HashSet<NodeVariable> getNeighbour() {
         return this.parametersset;
     }
@@ -261,6 +276,12 @@ public abstract class FunctionEvaluator {
     public abstract FunctionEvaluator getClone();
 
 
+    /**
+     * Change NodeFunction oldN neighbour to newN.<br/>
+     * Be careful with arraylist of parameters!
+     * @param oldN
+     * @param newN
+     */
     public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
         
 
@@ -285,6 +306,19 @@ public abstract class FunctionEvaluator {
     }
 
 
+    /**
+     * A little tricky here.
+     * Let's call argumentsNumber "value"<br/>
+     * values = { 1, 3, 2 }<br/>
+     * fe is a function of x1,x2,x3<br/>
+     * x_i = {a,b,c,d,e} foreach i<br/>
+     * e.g. x1[0] = a<br/>
+     * fe.evaluate(fe.functionArgument(values)) means:<br/>
+     * fe.functionArgument(values) = { b, d, c }<br/>
+     * fe.evaluate( { b, d, c } );<br/>
+     * @param argumentsNumber the array of arguments value position
+     * @return the array of NodeArguments to be evaluated
+     */
     public NodeArgument[] functionArgument (int[] argumentsNumber){
         NodeArgument[] fzArgument = new NodeArgument[argumentsNumber.length];
         if (debug>=3) {
@@ -302,6 +336,12 @@ public abstract class FunctionEvaluator {
 
 
 
+    /**
+     * Compute the maximums of F fixed x
+     * @param x the parameter to project the maximization
+     * @return the maximums array of F
+     * @throws ParameterNotFoundException if x is not a parameter of this Function Evaluator
+     */
     public double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
         if (!this.parameters.contains(x)) {
             throw new ParameterNotFoundException(this+" does NOT contain "+x);
@@ -422,6 +462,11 @@ public abstract class FunctionEvaluator {
 
     }
 
+    /**
+     * Remove the collection of args. It's a minimization over the removing args.<br/>
+     * This method is really complex, but it's just two application of enumeration algorithm, one nested in the other.
+     * @param args list of arg to remove.
+     */
     public void removeArgs(Collection<NodeVariable> args){
         ArrayList<NodeVariable> to_remove = new ArrayList<NodeVariable>();
         for (NodeVariable nv : args ){

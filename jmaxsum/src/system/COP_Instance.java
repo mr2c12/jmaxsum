@@ -32,7 +32,8 @@ import messages.PostService;
 import operation.Operator;
 
 /**
- * Instance of COP problem.
+ * Instance of COP problem.<br/>
+ * The method actualValue() is abstract and must be implemented in the class that extended COP_Instance, since this is about how to get the actual utility function value.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public abstract class COP_Instance {

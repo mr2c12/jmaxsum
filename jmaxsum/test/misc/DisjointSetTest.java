@@ -90,19 +90,6 @@ public class DisjointSetTest {
         
     }
 
-    /**
-     * Test of hashCode method, of class DisjointSet.
-     */
-    //@Test
-    public void testHashCode() {
-        System.out.println("hashCode");
-        DisjointSet instance = null;
-        int expResult = 0;
-        int result = instance.hashCode();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
     /**
      * Test of find method, of class DisjointSet.

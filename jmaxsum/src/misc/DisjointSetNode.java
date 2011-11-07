@@ -22,7 +22,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- *
+ * Disjoint sets of type Node manager.<br/>
+ * Used in Bounded Max Sum when executing Kruskal algorithm.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class DisjointSetNode {

@@ -18,14 +18,14 @@
 package maxsum;
 
 import exception.VariableNotSetException;
-import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import java.util.HashSet;
 import system.COP_Instance;
 
 /**
- *
+ * A instance of Max Sum COP problem.<br/>
+ * The difference with a COP problem is how to get actual value. Here is the sum.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class MS_COP_Instance extends COP_Instance{

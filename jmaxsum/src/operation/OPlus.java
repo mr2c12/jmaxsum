@@ -25,7 +25,7 @@ import messages.MessageQ;
 import messages.MessageR;
 
 /**
- *
+ * This interface provides methods for oplus operator
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public interface OPlus {

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 /**
  * This class implements a list of message (either Q or R)
- * @author mik
+ * @author Michele Roncalli
  */
 public class MessageList {
 

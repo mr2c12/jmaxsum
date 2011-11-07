@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- *
+ * Hash table with 3 keys.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class ThreeKeysHashtable<K1, K2, K3, TV> {

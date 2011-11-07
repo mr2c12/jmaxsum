@@ -2,15 +2,13 @@
 
 package messages;
 
-import exception.ReceiverNullException;
-import exception.SenderNullException;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * This class implements the postService in local mode
+ * This class implements the Post Service in local mode.
  * @author Michele Roncalli <roncallim@gmail.com>
  */
 public class MailMan implements PostService{
@@ -59,6 +57,11 @@ public class MailMan implements PostService{
         this.zmessages.put(x, mc);
     }
 
+    /**
+     * List of message R addressed to x
+     * @param x receiver of R-messages
+     * @return the list of R-messages
+     */
     public LinkedList<MessageR> getMessageRToX(NodeVariable x) {
         return this.rmessages.getMessageRToX(x);
     }

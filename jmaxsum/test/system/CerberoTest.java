@@ -17,7 +17,7 @@
 
 package system;
 
-import olimpo.Cerbero;
+import olimpo.Cerberus;
 import exception.InvalidInputFileException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,7 +52,7 @@ public class CerberoTest {
     }
 
     /**
-     * Test of getInstanceFromFile method, of class Cerbero.
+     * Test of getInstanceFromFile method, of class Cerberus.
      */
     @Test
     public void testGetInstanceFromFile() {
@@ -60,7 +60,7 @@ public class CerberoTest {
         String fname = "/home/mik/Documenti/NetBeansProjects/maxSum/paper.cop2";
         COP_Instance expResult = null;
         try {
-            COP_Instance result = Cerbero.getInstanceFromFile(fname);
+            COP_Instance result = Cerberus.getInstanceFromFile(fname);
             System.out.println(result.toTestString());
             assertNotNull(result);
         }

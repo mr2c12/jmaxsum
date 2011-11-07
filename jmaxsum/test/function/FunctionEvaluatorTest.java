@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import messages.MessageQ;
-import olimpo.Cerbero;
+import olimpo.Cerberus;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class FunctionEvaluatorTest {
     public static void setUpClass() throws Exception {
         COP_Instance cop = null;
         try {
-            cop = Cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
+            cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
         } catch (InvalidInputFileException ex) {
             ex.printStackTrace();
         }
@@ -153,7 +153,7 @@ public class FunctionEvaluatorTest {
 
         COP_Instance cop = null;
         try {
-            cop = Cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_arity5.cop2");
+            cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_arity5.cop2");
         } catch (InvalidInputFileException ex) {
             ex.printStackTrace();
         }

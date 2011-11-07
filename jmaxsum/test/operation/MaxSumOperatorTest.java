@@ -40,7 +40,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import system.COP_Instance;
-import olimpo.Cerbero;
+import olimpo.Cerberus;
 import static org.junit.Assert.*;
 
 /**
@@ -52,7 +52,7 @@ public class MaxSumOperatorTest {
     static PostService postservice;
     static MaxSumOperator maxsumoperator;
     static MessageFactory mfactory;
-    static Cerbero cerbero;
+    static Cerberus cerbero;
     static COP_Instance cop;
     static MaxSumOperator instance;
     static OPlus oplus;
@@ -79,7 +79,7 @@ public class MaxSumOperatorTest {
 
         MaxSumOperatorTest.maxsumoperator = new MaxSumOperator(new OTimes_MaxSum(mfactory), new OPlus_MaxSum(mfactory));
 
-        cerbero = new Cerbero();
+        cerbero = new Cerberus();
         try {
             cop = cerbero.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/paper.cop2");
 

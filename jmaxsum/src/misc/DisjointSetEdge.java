@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- *
+ * Disjoint sets of type Edge manager.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class DisjointSetEdge {

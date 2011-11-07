@@ -28,7 +28,10 @@ import misc.Utils;
 import system.COP_Instance;
 
 /**
- *
+ * This class implements an hack to get Max Sum work even with symmetric problems.<br/>
+ * The utility functions in the instance are modified a little to turn the problem in to an asymmetric form.<br/>
+ * The screwerUp method keep saved information of how the functions are changed, so it is possible to get back the original problem.<br/>
+ * If used on a cloned instance, restore step could be skipped.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
 public class ScrewerUp {
@@ -41,6 +44,9 @@ public class ScrewerUp {
     protected COP_Instance cop;
 
     protected HashMap<NodeVariable, Double> intervalTable;
+    /**
+     * Keep saved information of how the functions are changed.
+     */
     protected HashMap<NodeVariable, Double[]> modifierTable;
     protected boolean screwed = false;
 

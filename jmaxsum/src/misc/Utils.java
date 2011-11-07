@@ -1,5 +1,6 @@
 package misc;
 
+import com.sun.jmx.snmp.Enumerated;
 import exception.LengthMismatchException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,11 +9,18 @@ import java.io.IOException;
 
 /**
  * Utility class.
- * @author mik
+ * @author Michele Roncalli
  */
 public class Utils {
 
 
+    /**
+     * Sum array
+     * @param a1 first array
+     * @param a2 second array
+     * @return an array where at position i is stored the sum of a1[i] and a2[i]
+     * @throws IllegalArgumentException if at a1 or a2 is null, or if their length is different.
+     */
     public static double[] sumArray(double[] a1, double[] a2) throws IllegalArgumentException{
         if (a1 == null && a2 == null){
             throw new IllegalArgumentException("Given array size mismatch");
@@ -34,6 +42,11 @@ public class Utils {
         return res;
     }
 
+    /**
+     * Build a String representing the array
+     * @param a array of Object to turn into a String
+     * @return String representation of the array.
+     */
     public static String toString(Object[] a){
         StringBuilder array = new StringBuilder();
         array.append("[ ");
@@ -79,6 +92,19 @@ public class Utils {
     }
 
 
+    /**
+     * VERY IMPORTANT METHOD.<br/>
+     * It is used a lot of times in the whole project.<br/>
+     * This is an algorithm that produce all the possible arrays in a given range.<br/>
+     * e.g. let max={1,2,2,1} an array where max[i] is the number of values of i-th cell of aray to create.<br/>
+     * So, we want this lines of code to create:<br/>
+     * [0,0,0,0]<br/>
+     * [0,0,1,0]<br/>
+     * [0,1,0,0]<br/>
+     * [0,1,1,0]<br/>
+     * @param v the array to create.
+     * @param max the array of maximum values for each position.
+     */
     public static void enumerate(int[] v, int[] max){
         int imax = v.length-1;
         int i=imax;
@@ -88,6 +114,7 @@ public class Utils {
 
             while ( v[i] < max[i] - 1 ) {
                 //System.out.println(Utils.toString(v));
+                // HERE v IS THE ARRAY!
 
                 System.out.print("F ");
                 for (int index= 0; index < v.length; index++) {
@@ -110,7 +137,7 @@ public class Utils {
 
         }
         //System.out.println(Utils.toString(v));
-
+        // HERE v IS THE ARRAY!
         System.out.print("F ");
         for (int index= 0; index < v.length; index++) {
             System.out.print(v[index]+ " ");
@@ -123,12 +150,20 @@ public class Utils {
     }
 
 
-
+    /**
+     * @see Utils#enumerate(int[], int[]) 
+     */
     public static void enumerate(int[] max){
         Utils.enumerate(new int[max.length], max);
     }
 
 
+    /**
+     * Simple method that store a String into a file. Like the putfilecontent() php function.
+     * @param string to be saved.
+     * @param file where to write.
+     * @throws IOException if any problem accessing the file occurs.
+     */
     public static void stringToFile(String string, String file) throws IOException{
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         out.write(string);

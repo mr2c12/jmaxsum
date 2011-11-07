@@ -1,4 +1,19 @@
-
+/*
+ *  Copyright (C) 2011 Michele Roncalli <roncallim at gmail dot com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package maxsum;
 
@@ -17,22 +32,37 @@ import messages.PostService;
 import operation.Operator;
 
 /**
- * Agent that controls variables
+ * Agent that controls variables in a COP problem instance.
  * @author Michele Roncalli < roncallim at gmail dot com >
  */
 public class Agent {
 
+    /**
+     * Static map to have unique id.
+     */
     private static HashMap<Integer, Agent> table = new HashMap<Integer, Agent>();
 
     static final int debug = test.DebugVerbosity.debugAgent;
 
+    /**
+     * Operator that handle max sum
+     */
     private Operator op;
+    /**
+     * PostService to send and retrieve messages. Used by the Nodes.
+     */
     private PostService postservice = null;
 
     private int id;
     public static final int MAXAGENTNUMBER = 1000;
 
+    /**
+     * NodeVariables controlled by the agent
+     */
     private HashSet<NodeVariable> variables;
+    /**
+     * NodeFunctions controlled by the agent
+     */
     private HashSet<NodeFunction> functions;
     
     private Agent(int id){
@@ -89,6 +119,10 @@ public class Agent {
     }
 
 
+    /**
+     * Send Q-messages phase.
+     * @throws PostServiceNotSetException if ps not set.
+     */
     public void sendQMessages() throws PostServiceNotSetException{
 
         if (this.postservice == null){
@@ -134,6 +168,10 @@ public class Agent {
     }
 
     //////////////////////////////
+    /**
+     * Send R-messages phase.
+     * @throws PostServiceNotSetException if ps not set.
+     */
     public void sendRMessages() throws PostServiceNotSetException{
 
         if (this.postservice == null){
@@ -188,7 +226,7 @@ public class Agent {
 
 
     /**
-     * Compute the Z-messages and set the variables to the value
+     * Compute the Z-messages and set the variables to the value of argmax.
      * @throws PostServiceNotSetException if no post service is set
      */
     public void sendZMessages() throws PostServiceNotSetException{
@@ -227,6 +265,10 @@ public class Agent {
         return this.id;
     }
 
+    /**
+     * Set the NodeVariable x value as the argMax of Z-message
+     * @param x the NodeVariable to set.
+     */
     public void setVariableArgumentFromZ(NodeVariable x){
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -292,12 +334,21 @@ public class Agent {
 
     }
 
-
+    /**
+     * Used in Clone, to change the NodeVariables
+     * @param oldv
+     * @param newv
+     */
     public void changeVariable(NodeVariable oldv, NodeVariable newv) {
         this.variables.remove(oldv);
         this.variables.add(newv);
     }
 
+    /**
+     * Used in Clone, to change the NodeFunction
+     * @param oldv
+     * @param newv
+     */
     public void changeFunction(NodeFunction oldv, NodeFunction newv) {
         this.functions.remove(oldv);
         this.functions.add(newv);
