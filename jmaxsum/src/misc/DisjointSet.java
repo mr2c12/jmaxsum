@@ -77,6 +77,7 @@ public class DisjointSet<T> {
      * @param set1 first disjoint set
      * @param set2 second disjoint set
      */
+    @SuppressWarnings("unchecked")
     public static void union(DisjointSet set1, DisjointSet set2) {
         if (!(set1.find().equals(set2.find()))){
             if (set1.size()<set2.size()){

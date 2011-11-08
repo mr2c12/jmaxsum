@@ -1,6 +1,5 @@
 package misc;
 
-import com.sun.jmx.snmp.Enumerated;
 import exception.LengthMismatchException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;

@@ -49,6 +49,7 @@ public class Hermes {
         CmdLineParser.Option updateel = parser.addBooleanOption('U', "update-each-iteration");
         CmdLineParser.Option noBounded = parser.addBooleanOption("no-bounded-max-sum");
         CmdLineParser.Option printFactorGraph = parser.addBooleanOption('F', "print-factor-graph");
+        CmdLineParser.Option time = parser.addBooleanOption('T', "time");
 
         try {
             parser.parse(args);
@@ -65,6 +66,7 @@ public class Hermes {
         Boolean updateelV = (Boolean) parser.getOptionValue(updateel, false);
         Boolean noBoundedV = (Boolean) parser.getOptionValue(noBounded, false);
         Boolean printFactorGraphV = (Boolean) parser.getOptionValue(printFactorGraph, false);
+        Boolean timeV = (Boolean) parser.getOptionValue(time, false);
 
         // what if no report? -> null!
         String reportV = (String) parser.getOptionValue(report);
@@ -96,6 +98,8 @@ public class Hermes {
 
 
         try {
+
+            long startTime = System.currentTimeMillis();
 
             COP_Instance original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
 
@@ -141,6 +145,8 @@ public class Hermes {
             // set the variables value to the original instance
             ic.setOriginalVariablesValues();
 
+            long endTime = System.currentTimeMillis();
+
 
             String finale = "";
 
@@ -169,7 +175,11 @@ public class Hermes {
                 }
             }
             
-            finale += "Conclusion for original cop=" + original_cop.status();
+            finale += "Conclusion for original cop=" + original_cop.status()+"\n";
+
+            if (timeV){
+                finale += "Time needed: "+((endTime - startTime)/(double)1000)+" [s]";
+            }
 
             if (reportV != null) {
                 try {
@@ -202,6 +212,7 @@ public class Hermes {
         usage += "\t--print-factor-graph | -F\n\t\tprint both version of factor graph, original and after the bounded-max-sum phase\n";
         usage += "\t--screw-it-up\tto use the preferences-on-values hack\n";
         usage += "\t--no-bounded-max-sum\tskip the Bounded Max Sum phase\n";
+        usage += "\t--time | -T\n\t\tprint total time usage\n";
         usage += "\t--report <file>\twrite the report of the execution on <file>";
 
         System.out.println(usage);
