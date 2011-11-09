@@ -67,7 +67,10 @@ public class DebugVerbosity {
     public static final int debugCerbero = 0
             + DebugVerbosity.debug;
 
-    public static final int debugCore = 0
+    public static final int debugAthena = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugUtils = 0
             + DebugVerbosity.debug;
 
     public static final int debugMain = 0

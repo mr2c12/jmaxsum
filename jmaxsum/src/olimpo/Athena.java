@@ -49,7 +49,7 @@ public class Athena {
     private OTimes otimes;
     private OPlus oplus;
     private int iterationsNumber = 3;
-    final static int debug = test.DebugVerbosity.debugCore;
+    final static int debug = test.DebugVerbosity.debugAthena;
     private boolean stepbystep = false;
 
     private boolean updateOnlyAtEnd = true;

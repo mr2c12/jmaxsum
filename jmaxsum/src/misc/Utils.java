@@ -12,6 +12,7 @@ import java.io.IOException;
  */
 public class Utils {
 
+    final static int debug = test.DebugVerbosity.debugUtils;
 
     /**
      * Sum array
@@ -164,9 +165,20 @@ public class Utils {
      * @throws IOException if any problem accessing the file occurs.
      */
     public static void stringToFile(String string, String file) throws IOException{
-        BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        out.write(string);
-        out.close();
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Writing:\n"+string+"\nin\n"+file);
+                System.out.println("---------------------------------------");
+        }
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
+            out.write(string);
+            out.close();
+        } catch (IOException ie) {
+            ie.printStackTrace();
+        }
     }
 
     /**
