@@ -467,7 +467,7 @@ public class BoundedMaxSum {
     /**
      * Approximation ratio for this instance.
      * Computed as the formula:
-     * rho_{FG} = 1 + ( V^{m} + B + V ) / V
+     * rho_{FG} = ( V^{m} + B + V ) / V
      * where:
      * V^{m}    is the optimal solution to the tree structured constraint network
      * B        is the sum of weights of removed edges
@@ -482,7 +482,67 @@ public class BoundedMaxSum {
         if (this.weight_removed == null) {
             throw new WeightNotSetException("Unable to compute the approximation: no weight-removed set. This is not supposed to happen. Did you run letsBound() before calling getApproximationRatio()?");
         }
-        double ratio = 1 + ( ( solutionOnTree + this.weight_removed + solutionOnOriginalGraph) / solutionOnOriginalGraph);
+        double ratio = ( ( solutionOnTree + this.weight_removed - solutionOnOriginalGraph) / solutionOnOriginalGraph);
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Approximation ratio with:");
+                System.out.println("solutionOnTree="+solutionOnTree);
+                System.out.println("solutionOnOriginalGraph="+solutionOnOriginalGraph);
+                System.out.println("B="+this.weight_removed);
+                System.out.println("AR="+ratio);
+                System.out.println("---------------------------------------");
+        }
         return ratio;
+    }
+
+        /**
+     * Approximation ratio for this instance.<br/>
+     * Computed as the formula:<br/>
+     * rho_{FG} = 1 + ( V^{m} + B + V ) / V<br/>
+     * where:<br/>
+     * V^{m}    is the optimal solution to the tree structured constraint network<br/>
+     * B        is the sum of weights of removed edges<br/>
+     * V        is the approximate solution on the original graph<br/>
+     *<br/>
+     * @param solutionOnTree is the optimal solution to the tree structured constraint network
+     * @param solutionOnOriginalGraph is the approximate solution on the original graph
+     * @return the approximation ratio for this instance
+     * @throws WeightNotSetException if the sum of weights of removed edges is not set
+     */
+    public double getApproximationRatio_OnePlus(double solutionOnTree, double solutionOnOriginalGraph) throws WeightNotSetException{
+        if (this.weight_removed == null) {
+            throw new WeightNotSetException("Unable to compute the approximation: no weight-removed set. This is not supposed to happen. Did you run letsBound() before calling getApproximationRatio()?");
+        }
+        double ratio = 1 + this.getApproximationRatio(solutionOnTree, solutionOnOriginalGraph);
+        return ratio;
+    }
+
+    /**
+     * Perform a the sanity check on the final solutions:<br/>
+     * V^{m} <= V <= V^{m} + B<br/>
+     * where:<br/>
+     * V^{m}    is the optimal solution to the tree structured constraint network<br/>
+     * B        is the sum of weights of removed edges<br/>
+     * V        is the approximate solution on the original graph<br/>
+     * <br/>
+     * @param solutionOnTree is the optimal solution to the tree structured constraint network
+     * @param solutionOnOriginalGraph is the approximate solution on the original graph
+     * @return true if the check is passed
+     * @throws WeightNotSetException if the sum of weights of removed edges is not set
+     */
+    public boolean sanityCheckOnSolution(double solutionOnTree, double solutionOnOriginalGraph) throws WeightNotSetException{
+        if (this.weight_removed == null) {
+            throw new WeightNotSetException("Unable to compute the approximation: no weight-removed set. This is not supposed to happen. Did you run letsBound() before calling getApproximationRatio()?");
+        }
+        boolean result = true;
+        // first check:
+        // V^{m} <= V
+        result &= ( solutionOnTree <= solutionOnOriginalGraph );
+        // second check:
+        // V <= V^{m} + B
+        result &= ( solutionOnOriginalGraph <= ( solutionOnTree + this.weight_removed ) );
+        return result;
     }
 }

@@ -166,8 +166,15 @@ public class Hermes {
                 // bounded version printed only if created
                 try {
                     finale += "Approximation Ratio: "+
-                            BMax.getApproximationRatio(original_cop.actualValue(), cop.actualValue())
+                            BMax.getApproximationRatio(cop.actualValue(), original_cop.actualValue())
                             +"\n";
+                    finale += "Sanity check: ";
+                    if (BMax.sanityCheckOnSolution(cop.actualValue(), original_cop.actualValue())){
+                        finale += "OK\n";
+                    }
+                    else {
+                        finale += "ERROR\n";
+                    }
                 } catch (VariableNotSetException e1) {
                     System.out.println("Unable to get the Approximation Ratio: at least one variable is not set");
                 } catch (WeightNotSetException e2) {
