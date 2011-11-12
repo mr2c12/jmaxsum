@@ -62,7 +62,7 @@ public class MessageArrayDouble implements Message{
     }
 
 
-    public MessageArrayDouble(Node sender, Node receiver, double[] message) {
+    public MessageArrayDouble(Node sender, Node receiver, Double[] message) {
         if (debug>=3) {
             String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
             String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -114,7 +114,7 @@ public class MessageArrayDouble implements Message{
 
     @Override
     public String toString(){
-        return "Message: "+ this.message;
+        return "Message from "+ this.sender + " to " + this.receiver + " = " + this.message.StringContent();
                 //Utils.toString(this.message);
     }
 

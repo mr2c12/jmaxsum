@@ -230,7 +230,7 @@ public class Agent {
      * @throws PostServiceNotSetException if no post service is set
      */
     public void sendZMessages() throws PostServiceNotSetException{
-
+        
         if (this.postservice == null){
             throw new PostServiceNotSetException();
         }
@@ -274,11 +274,11 @@ public class Agent {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                 System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "for the nodevariable "+x+" set the value "+this.op.argMaxZ(x, postservice));
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "for the nodevariable "+x+" set the value "+this.op.argOfInterestOfZ(x, postservice));
                 System.out.println("---------------------------------------");
         }
         x.setStateIndex(
-                this.op.argMaxZ(x, postservice)
+                this.op.argOfInterestOfZ(x, postservice)
                 );
     }
 

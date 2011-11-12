@@ -21,6 +21,7 @@ import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
 import java.util.LinkedList;
+import messages.MessageContent;
 import messages.MessageQ;
 import messages.MessageR;
 
@@ -33,5 +34,8 @@ public interface OPlus {
     public MessageR oplus(NodeFunction sender, NodeVariable x, FunctionEvaluator fe, LinkedList<MessageQ> messagelist);
 
     public MessageR nullMessage(NodeFunction sender, NodeVariable receiver, int size);
+
+    public int argOfInterestOfZ(MessageContent messageZ);
+
     
 }

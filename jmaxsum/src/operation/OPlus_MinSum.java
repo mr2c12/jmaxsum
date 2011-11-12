@@ -18,7 +18,6 @@
 package operation;
 
 import exception.ParameterNotFoundException;
-import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
@@ -29,19 +28,18 @@ import messages.MessageContent;
 import messages.MessageFactory;
 import messages.MessageQ;
 import messages.MessageR;
-import misc.Utils;
 
 /**
  *
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class OPlus_MaxSum implements OPlus{
+public class OPlus_MinSum implements OPlus{
 
     static final int debug = test.DebugVerbosity.debugOPlus_MaxSum;
     
     private MessageFactory factory;
 
-    public OPlus_MaxSum(MessageFactory factory) {
+    public OPlus_MinSum(MessageFactory factory) {
         this.factory = factory;
     }
 
@@ -130,7 +128,7 @@ public class OPlus_MaxSum implements OPlus{
 
 
 
-            System.out.print("Oplus_MaxSum.computeR: modifier table size="+modifierTable.size());
+            System.out.print("Oplus_MinSum.computeR: modifier table size="+modifierTable.size());
             if (modifierTable.size()>=1){
                 Iterator<NodeVariable> it = modifierTable.keySet().iterator();
                 while (it.hasNext()) {
@@ -168,7 +166,7 @@ public class OPlus_MaxSum implements OPlus{
             while(i>=0){
                 while ( functionArgument[i] < numberOfValues[i] - 1 ) {
                     // here an array ready for being evaluated
-                    maxCost = this.maximizeMod(maxCost, functionArgument, x, xIndex, fe, modifierTable);
+                    maxCost = this.minimizeMod(maxCost, functionArgument, x, xIndex, fe, modifierTable);
                     functionArgument[i]++;
                     for (int j = i+1; j <= imax; j++) {
                         functionArgument[j]=0;
@@ -178,18 +176,11 @@ public class OPlus_MaxSum implements OPlus{
                 i--;
             }
             // here an array ready for being evaluated
-            maxCost = this.maximizeMod(maxCost, functionArgument, x, xIndex, fe, modifierTable);
+            maxCost = this.minimizeMod(maxCost, functionArgument, x, xIndex, fe, modifierTable);
             //////////////////////
 
 
             //return new MessageRArrayDouble(maxCost);
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "maxCost is "+Utils.toString(maxCost));
-                    System.out.println("---------------------------------------");
-            }
             return this.factory.getMessageR(sender, x, maxCost);
         } catch (ParameterNotFoundException ex) {
             // if x is not found, return a null message
@@ -202,10 +193,10 @@ public class OPlus_MaxSum implements OPlus{
 
 
 
-    public Double[] maximizeMod(Double[] max, int[] numberOfValues, NodeVariable x, int xIndex, FunctionEvaluator fe, HashMap<NodeVariable, MessageQ> modifierTable){
+    public Double[] minimizeMod(Double[] min, int[] numberOfValues, NodeVariable x, int xIndex, FunctionEvaluator fe, HashMap<NodeVariable, MessageQ> modifierTable){
 
         if(debug>=3){
-            System.out.print("Oplus_MaxSum.maximizeMod: modifier table size="+modifierTable.size());
+            System.out.print("Oplus_MinSum.minimizeMod: modifier table size="+modifierTable.size());
             if (modifierTable.size()>=1){
                 Iterator<NodeVariable> it = modifierTable.keySet().iterator();
                 while (it.hasNext()) {
@@ -222,23 +213,24 @@ public class OPlus_MaxSum implements OPlus{
             // NOW it's pretty ready
             // this is the part where it is maximized
             cost = ( fe.evaluateMod(fe.functionArgument(numberOfValues), modifierTable));
-            if (max[xParamIndex] == null){
-                max[xParamIndex] = ( cost );
-            } else {
-                max[xParamIndex] = ( cost > max[xParamIndex] ) ? cost : max[xParamIndex];
+            if (min[xParamIndex] == null){
+                min[xParamIndex] = cost;
+            }
+            else {
+                min[xParamIndex] = ( cost < min[xParamIndex] ) ? cost : min[xParamIndex];
             }
         }
-        return max;
+        return min;
     }
 
 
     /**
-     * Given Z, it gives back the argmax
+     * Given Z, it gives back the argmin
      * @param z array of summarized r-messages
-     * @return the (lower) index of array with the maximum/minimum value, corresponding to the argmax/argmin
+     * @return the (lower) index of array with the maximum/minimum value, corresponding to the argmin/argmin
      */
     public int argOfInterestOfZ(MessageContent z) {
-        // we look for the argmax
+        // we look for the argmin
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -246,22 +238,22 @@ public class OPlus_MaxSum implements OPlus{
                 System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "computing the Z index of"+z);
                 System.out.println("---------------------------------------");
         }
-        int argmax = 0;
-        double maxvalue = z.getValue(0);
+        int argmin = 0;
+        double minvalue = z.getValue(0);
         for (int index= 0; index < z.size()-1; index++) {
 
             if (debug>=3) {
                     String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                     String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                     System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "loop number "+index+" maxvalue="+maxvalue);
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "loop number "+index+" minvalue="+minvalue);
                     System.out.println("---------------------------------------");
             }
 
 
-            if (maxvalue < z.getValue(index+1)) {
-                argmax = index+1;
-                maxvalue = z.getValue(index+1);
+            if (minvalue > z.getValue(index+1)) {
+                argmin = index+1;
+                minvalue = z.getValue(index+1);
             }
         }
 
@@ -269,11 +261,11 @@ public class OPlus_MaxSum implements OPlus{
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                 System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "the argmax is "+argmax);
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "the argmin is "+argmin);
                 System.out.println("---------------------------------------");
         }
 
-        return argmax;
+        return argmin;
     }
 }
 

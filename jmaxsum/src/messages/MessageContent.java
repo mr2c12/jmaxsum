@@ -25,12 +25,13 @@ public abstract class MessageContent {
 
     public abstract int size();
 
-    public abstract double getValue(int position);
+    public abstract Double getValue(int position);
 
-    public abstract void setValue(int position, double value);
+    public abstract void setValue(int position, Double value);
 
     public abstract MessageContent clone();
 
+    @Override
     public boolean equals(Object mc){
         if ((mc == null)|| !(mc instanceof MessageContent)){
             return false;
@@ -44,6 +45,28 @@ public abstract class MessageContent {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        for (int i = 0; i < this.size(); i++) {
+            hash += (this.getValue(i).hashCode());
+        }
+        return hash;
+    }
+
+    public String StringContent(){
+        StringBuilder s = new StringBuilder("[");
+        for (int i = 0; i < this.size(); i++) {
+            if (this.getValue(i) == null){
+                s.append("null").append(",");
+            } else {
+                s.append(this.getValue(i)).append(",");
+            }
+        }
+        s.append("]");
+        return s.toString();
     }
 
 }

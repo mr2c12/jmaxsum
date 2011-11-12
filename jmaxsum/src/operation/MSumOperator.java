@@ -16,17 +16,17 @@ import messages.RMessageList;
 import misc.Utils;
 
 /**
- * This class implements all the necessary methods to perform a correct execution of MaxSum
+ * This class implements all the necessary methods to perform a correct execution of MaxSum or MinSum, depending on OTimes and OPlus
  * @author Michele Roncalli < roncallim at gmail dot com >
  */
-public class MaxSumOperator implements Operator{
+public class MSumOperator implements Operator{
 
     OTimes otimes;
     OPlus oplus;
 
-    final static int debug = test.DebugVerbosity.debugMaxSumOperator;
+    final static int debug = test.DebugVerbosity.debugMSumOperator;
 
-    public MaxSumOperator(OTimes otimes, OPlus oplus) {
+    public MSumOperator(OTimes otimes, OPlus oplus) {
         this.otimes = otimes;
         this.oplus = oplus;
     }
@@ -120,49 +120,7 @@ public class MaxSumOperator implements Operator{
         }
     }
     
-    /**
-     * Given Z, it gives back the argmax
-     * @param z array of summarized r-messages
-     * @return the (lower) index of array with the maximum/minimum value, corresponding to the argmax/argmin
-     */
-    public int computeZIndex(MessageContent z) {
-        // we look for the argmax
-        if (debug>=3) {
-                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "computing the Z index of"+z);
-                System.out.println("---------------------------------------");
-        }
-        int argmax = 0;
-        double maxvalue = z.getValue(0);
-        for (int index= 0; index < z.size()-1; index++) {
-
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "loop number "+index+" maxvalue="+maxvalue);
-                    System.out.println("---------------------------------------");
-            }
-
-
-            if (maxvalue < z.getValue(index+1)) {
-                argmax = index+1;
-                maxvalue = z.getValue(index+1);
-            }
-        }
-
-        if (debug>=3) {
-                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "the argmax is "+argmax);
-                System.out.println("---------------------------------------");
-        }
-
-        return argmax;
-    }
+    
 
     public void updateQ(NodeVariable x, NodeFunction f, PostService postservice) {
         NodeFunction function = null;
@@ -259,6 +217,14 @@ public class MaxSumOperator implements Operator{
 
         MessageR messager = this.oplus.oplus(f, x, f.getFunction(), qmessages);
 
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "MessageR created: "+messager);
+                System.out.println("---------------------------------------");
+        }
+
         postservice.sendRMessage(f, x, messager);
     }
 
@@ -279,8 +245,17 @@ public class MaxSumOperator implements Operator{
 
     }
 
-    public int argMaxZ(NodeVariable x, PostService ps) {
-        return this.computeZIndex(
+    /**
+     * Implementation of arg max of Z
+     * @param x the NodeVariable
+     * @param ps the Post Service
+     * @return the position of the arg max
+     */
+    public int argOfInterestOfZ(NodeVariable x, PostService ps) {
+        /*return this.computeZIndex(
+                ps.readZMessage(x)
+                );*/
+        return this.oplus.argOfInterestOfZ(
                 ps.readZMessage(x)
                 );
     }

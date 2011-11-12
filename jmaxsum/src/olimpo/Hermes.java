@@ -50,6 +50,8 @@ public class Hermes {
         CmdLineParser.Option noBounded = parser.addBooleanOption("no-bounded-max-sum");
         CmdLineParser.Option printFactorGraph = parser.addBooleanOption('F', "print-factor-graph");
         CmdLineParser.Option time = parser.addBooleanOption('T', "time");
+        CmdLineParser.Option oplus = parser.addStringOption("oplus");
+        CmdLineParser.Option otimes = parser.addStringOption("otimes");
 
         try {
             parser.parse(args);
@@ -72,6 +74,9 @@ public class Hermes {
         String reportV = (String) parser.getOptionValue(report);
 
         Integer iterationsV = (Integer) parser.getOptionValue(iterationnumber, new Integer(10));
+
+        String oplusV = (String) parser.getOptionValue(oplus, "max");
+        String otimesV = (String) parser.getOptionValue(otimes, "sum");
 
         String[] otherArgs = parser.getRemainingArgs();
         String filepath = "";
@@ -122,7 +127,7 @@ public class Hermes {
                 BMax.letsBound();
             }
 
-            Athena core = new Athena(cop);
+            Athena core = new Athena(cop, oplusV, otimesV);
 
             core.setIterationsNumber(iterationsV);
 
@@ -198,6 +203,8 @@ public class Hermes {
                 System.out.println(finale);
             }
 
+        }catch (IllegalArgumentException iaex) {
+            System.out.println(iaex.getMessage());
         } catch (PostServiceNotSetException pse) {
             System.out.println("Fatal problem in the process of initialization: no PostService set!");
         } catch (InvalidInputFileException iife) {
@@ -212,6 +219,9 @@ public class Hermes {
         String usage = "Usage: java -jar maxSum.jar [-options] inputfile\n";
         usage += "where inputfile is the path of the file containing an instance of a COP problem\n";
         usage += "and where options include:\n";
+        usage += "\t--oplus\t\tthe oplus operator, can be \"max\" or \"min\" (default: \"max\")\n";
+        usage += "\t--otimes\tthe otimes operator, only \"sum\" available at the moment (default: \"sum\")\n";
+
         usage += "\t--old-format\tif the input file does not specify function id and agent\n";
         usage += "\t--step-by-step\tat each iteration the execution pause and wait for ENTER to be pressed\n";
         usage += "\t--iterations-number <n> | -i <n>\n\t\tset the number of iterations of the algorithm\n";

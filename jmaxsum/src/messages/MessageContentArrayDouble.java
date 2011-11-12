@@ -25,15 +25,31 @@ import misc.Utils;
  */
 public class MessageContentArrayDouble extends  MessageContent{
 
-    protected double[] message;
+    protected Double[] message;
 
-    public MessageContentArrayDouble(double[] message){
-        this.message = new double[message.length];
+    final static int debug = test.DebugVerbosity.debugMessageContentMessageArrayDouble;
+
+    public MessageContentArrayDouble(Double[] message){
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "message required to be created: "+Utils.toString(message));
+                System.out.println("---------------------------------------");
+        }
+        this.message = new Double[message.length];
         System.arraycopy(message, 0, this.message, 0, message.length);
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "message created: "+Utils.toString(this.message));
+                System.out.println("---------------------------------------");
+        }
     }
 
      public MessageContentArrayDouble(int size, double value) {
-        this.message = new double[size];
+        this.message = new Double[size];
         for (int i = 0; i < size; i++) {
             this.message[i] = value;
         }
@@ -43,11 +59,18 @@ public class MessageContentArrayDouble extends  MessageContent{
         return this.message.length;
     }
 
-    public double getValue(int position) {
+    public Double getValue(int position) {
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "get "+position+" value of "+Utils.toString(message));
+                System.out.println("---------------------------------------");
+        }
         return this.message[position];
     }
 
-    public void setValue(int position, double value) {
+    public void setValue(int position, Double value) {
         this.message[position] = value;
     }
 
@@ -58,7 +81,7 @@ public class MessageContentArrayDouble extends  MessageContent{
 
     @Override
     public MessageContent clone() {
-        double[] newmessage = new double[this.message.length];
+        Double[] newmessage = new Double[this.message.length];
         System.arraycopy(this.message, 0, newmessage, 0, this.message.length);
         return new MessageContentArrayDouble(newmessage);
     }

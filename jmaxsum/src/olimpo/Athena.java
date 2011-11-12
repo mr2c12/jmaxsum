@@ -25,9 +25,10 @@ import messages.MessageFactory;
 import messages.MessageFactoryArrayDouble;
 import messages.PostService;
 import misc.Utils;
-import operation.MaxSumOperator;
+import operation.MSumOperator;
 import operation.OPlus;
 import operation.OPlus_MaxSum;
+import operation.OPlus_MinSum;
 import operation.OTimes;
 import operation.OTimes_MaxSum;
 import operation.Operator;
@@ -58,15 +59,37 @@ public class Athena {
     private String reportpath = "";
     private String report = "";
 
-    public Athena(COP_Instance cop) {
+    public Athena(COP_Instance cop, String plus_operation, String times_operation) throws IllegalArgumentException {
         this.cop = cop;
         this.ps = new MailMan();
         this.mfactory = new MessageFactoryArrayDouble();
 
-        this.otimes = new OTimes_MaxSum(mfactory);
-        this.oplus = new OPlus_MaxSum(mfactory);
+        // change this for sum or prod
+        // LOOK: check the code!
+        if (times_operation == null){
+            throw new IllegalArgumentException("Times Operation can NOT be null.");
+        }
+        if (times_operation.equalsIgnoreCase("sum")){
+            this.otimes = new OTimes_MaxSum(mfactory);
+        } else {
+            throw new IllegalArgumentException("Times Operation \""+plus_operation+"\" not recognized, sorry");
+        }
 
-        this.op = new MaxSumOperator(otimes, oplus);
+
+        // change this for max or min
+        if (plus_operation == null){
+            throw new IllegalArgumentException("Plus Operation can NOT be null.");
+        }
+        if (plus_operation.equalsIgnoreCase("max")){
+            this.oplus = new OPlus_MaxSum(mfactory);
+        }
+        else if (plus_operation.equalsIgnoreCase("min")){
+            this.oplus = new OPlus_MinSum(mfactory);
+        } else {
+            throw new IllegalArgumentException("Plus Operation \""+plus_operation+"\" not recognized, sorry");
+        }
+
+        this.op = new MSumOperator(otimes, oplus);
     }
 
     /**

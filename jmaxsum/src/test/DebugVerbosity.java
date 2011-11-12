@@ -27,7 +27,7 @@ public class DebugVerbosity {
     /**
      * Global modifier. Use this if you want to change easily all the debug settings.
      */
-    public static final int debug = 0;
+    public static final int debug = -10;
 
     public static final int debugNodeVariable = 0
             + DebugVerbosity.debug;
@@ -54,14 +54,17 @@ public class DebugVerbosity {
 
     public static final int debugMessageRArrayDouble = 0
             + DebugVerbosity.debug;
-
-    public static final int debugMaxSumOperator = 0
+    
+    public static final int debugMessageContentMessageArrayDouble = 3
+            + DebugVerbosity.debug;
+    
+    public static final int debugMSumOperator = 3
             + DebugVerbosity.debug;
 
-    public static final int debugOPlus_MaxSum = 0
+    public static final int debugOPlus_MaxSum = 3
             + DebugVerbosity.debug;
 
-    public static final int debugOTimes_MaxSum = 0
+    public static final int debugOTimes_MaxSum = 3
             + DebugVerbosity.debug;
 
     public static final int debugCerbero = 0

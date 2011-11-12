@@ -16,6 +16,6 @@ public interface Operator {
 
     public void updateZ(NodeVariable x, PostService ps);
 
-    public int argMaxZ(NodeVariable x, PostService ps);
+    public int argOfInterestOfZ(NodeVariable x, PostService ps);
 
 }

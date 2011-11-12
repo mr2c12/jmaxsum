@@ -33,7 +33,7 @@ public class MessageQArrayDouble extends MessageArrayDouble implements MessageQ 
     }
 
 
-    public MessageQArrayDouble(NodeVariable sender, NodeFunction receiver, double[] message) {
+    public MessageQArrayDouble(NodeVariable sender, NodeFunction receiver, Double[] message) {
         super(sender, receiver, message);
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();

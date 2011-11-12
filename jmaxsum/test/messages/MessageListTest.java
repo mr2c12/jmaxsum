@@ -50,7 +50,7 @@ public class MessageListTest {
     public void setUp() {
         c1 = 1;
         c2 = 2;
-        double[] array = {1,2};
+        Double[] array = {new Double(1),new Double(2)};
         value = new MessageArrayDouble(null, null, array);
         instance = new MessageList();
         instance.setValue(c1, c2, value);
@@ -67,7 +67,7 @@ public class MessageListTest {
     public void testSetValue() {
         System.out.println("setValue");
         instance = new MessageList();
-        double[] array = {2,2};
+        Double[] array = {new Double(2),new Double(2)};
         value = new MessageArrayDouble(null, null, array);
         instance.setValue(2, 2, value);
     }
@@ -78,7 +78,8 @@ public class MessageListTest {
     @Test
     public void testGetValue() {
         System.out.println("getValue");
-        double[] array = {1,2};
+        
+        Double[] array = {new Double(2),new Double(2)};
         Message expResult = new MessageArrayDouble(null, null, array);
         Message result = instance.getValue(1,2);
         assertEquals(true, result.equals(expResult));

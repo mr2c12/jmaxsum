@@ -27,6 +27,11 @@ public class Main {
         long startTime = System.currentTimeMillis();
         System.out.println("Started");
 
+        Double[] array = new Double[5];
+        System.out.println( Utils.toString(array));
+
+        System.exit(0);
+
         try {
 
             String[] paths = {
@@ -77,14 +82,14 @@ public class Main {
                 
 
                 
-                Athena core = new Athena(cop);
+                Athena core = new Athena(cop,"max", "sum");
                 core.setIterationsNumber(500);
                 core.setStepbystep(false);
                 core.solve();
                 core.conclude();
 
 
-                Athena core2 = new Athena(cop2);
+                Athena core2 = new Athena(cop2,"max", "sum");
                 core2.setIterationsNumber(500);
                 core2.setStepbystep(false);
                 core2.solve();

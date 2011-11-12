@@ -44,7 +44,7 @@ public class OTimes_MaxSum implements OTimes{
             throw new IllegalArgumentException();
         }
 
-        double[] content = new double[m1.size()];
+        Double[] content = new Double[m1.size()];
         for (int i = 0; i < content.length; i++) {
             content[i] = m1.getValue(i) + m2.getValue(i);
         }
@@ -52,7 +52,10 @@ public class OTimes_MaxSum implements OTimes{
     }
 
     public MessageQ nullMessage(NodeVariable sender, NodeFunction receiver, int size) {
-        double[] content = new double[size];
+        Double[] content = new Double[size];
+        for (int i = 0; i < content.length; i++) {
+            content[i] = 0.0;
+        }
         return this.factory.getMessageQ(sender, receiver, content);
     }
 
@@ -108,13 +111,34 @@ public class OTimes_MaxSum implements OTimes{
             return null;
 
         int dimension = messagearray[0].size();
-        double[] content = new double[dimension];
+        Double[] content = new Double[dimension];
         for (int i = 0; i < messagearray.length; i++) {
             if (messagearray[i].size()!= dimension) {
                 throw new IllegalArgumentException();
             }
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "On array "+messagearray[i]);
+                    System.out.println("---------------------------------------");
+            }
             for (int j = 0; j < messagearray[i].size(); j++) {
-                content[j]+=messagearray[i].getValue(j);
+
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Loop: j="+j);
+                        System.out.println("---------------------------------------");
+                }
+
+                if (content[j] == null){
+                    content[j] = messagearray[i].getValue(j);
+                } else {
+                    content[j]+=messagearray[i].getValue(j);
+                }
+
             }
         }
         return this.factory.getMessageQ(sender, receiver, content);
