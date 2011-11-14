@@ -27,7 +27,7 @@ public class DebugVerbosity {
     /**
      * Global modifier. Use this if you want to change easily all the debug settings.
      */
-    public static final int debug = -10;
+    public static final int debug = 10;
 
     public static final int debugNodeVariable = 0
             + DebugVerbosity.debug;

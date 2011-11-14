@@ -46,7 +46,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/maxSum/simpleTest.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/test43.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test43_mod.cop2",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test2.cop2"
+                "/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2"
             };
 
             for (String path : paths){
@@ -89,7 +89,7 @@ public class Main {
 
                 
                 Athena core = new Athena(cop,"max", "sum");
-                core.setIterationsNumber(500);
+                core.setIterationsNumber(5);
                 core.setStepbystep(false);
                 core.solve();
                 core.conclude();

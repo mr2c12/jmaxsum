@@ -218,7 +218,7 @@ public class Cerberus {
                         else {
                             // just a number
                             nodefunction.getFunction().addParametersCost(arguments,
-                                    new Double(costString)
+                                    Double.parseDouble(costString)
                                     );
                         }
 
