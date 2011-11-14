@@ -84,7 +84,7 @@ public abstract class FunctionEvaluator {
      * @param params the values of arguments. Note that order is very important
      * @return the value of f
      */
-    public abstract Double evaluate(NodeArgument[] params) ;
+    public abstract double evaluate(NodeArgument[] params) ;
 
 
     /**
@@ -92,7 +92,7 @@ public abstract class FunctionEvaluator {
      * @param modifierTable it links a parameter to the qmessage to apply to the function
      * @return the value of the function
      */
-    public  Double evaluateMod(NodeArgument[] params, HashMap<NodeVariable, MessageQ> modifierTable)
+    public  double evaluateMod(NodeArgument[] params, HashMap<NodeVariable, MessageQ> modifierTable)
     {
         if (modifierTable.isEmpty()){
             return this.evaluate(params);
@@ -106,7 +106,7 @@ public abstract class FunctionEvaluator {
                 System.out.println("Key: "+nodeVariable+" Value: "+modifierTable.get(itv));
             }
         }
-        Double cost = this.evaluate(params);
+        double cost = this.evaluate(params);
 
         // seems to work
         Iterator<Entry<NodeVariable, MessageQ>> it = modifierTable.entrySet().iterator();
@@ -122,7 +122,7 @@ public abstract class FunctionEvaluator {
             try {
 
                 indexOfModifier = nodeVariable.numberOfArgument(params[this.getParameterPosition(nodeVariable)]);
-            
+
                 cost += modifierTable.get(nodeVariable).getValue(indexOfModifier);
 
             } catch (ParameterNotFoundException ex) {
@@ -190,7 +190,7 @@ public abstract class FunctionEvaluator {
      * @return the cost of the funtion for the actual parameters values.
      * @throws VariableNotSetException if there is at least one parameter still not set
      */
-    public Double actualValue() throws VariableNotSetException{
+    public double actualValue() throws VariableNotSetException{
         NodeArgument[] params = new NodeArgument[this.parametersNumber()];
         for(NodeVariable param : this.parameters) {
 
@@ -206,7 +206,7 @@ public abstract class FunctionEvaluator {
      * @param params the values of parameters
      * @param cost the cost corresponding to these parameters
      */
-    public abstract void addParametersCost(NodeArgument[] params, Double cost);
+    public abstract void addParametersCost(NodeArgument[] params, double cost);
 
     public abstract void clearCosts();
 
@@ -233,7 +233,7 @@ public abstract class FunctionEvaluator {
      *
      * @return the minimum cost
      */
-    public Double minCost() throws ValueNotSetException{
+    public double minCost() throws ValueNotSetException{
         if (this.minCost == null) {
             throw new ValueNotSetException("MinCost not set");
         }
@@ -244,7 +244,7 @@ public abstract class FunctionEvaluator {
      *
      * @return the maximum cost
      */
-    public Double maxCost() throws ValueNotSetException{
+    public double maxCost() throws ValueNotSetException{
         if (this.maxCost == null) {
             throw new ValueNotSetException("MaxCost not set");
         }
@@ -269,7 +269,7 @@ public abstract class FunctionEvaluator {
         }
     }
 
-    public Double getDelta() throws ValueNotSetException{
+    public double getDelta() throws ValueNotSetException{
         return this.maxCost() - this.minCost();
     }
 
@@ -283,7 +283,7 @@ public abstract class FunctionEvaluator {
      * @param newN
      */
     public void changeNeighbour(NodeVariable oldN, NodeVariable newN) {
-        
+
 
         /* COMPLETELY WRONG, IT CHANGES THE ORDER!
          if (this.parameters.contains(oldN)){
@@ -291,7 +291,7 @@ public abstract class FunctionEvaluator {
             this.parameters.remove(oldN);
             this.parameters.add(newN);
         }*/
-        
+
         if (this.parameters.contains(oldN)){
             this.parameters.set(this.parameters.indexOf(oldN), newN);
         }
@@ -342,7 +342,7 @@ public abstract class FunctionEvaluator {
      * @return the maximums array of F
      * @throws ParameterNotFoundException if x is not a parameter of this Function Evaluator
      */
-    public Double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
+    public double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
         if (!this.parameters.contains(x)) {
             throw new ParameterNotFoundException(this+" does NOT contain "+x);
         }
@@ -357,7 +357,7 @@ public abstract class FunctionEvaluator {
                 System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "x position is:"+fixed_x_position + " and has "+x_number_of_values+" number of values");
                 System.out.println("---------------------------------------");
         }
-        
+
         int maxes_size = 1;
         for (NodeVariable param : this.parameters){
             if (!param.equals(x)){
@@ -368,10 +368,10 @@ public abstract class FunctionEvaluator {
 
 
 
-        Double[] maxes = new Double[maxes_size];
+        double[] maxes = new double[maxes_size];
 
         for (int i = 0; i< maxes.length; i++) {
-            maxes[i] = Double.NEGATIVE_INFINITY;
+            maxes[i] = -100000;
         }
 
 
@@ -402,7 +402,7 @@ public abstract class FunctionEvaluator {
         }
 
         int maxes_index_to_change = 0;
-        Double temp_evaluation;
+        double temp_evaluation;
         // enumerate all the possible arguments
         int[] values = new int[arg_size.length];
         int imax = values.length-1;
@@ -544,7 +544,7 @@ public abstract class FunctionEvaluator {
 
 
         int[] args_param = new int[this.parametersNumber()];
-        Double fevaluate;
+        double fevaluate;
 
 
         int tableSize = 1;

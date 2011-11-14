@@ -1,16 +1,16 @@
 /*
  *  Copyright (C) 2011 Michele Roncalli <roncallim at gmail dot com>
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -51,14 +51,14 @@ public class TabularFunction extends FunctionEvaluator{
      * @param params the array of NodeArgument
      * @param cost the cost for the params
      */
-    public void addParametersCost(NodeArgument[] params, Double cost){
+    public void addParametersCost(NodeArgument[] params, double cost){
         StringBuilder key = new StringBuilder();
         key.append("");
         for (int i = 0; i < params.length; i++) {
             key.append(params[i].toString()).append(";");
         }
         this.costTable.put(key.toString(), cost);
-        
+
         // set the min and the max
         if (this.minCost == null || cost < this.minCost) {
             this.minCost = cost;
@@ -69,7 +69,7 @@ public class TabularFunction extends FunctionEvaluator{
     }
 
     @Override
-    public Double evaluate(NodeArgument[] params) {
+    public double evaluate(NodeArgument[] params) {
         StringBuilder key = new StringBuilder();
 
         for (int i = 0; i < params.length; i++) {

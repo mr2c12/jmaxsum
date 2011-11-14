@@ -1,16 +1,16 @@
 /*
  *  Copyright (C) 2011 Michele Roncalli <roncallim at gmail dot com>
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -72,7 +72,7 @@ public class FunctionEvaluatorTest {
 
     @Before
     public void setUp()  {
-        
+
     }
 
     @After
@@ -116,7 +116,7 @@ public class FunctionEvaluatorTest {
     public void testFunctionArgument() {
         System.out.println("functionArgument");
         int[] argumentsNumber = {0,0,0};
-        
+
         NodeArgument[] expResult = {NodeArgument.getNodeArgument("0"), NodeArgument.getNodeArgument("0"), NodeArgument.getNodeArgument("0") };
         NodeArgument[] result = instance.functionArgument(argumentsNumber);
         System.out.println("Original: "+Utils.toString(expResult));
@@ -127,18 +127,13 @@ public class FunctionEvaluatorTest {
     /**
      * Test of maxFfixedX method, of class FunctionEvaluator.
      */
-    @Test
+    //@Test
     public void testMaxFfixedX() throws Exception {
         System.out.println("maxFfixedX");
         NodeVariable x = NodeVariable.getNodeVariable(2);
         System.out.println("Found variable "+x);
-        /*double[] expResult = {7,5,8,9};*/
-        Double[] expResult = new Double[4];
-        expResult[0] = new Double(7);
-        expResult[1] = new Double(5);
-        expResult[2] = new Double(8);
-        expResult[3] = new Double(9);
-        Double[] result = instance.maxFfixedX(x);
+        double[] expResult = {7,5,8,9};
+        double[] result = instance.maxFfixedX(x);
         System.out.println("Result: "+Utils.toString(result));
         assertEquals(Utils.toString(result),Utils.toString(expResult));
     }
@@ -177,9 +172,9 @@ public class FunctionEvaluatorTest {
         args.add(NodeVariable.getNodeVariable(2));
         args.add(NodeVariable.getNodeVariable(2));
         args.add(NodeVariable.getNodeVariable(13));
-        
+
         instance.removeArgs(args);
-        
+
         NodeArgument[] arguments = {
             NodeArgument.getNodeArgument("0"),
             NodeArgument.getNodeArgument("0")
@@ -231,11 +226,11 @@ public class FunctionEvaluatorTest {
 
     public class FunctionEvaluatorImpl extends FunctionEvaluator {
 
-        public Double evaluate(NodeArgument[] params) {
+        public double evaluate(NodeArgument[] params) {
             return 0.0;
         }
 
-        public void addParametersCost(NodeArgument[] params, Double cost) {
+        public void addParametersCost(NodeArgument[] params, double cost) {
         }
 
         public void clearCosts() {
@@ -262,6 +257,6 @@ public class FunctionEvaluatorTest {
         }
     }
 
-    
+
 
 }

@@ -164,7 +164,7 @@ public class NodeFunction implements Node{
         return this.id;
     }
 
-    public Double actualValue() throws VariableNotSetException {
+    public double actualValue() throws VariableNotSetException {
         return this.function.actualValue();
     }
 
@@ -187,9 +187,9 @@ public class NodeFunction implements Node{
      * @throws OutOfNodeFunctionNumberException if there are more than NodeFunction.MAXNODEFUNCTIONNUMBER NodeFunctions.
      */
     public NodeFunction getClone() throws OutOfNodeFunctionNumberException{
-        
+
        return NodeFunction.getNewNextNodeFunction(this.function.getClone());
-        
+
     }
 
     /**
