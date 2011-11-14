@@ -11,6 +11,7 @@ import misc.Utils;
 import system.COP_Instance;
 import olimpo.Cerberus;
 import olimpo.Athena;
+import powerGrid.PowerGrid;
 
 /**
  * Class used for test executions.
@@ -27,6 +28,8 @@ public class Main {
         long startTime = System.currentTimeMillis();
         System.out.println("Started");
 
+        PowerGrid pg = new PowerGrid();
+        pg.initRandom(4, 3, 1);
 
         Double uno = new Double("1");
         Double inf = Double.POSITIVE_INFINITY;
