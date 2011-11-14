@@ -61,6 +61,13 @@ public class MessageArrayDouble implements Message{
 
     }
 
+    public MessageArrayDouble(Node sender, Node receiver, double[] message) {
+        Double[] m = new Double[message.length];
+        System.arraycopy(message, 0, m, 0, message.length);
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = new MessageContentArrayDouble(m);
+    }
 
     public MessageArrayDouble(Node sender, Node receiver, Double[] message) {
         if (debug>=3) {

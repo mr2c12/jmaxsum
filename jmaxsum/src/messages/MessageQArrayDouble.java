@@ -32,6 +32,10 @@ public class MessageQArrayDouble extends MessageArrayDouble implements MessageQ 
         super(sender, receiver, size,value);
     }
 
+    public MessageQArrayDouble(NodeVariable sender, NodeFunction receiver, double[] message) {
+        super(sender, receiver, message);
+    }
+
 
     public MessageQArrayDouble(NodeVariable sender, NodeFunction receiver, Double[] message) {
         super(sender, receiver, message);

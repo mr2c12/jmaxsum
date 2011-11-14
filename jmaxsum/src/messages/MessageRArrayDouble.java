@@ -33,6 +33,10 @@ public class MessageRArrayDouble extends MessageArrayDouble implements MessageR 
         super(sender, receiver, size,value);
     }
 
+    public MessageRArrayDouble(NodeFunction sender, NodeVariable receiver, double[] message) {
+        super(sender, receiver, message);
+    }
+
     public MessageRArrayDouble(NodeFunction sender, NodeVariable receiver, Double[] message) {
         super(sender, receiver, message);
     }

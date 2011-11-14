@@ -50,11 +50,11 @@ import static org.junit.Assert.*;
 public class MaxSumOperatorTest {
 
     static PostService postservice;
-    static MaxSumOperator maxsumoperator;
+    static MSumOperator maxsumoperator;
     static MessageFactory mfactory;
     static Cerberus cerbero;
     static COP_Instance cop;
-    static MaxSumOperator instance;
+    static MSumOperator instance;
     static OPlus oplus;
     static OTimes otimes;
 
@@ -77,7 +77,7 @@ public class MaxSumOperatorTest {
 
         mfactory = new MessageFactoryArrayDouble();
 
-        MaxSumOperatorTest.maxsumoperator = new MaxSumOperator(new OTimes_MaxSum(mfactory), new OPlus_MaxSum(mfactory));
+        MaxSumOperatorTest.maxsumoperator = new MSumOperator(new OTimes_MaxSum(mfactory), new OPlus_MaxSum(mfactory));
 
         cerbero = new Cerberus();
         try {
@@ -87,7 +87,7 @@ public class MaxSumOperatorTest {
             oplus = new OPlus_MaxSum(mfactory);
 
 
-            instance = new MaxSumOperator(otimes, oplus);
+            instance = new MSumOperator(otimes, oplus);
         } catch (InvalidInputFileException ex) {
             // do nothing
         }
@@ -157,7 +157,7 @@ public class MaxSumOperatorTest {
     public void testSetOplus() {
         System.out.println("setOplus");
         OPlus oplus = null;
-        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.setOplus(oplus);
         fail("The test case is a prototype.");
     }
@@ -169,7 +169,7 @@ public class MaxSumOperatorTest {
     public void testSetOtimes() {
         System.out.println("setOtimes");
         OTimes otimes = null;
-        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.setOtimes(otimes);
         fail("The test case is a prototype.");
     }
@@ -183,7 +183,7 @@ public class MaxSumOperatorTest {
         System.out.println("updateQ");
         NodeVariable x = null;
         NodeFunction f = null;
-        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.updateQ(x, f, postservice);
         fail("The test case is a prototype.");
     }
@@ -196,7 +196,7 @@ public class MaxSumOperatorTest {
         System.out.println("updateR");
         NodeFunction f = null;
         NodeVariable x = null;
-        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.updateR(f, x, postservice);
         fail("The test case is a prototype.");
     }
