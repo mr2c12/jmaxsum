@@ -50,11 +50,11 @@ import static org.junit.Assert.*;
 public class MaxSumOperatorTest {
 
     static PostService postservice;
-    static MSumOperator maxsumoperator;
+    static MaxSumOperator maxsumoperator;
     static MessageFactory mfactory;
     static Cerberus cerbero;
     static COP_Instance cop;
-    static MSumOperator instance;
+    static MaxSumOperator instance;
     static OPlus oplus;
     static OTimes otimes;
 
@@ -77,7 +77,7 @@ public class MaxSumOperatorTest {
 
         mfactory = new MessageFactoryArrayDouble();
 
-        MaxSumOperatorTest.maxsumoperator = new MSumOperator(new OTimes_MaxSum(mfactory), new OPlus_MaxSum(mfactory));
+        MaxSumOperatorTest.maxsumoperator = new MaxSumOperator(new OTimes_MaxSum(mfactory), new OPlus_MaxSum(mfactory));
 
         cerbero = new Cerberus();
         try {
@@ -87,7 +87,7 @@ public class MaxSumOperatorTest {
             oplus = new OPlus_MaxSum(mfactory);
 
 
-            instance = new MSumOperator(otimes, oplus);
+            instance = new MaxSumOperator(otimes, oplus);
         } catch (InvalidInputFileException ex) {
             // do nothing
         }
@@ -98,11 +98,11 @@ public class MaxSumOperatorTest {
     }
 
     /**
-     * Test of computeAlpha method, of class MSumOperator.
+     * Test of computeAlpha method, of class MaxSumOperator.
      */
     @Test
     public void testComputeAlpha() {
-        /*try {
+        try {
             System.out.println("computeAlpha");
             LinkedList<MessageR> params = new LinkedList<MessageR>();
             double[] r1 = {1, 2, 3};
@@ -116,12 +116,12 @@ public class MaxSumOperatorTest {
             assertEquals(expResult, result, 0.0);
         } catch (FunctionNotPresentException ex) {
             ex.printStackTrace();
-        }*/
+        }
 
     }
 
     /**
-     * Test of computeQ method, of class MSumOperator.
+     * Test of computeQ method, of class MaxSumOperator.
      */
     @Test
     public void testComputeQ() {
@@ -129,7 +129,7 @@ public class MaxSumOperatorTest {
         NodeVariable x = null;
         double alpha = -9.0;
         LinkedList<MessageR> params = new LinkedList<MessageR>();
-        /*double[] r1 = {1,2,3};
+        double[] r1 = {1,2,3};
         params.add(new MessageRArrayDouble(null, null, r1));
         double[] r2 = {1,2,3};
         params.add(new MessageRArrayDouble(null, null, r2));
@@ -139,9 +139,11 @@ public class MaxSumOperatorTest {
         MessageQ expResult = new MessageQArrayDouble(null, null, res);
         MessageQ result = instance.computeQ(null, null, alpha, params);
         //assertEquals(expResult, result);
-        boolean equals = result.equals(expResult);
+        /*System.out.println("exp res="+ expResult.toString());
+        System.out.println("act res="+ result.toString());
+        */boolean equals = result.equals(expResult);
         //System.out.println("Il confronto vale "+equals);
-        assertEquals(equals, true);*/
+        assertEquals(equals, true);
     }
 
 
@@ -149,52 +151,52 @@ public class MaxSumOperatorTest {
 
 
     /**
-     * Test of setOplus method, of class MSumOperator.
+     * Test of setOplus method, of class MaxSumOperator.
      */
     @Test
     public void testSetOplus() {
         System.out.println("setOplus");
         OPlus oplus = null;
-        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.setOplus(oplus);
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of setOtimes method, of class MSumOperator.
+     * Test of setOtimes method, of class MaxSumOperator.
      */
     @Test
     public void testSetOtimes() {
         System.out.println("setOtimes");
         OTimes otimes = null;
-        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.setOtimes(otimes);
         fail("The test case is a prototype.");
     }
 
 
     /**
-     * Test of updateQ method, of class MSumOperator.
+     * Test of updateQ method, of class MaxSumOperator.
      */
     @Test
     public void testUpdateQ() {
         System.out.println("updateQ");
         NodeVariable x = null;
         NodeFunction f = null;
-        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.updateQ(x, f, postservice);
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of updateR method, of class MSumOperator.
+     * Test of updateR method, of class MaxSumOperator.
      */
     //@Test
     public void testUpdateR() {
         System.out.println("updateR");
         NodeFunction f = null;
         NodeVariable x = null;
-        MSumOperator instance = MaxSumOperatorTest.maxsumoperator;
+        MaxSumOperator instance = MaxSumOperatorTest.maxsumoperator;
         instance.updateR(f, x, postservice);
         fail("The test case is a prototype.");
     }

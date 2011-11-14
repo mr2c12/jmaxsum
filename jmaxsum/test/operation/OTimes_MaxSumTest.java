@@ -92,7 +92,7 @@ public class OTimes_MaxSumTest {
      */
     @Test
     public void testOtimes_LinkedList() {
-        /*System.out.println("otimes");
+        System.out.println("otimes");
         LinkedList<MessageR> messagelist = new LinkedList<MessageR>();
 
         MessageR m1 = new MessageRArrayDouble(null, null, 3,2);
@@ -109,7 +109,7 @@ public class OTimes_MaxSumTest {
         double[] contentres = {4,5,6.5};
         MessageQ expResult = new MessageQArrayDouble(null, null, contentres);
         MessageQ result = instance.otimes(null, null, messagelist);
-        assertTrue(expResult.equalContent(result));*/
+        assertTrue(expResult.equalContent(result));
     }
 
     /**
@@ -117,7 +117,7 @@ public class OTimes_MaxSumTest {
      */
     @Test
     public void testOtimes_MessageRArr() {
-        /*System.out.println("otimes");
+        System.out.println("otimes");
         MessageR[] messagearray = new MessageR[3];
         MessageR m1 = new MessageRArrayDouble(null, null, 3,2);
         MessageR m2 = new MessageRArrayDouble(null, null, 3,1);
@@ -133,7 +133,7 @@ public class OTimes_MaxSumTest {
         double[] contentres = {4,5,6.5};
         MessageQ expResult = new MessageQArrayDouble(null, null, contentres);
         MessageQ result = instance.otimes(null, null, messagearray);
-        assertTrue(expResult.equalContent(result));*/
+        assertTrue(expResult.equalContent(result));
     }
 
 }

@@ -94,11 +94,11 @@ public class TabularFunctionTest {
         }
         modifierTable = new HashMap<NodeVariable, MessageQ>();
         
-        Double[] message1 = {new Double(2),new Double(1)};
+        double[] message1 = {2,1};
         modifierTable.put(x1, new MessageQArrayDouble(null, null, message1));
-        Double[] message2 = {new Double(-3),new Double(-4)};
+        double[] message2 = {-3,-4};
         modifierTable.put(x2, new MessageQArrayDouble(null, null, message2));
-        Double[] message3 = {new Double(3),new Double(5),new Double(-7)};
+        double[] message3 = {3,5,-7};
         modifierTable.put(x3, new MessageQArrayDouble(null, null, message3));
 
     }
