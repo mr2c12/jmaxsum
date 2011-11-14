@@ -27,21 +27,26 @@ public class Main {
         long startTime = System.currentTimeMillis();
         System.out.println("Started");
 
-        Double[] array = new Double[5];
-        System.out.println( Utils.toString(array));
 
-        System.exit(0);
+        Double uno = new Double("1");
+        Double inf = Double.POSITIVE_INFINITY;
+        Double res = uno + inf;
+        System.out.println("Res="+res);
+        double resd = res.doubleValue();
+        System.out.println("resd="+resd);
+
 
         try {
 
             String[] paths = {
                 //"/home/mik/NetBeansProjects/maxSum/copTest.cop2",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper_multi.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/simpleTest.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/test43.cop2",
-                //"/home/mik/NetBeansProjects/jMaxSumSVN/test43_mod.cop2"
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/test43_mod.cop2",
+                "/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test2.cop2"
             };
 
             for (String path : paths){
@@ -72,6 +77,7 @@ public class Main {
 
                 
 
+                /*
                 InstanceCloner ic = new InstanceCloner(cop);
                 COP_Instance cop2 = ic.getClonedInstance();
                 
@@ -79,7 +85,7 @@ public class Main {
                 System.out.println("Cloned instance value:\n"+cop2.toTestString());
 
                 System.out.println("------------------------------------------------");
-                
+                */
 
                 
                 Athena core = new Athena(cop,"max", "sum");
@@ -88,13 +94,13 @@ public class Main {
                 core.solve();
                 core.conclude();
 
-
+                /*
                 Athena core2 = new Athena(cop2,"max", "sum");
                 core2.setIterationsNumber(500);
                 core2.setStepbystep(false);
                 core2.solve();
                 core2.conclude();
-                
+                */
                 /*
                 ClonedMSInstance cop3 = new ClonedMSInstance((MS_COP_Instance) cop);
                 Athena core3 = new Athena(cop3);
@@ -109,11 +115,12 @@ public class Main {
                 //ic.setOriginalVariablesValues();
                 //System.out.println("original value(ic)= " + ic.getActualOriginalValue());
                 System.out.println("original value(cop)= " + cop.actualValue());
-                System.out.println("original value(cop2)= " + cop2.actualValue());
+                /*System.out.println("original value(cop2)= " + cop2.actualValue());
 
-                ic.setOriginalVariablesValues();
+                ic.setOriginalVariablesValues();*/
                 System.out.println("cop new status: "+cop.status());
-                System.out.println("original renewed value(cop)= " + cop.actualValue());
+
+                //System.out.println("original renewed value(cop)= " + cop.actualValue());
 
                 //System.out.println(ic.testString());
 
@@ -121,12 +128,12 @@ public class Main {
                 
 
 
-                if (cop.actualValue() == cop2.actualValue()){
+                /*if (cop.actualValue() == cop2.actualValue()){
                     System.out.println("OK on "+path);
                 }
                 else {
                     System.out.println("FAIL on "+path);
-                }
+                }*/
             }
             /*
             ScrewerUp su = new ScrewerUp(cop);

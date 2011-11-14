@@ -84,6 +84,7 @@ public class ScrewerUp {
                 
                 do {
                     try {
+                        // TODO: the Infinity value would mess it all!
                         delta = fe.getDelta();
                         goon = true;
                     } catch (ValueNotSetException ex) {

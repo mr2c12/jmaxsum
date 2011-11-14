@@ -164,7 +164,7 @@ public class NodeFunction implements Node{
         return this.id;
     }
 
-    public double actualValue() throws VariableNotSetException {
+    public Double actualValue() throws VariableNotSetException {
         return this.function.actualValue();
     }
 

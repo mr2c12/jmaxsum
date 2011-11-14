@@ -127,13 +127,18 @@ public class FunctionEvaluatorTest {
     /**
      * Test of maxFfixedX method, of class FunctionEvaluator.
      */
-    //@Test
+    @Test
     public void testMaxFfixedX() throws Exception {
         System.out.println("maxFfixedX");
         NodeVariable x = NodeVariable.getNodeVariable(2);
         System.out.println("Found variable "+x);
-        double[] expResult = {7,5,8,9};
-        double[] result = instance.maxFfixedX(x);
+        /*double[] expResult = {7,5,8,9};*/
+        Double[] expResult = new Double[4];
+        expResult[0] = new Double(7);
+        expResult[1] = new Double(5);
+        expResult[2] = new Double(8);
+        expResult[3] = new Double(9);
+        Double[] result = instance.maxFfixedX(x);
         System.out.println("Result: "+Utils.toString(result));
         assertEquals(Utils.toString(result),Utils.toString(expResult));
     }
@@ -226,11 +231,11 @@ public class FunctionEvaluatorTest {
 
     public class FunctionEvaluatorImpl extends FunctionEvaluator {
 
-        public double evaluate(NodeArgument[] params) {
+        public Double evaluate(NodeArgument[] params) {
             return 0.0;
         }
 
-        public void addParametersCost(NodeArgument[] params, double cost) {
+        public void addParametersCost(NodeArgument[] params, Double cost) {
         }
 
         public void clearCosts() {

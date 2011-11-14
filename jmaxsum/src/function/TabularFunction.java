@@ -51,7 +51,7 @@ public class TabularFunction extends FunctionEvaluator{
      * @param params the array of NodeArgument
      * @param cost the cost for the params
      */
-    public void addParametersCost(NodeArgument[] params, double cost){
+    public void addParametersCost(NodeArgument[] params, Double cost){
         StringBuilder key = new StringBuilder();
         key.append("");
         for (int i = 0; i < params.length; i++) {
@@ -69,7 +69,7 @@ public class TabularFunction extends FunctionEvaluator{
     }
 
     @Override
-    public double evaluate(NodeArgument[] params) {
+    public Double evaluate(NodeArgument[] params) {
         StringBuilder key = new StringBuilder();
 
         for (int i = 0; i < params.length; i++) {

@@ -83,7 +83,8 @@ public class Cerberus {
             //TabularFunction functionevaluator = null;
             StringTokenizer t = null;
             String token = null;
-            int agent_id, variable_id, variable_to_agent, number_of_argument, cost, function_id = -1, variable_to_function = -1, function_to_agent = -1;
+            String costString;
+            int agent_id, variable_id, variable_to_agent, number_of_argument, function_id = -1, variable_to_function = -1, function_to_agent = -1;
             LinkedList<NodeVariable> argumentsOfFunction = null;
             NodeArgument[] arguments = null;
 
@@ -197,8 +198,31 @@ public class Cerberus {
                             //arguments[i] = NodeArgument.getNodeArgument(Integer.parseInt(t.nextToken()));
                             arguments[i] = NodeArgument.getNodeArgument(t.nextToken());
                         }
-                        cost = (Integer.parseInt(t.nextToken()));
-                        nodefunction.getFunction().addParametersCost(arguments, cost);
+                        /*cost = (Integer.parseInt(t.nextToken()));
+                        nodefunction.getFunction().addParametersCost(arguments, cost);*/
+
+                        // check for infinite
+                        costString = t.nextToken();
+                        if (costString.equalsIgnoreCase("inf") || costString.equalsIgnoreCase("+inf")){
+                            // positive infinity
+                            nodefunction.getFunction().addParametersCost(arguments,
+                                    Double.POSITIVE_INFINITY
+                                    );
+                        }
+                        else if (costString.equalsIgnoreCase("-inf")) {
+                            // negative infinity
+                            nodefunction.getFunction().addParametersCost(arguments,
+                                    Double.NEGATIVE_INFINITY
+                                    );
+                        }
+                        else {
+                            // just a number
+                            nodefunction.getFunction().addParametersCost(arguments,
+                                    new Double(costString)
+                                    );
+                        }
+
+
                     }
                 }
                 line = in.readLine();
