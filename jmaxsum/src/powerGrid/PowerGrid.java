@@ -92,82 +92,74 @@ public class PowerGrid {
         // phase 2: R
 
         //HashSet<Generator> generators_biggerable = (HashSet<Generator>) this.generators.clone();
-        LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>(this.generators);
+        LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
 
-        LinkedList<Load> loads_where_pick_up_R;
+        LinkedList<Load> loads_to_link = new LinkedList<Load>();
         Load load_to_link;
         Generator generator_to_link;
         int position;
 
-        try {
 
-            LinkedList<HashSet<Load>> list_of_loads_set = new LinkedList<HashSet<Load>>();
 
-            // TODO: error!
-            for (Generator it_gen : this.generators) {
-                list_of_loads_set.add(it_gen.getLoads());
+        for (Generator g: this.generators){
+
+            // pick R random loads from it
+            LinkedList<Load> temp_load_list = new LinkedList<Load>(g.getLoads());
+            for (int i = 0; i < R; i++) {
+                loads_to_link.add(
+                        temp_load_list.remove(
+                            rnd.nextInt(temp_load_list.size())
+                            )
+                        );
             }
 
-            // TODO: ERROR
-            /*for (Generator it_gen : this.generators) {
-                loads_where_pick_up_R = new LinkedList<Load>(it_gen.getLoads());*/
-            for (HashSet<Load> set : list_of_loads_set ){
-                loads_where_pick_up_R = new LinkedList<Load>(set);
-                // pick R loads from its
-                for (int r = 0; r < R; r++) {
-                    position = rnd.nextInt(loads_where_pick_up_R.size());
-                    load_to_link = loads_where_pick_up_R.remove(position);
+            if (g.howManyLoads()<=numberOfLoadsForGenerator+R) {
+                generators_that_admit_another_link.add(g);
+            }
 
-                    if (debug >= 3) {
+
+        }
+
+
+
+        while(!loads_to_link.isEmpty()) {
+            load_to_link = loads_to_link.remove(
+                    rnd.nextInt(
+                        loads_to_link.size()
+                    ));
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "load_to_link selected="+load_to_link);
+                    System.out.println("---------------------------------------");
+            }
+            
+            do{
+                position = rnd.nextInt(generators_that_admit_another_link.size());
+                generator_to_link = generators_that_admit_another_link.get(position);
+
+                if (debug>=3) {
                         String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                         String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                         System.out.println("---------------------------------------");
-                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "trying to link " + load_to_link);
-                        System.out.println("There are " + generators_that_admit_another_link.size() + " more generators available");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "generator selected="+generator_to_link);
                         System.out.println("---------------------------------------");
-                    }
-
-                    do {
-                        if (generators_that_admit_another_link.isEmpty()) {
-                            throw new NoMoreGeneratorsException();
-                        }
-                        // choose a valid Generator to link to load to link
-                        position = rnd.nextInt(generators_that_admit_another_link.size());
-                        generator_to_link = generators_that_admit_another_link.remove(position);
-                    } while (
-                            (generator_to_link.howManyLoads() > numberOfLoadsForGenerator + R)
-                            ||
-                            (generator_to_link.hasLoad(load_to_link))
-                            )
-                            ;
-
-                    if (debug>=3) {
-                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                            System.out.println("---------------------------------------");
-                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "now linking " + load_to_link + " with "+generator_to_link);
-                            System.out.println("---------------------------------------");
-                    }
-
-                    // now link 'em
-                    load_to_link.addGenerator(generator_to_link);
-                    generator_to_link.addLoad(load_to_link);
-
-
-
                 }
+
+            } while (generator_to_link.hasLoad(load_to_link));
+
+            load_to_link.addGenerator(generator_to_link);
+            generator_to_link.addLoad(load_to_link);
+
+            if (generator_to_link.howManyLoads()==numberOfLoadsForGenerator+R){
+                generators_that_admit_another_link.remove(position);
             }
 
-        } catch (NoMoreGeneratorsException ex) {
-            if (debug >= 3) {
-                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                System.out.println("---------------------------------------");
-                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Exception generated");
-                System.out.println("---------------------------------------");
-            }
-            // finish!
         }
+
+
+        
 
         // and now we have:
         if (debug >= 3) {
@@ -195,4 +187,15 @@ public class PowerGrid {
         }
 
     }
+
+    public HashSet<Generator> getGenerators() {
+        return generators;
+    }
+
+    public HashSet<Load> getLoads() {
+        return loads;
+    }
+
+
+
 }

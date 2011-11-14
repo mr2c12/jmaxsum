@@ -31,6 +31,8 @@ public class Main {
         PowerGrid pg = new PowerGrid();
         pg.initRandom(4, 3, 1);
 
+        System.exit(0);
+
         Double uno = new Double("1");
         Double inf = Double.POSITIVE_INFINITY;
         Double res = uno + inf;
