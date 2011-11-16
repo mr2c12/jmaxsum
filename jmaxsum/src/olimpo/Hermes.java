@@ -132,6 +132,7 @@ public class Hermes {
             core.setIterationsNumber(iterationsV);
 
             core.setStepbystep(stepbystepV);
+            core.setUpdateOnlyAtEnd(!stepbystepV);
 
             core.setUpdateOnlyAtEnd(!updateelV);
 
