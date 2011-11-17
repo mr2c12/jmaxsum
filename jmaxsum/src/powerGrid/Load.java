@@ -43,6 +43,10 @@ public class Load {
         return Load.loadsMap.get(id);
     }
 
+    public static void resetLoads(){
+        Load.loadsMap = new HashMap<Integer, Load>();
+    }
+
     public static Load getNextLoad(double power) {
         int id = 0;
         while (Load.loadsMap.containsKey(id)) {

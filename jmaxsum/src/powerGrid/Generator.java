@@ -16,6 +16,7 @@
  */
 package powerGrid;
 
+import function.CO2Function;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -27,6 +28,7 @@ public class Generator {
 
     protected int id;
     protected double power;
+    protected CO2Function co2 = null;
     protected static HashMap<Integer, Generator> generatorsMap = new HashMap<Integer, Generator>();
     HashSet<Load> loads;
 
@@ -34,6 +36,26 @@ public class Generator {
         this.id = id;
         this.power = power;
         this.loads = new HashSet<Load>();
+    }
+
+    public CO2Function getCo2() {
+        return co2;
+    }
+
+    public void setCo2(CO2Function co2) {
+        this.co2 = co2;
+    }
+
+    public static HashMap<Integer, Generator> getGeneratorsMap() {
+        return generatorsMap;
+    }
+
+    public static void setGeneratorsMap(HashMap<Integer, Generator> generatorsMap) {
+        Generator.generatorsMap = generatorsMap;
+    }
+
+    public static void resetGenerators() {
+        Generator.generatorsMap = new HashMap<Integer, Generator>();
     }
 
     public static Generator getGenerator(int id, double power) {
@@ -89,7 +111,12 @@ public class Generator {
 
     @Override
     public String toString() {
-        return "Generator{" + "id=" + id + " power=" + power + '}';
+        String string = "Generator{" + "id=" + id + " power=" + power;
+        if (this.co2!=null){
+            string += " CO2="+this.co2;
+        }
+        string += '}';
+        return string;
     }
 
     public String getLoadsList(){
@@ -111,5 +138,9 @@ public class Generator {
 
     public boolean hasLoad(Load l){
         return this.loads.contains(l);
+    }
+
+    public double getCO2emission(double consumption){
+        return this.getCo2().emission(consumption);
     }
 }

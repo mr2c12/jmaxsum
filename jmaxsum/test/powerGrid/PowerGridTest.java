@@ -17,6 +17,7 @@
 
 package powerGrid;
 
+import java.util.Random;
 import java.util.HashSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,13 +59,48 @@ public class PowerGridTest {
         System.out.println("initRandom");
         int numberOfGenerators = 5;
         int numberOfLoadsForGenerator = 3;
-        int R = 7;
-        PowerGrid instance = new PowerGrid();
-        instance.initRandom(numberOfGenerators, numberOfLoadsForGenerator, R);
+        int R = 2;
+        PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
 
         for (Generator g : instance.getGenerators()){
             assertEquals(g.howManyLoads(), R+numberOfLoadsForGenerator);
         }
     }
+
+
+
+    /**
+     * Test of saveToFile method, of class PowerGrid.
+     */
+    //@Test
+    public void testSaveToFile() throws Exception {
+        System.out.println("saveToFile");
+        String file = "/home/mik/Documenti/univr/Ragionamento Automatico/stage/powerGrid_instances/";
+        Random rnd = new Random();
+        file += rnd.nextInt(10000);
+        file += ".pg";
+        int numberOfGenerators = 5;
+        int numberOfLoadsForGenerator = 3;
+        int R = 2;
+        PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
+
+        instance.saveToFile(file);
+        
+    }
+
+
+
+    /**
+     * Test of initFromFile method, of class PowerGrid.
+     */
+    //@Test
+    public void testInitFromFile() throws Exception {
+        System.out.println("initFromFile");
+        String file = "/home/mik/Documenti/univr/Ragionamento Automatico/stage/powerGrid_instances/598.pg";
+        PowerGrid instance = new PowerGrid(file);
+        System.out.println("string of parsed file:\n"+instance.toStringFile());
+    }
+
+    
 
 }

@@ -36,7 +36,7 @@ public class Main {
         try {
 
             String[] paths = {
-                "/home/mik/NetBeansProjects/maxSum/copTest.cop2",
+                //"/home/mik/NetBeansProjects/maxSum/copTest.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper_multi.cop2",
@@ -45,7 +45,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test43_mod.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
-                //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_2.cop2",
+                "/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
             };
 
@@ -89,9 +89,9 @@ public class Main {
 
                 
                 Athena core = new Athena(cop,"max", "sum");
-                core.setIterationsNumber(5);
-                core.setStepbystep(true);
-                core.setUpdateOnlyAtEnd(false);
+                core.setIterationsNumber(100);
+                core.setStepbystep(false);
+                //core.setUpdateOnlyAtEnd(false);
                 core.solve();
                 core.conclude();
 
