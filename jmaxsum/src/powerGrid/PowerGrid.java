@@ -17,6 +17,7 @@
 package powerGrid;
 
 import exception.InitializatedException;
+import exception.NoMoreGeneratorsException;
 import exception.UnInitializatedException;
 import function.CO2Simple;
 import java.io.BufferedReader;
@@ -56,7 +57,7 @@ public class PowerGrid {
         this.initFromFile(file);
     }
 
-    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException {
+    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException {
         this();
         this.initRandom(numberOfGenerators, numberOfLoadsForGenerator, R);
     }
@@ -67,7 +68,7 @@ public class PowerGrid {
      * @param numberOfLoadsForGenerator D
      * @param R
      */
-    public void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException {
+    public void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException {
         if (R > numberOfLoadsForGenerator) {
             throw new IllegalArgumentException("R can't be greater than the number of loads for each generator!");
         }
@@ -180,6 +181,11 @@ public class PowerGrid {
             }
 
             do {
+
+                if (generators_that_admit_another_link.size()==1 && generators_that_admit_another_link.get(0).hasLoad(load_to_link)){
+                    throw new NoMoreGeneratorsException();
+                }
+
                 position = rnd.nextInt(generators_that_admit_another_link.size());
                 generator_to_link = generators_that_admit_another_link.get(position);
 

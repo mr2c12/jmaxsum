@@ -17,6 +17,8 @@
 
 package powerGrid;
 
+import exception.NoMoreGeneratorsException;
+import exception.UnInitializatedException;
 import java.util.Random;
 import java.util.HashSet;
 import org.junit.After;
@@ -56,14 +58,22 @@ public class PowerGridTest {
      */
     @Test
     public void testInitRandom() {
-        System.out.println("initRandom");
-        int numberOfGenerators = 5;
-        int numberOfLoadsForGenerator = 3;
-        int R = 2;
-        PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
-
-        for (Generator g : instance.getGenerators()){
-            assertEquals(g.howManyLoads(), R+numberOfLoadsForGenerator);
+        try {
+            System.out.println("initRandom");
+            int numberOfGenerators = 5;
+            int numberOfLoadsForGenerator = 3;
+            int R = 2;
+            PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
+            System.out.println("Instance created:\n"+instance.toStringFile());
+            for (Generator g : instance.getGenerators()) {
+                assertEquals(g.howManyLoads(), R + numberOfLoadsForGenerator);
+            }
+        } catch (UnInitializatedException ex) {
+            ex.printStackTrace();
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (NoMoreGeneratorsException ex) {
+            System.out.println("No more generators, sorry!");
         }
     }
 
