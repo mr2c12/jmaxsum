@@ -6,6 +6,7 @@
 package test;
 import boundedMaxSum.InstanceCloner;
 import hacks.ScrewerUp;
+import java.util.Random;
 import maxsum.MS_COP_Instance;
 import misc.Utils;
 import system.COP_Instance;
@@ -31,7 +32,7 @@ public class Main {
         /*PowerGrid pg = new PowerGrid();
         pg.initRandom(4, 3, 1);*/
 
-        
+
 
         try {
 

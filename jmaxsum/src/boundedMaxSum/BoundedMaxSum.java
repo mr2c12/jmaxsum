@@ -184,6 +184,7 @@ public class BoundedMaxSum {
         }
 
 
+        // TODO: change it to double, using +/- inf ?
 
         // used for maximization of f over its arguments, except x
         Double[] maxes = new Double[maxes_size];// new double[maxes_size];
@@ -317,7 +318,7 @@ public class BoundedMaxSum {
             }
         }
         // maximization ends
-
+        // TODO: change it to double, using +/- inf ?
         Double[] diff = Utils.opArray(-1,maxes,minis);
 
         double weight = diff[0];

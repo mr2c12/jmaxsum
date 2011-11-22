@@ -23,6 +23,9 @@ import java.util.LinkedList;
 import messages.MessageQ;
 import messages.MessageR;
 
+// TODO: check if it's easy to change
+// TODO: implement a correct actualValue() method in COP_instance
+
 /**
  * This interface provides methods for oplus operator
  * @author Michele Roncalli <roncallim at gmail dot com>

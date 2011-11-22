@@ -14,13 +14,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package powerGrid;
 
+import exception.InitializatedException;
 import exception.NoMoreGeneratorsException;
+import exception.PostServiceNotSetException;
 import exception.UnInitializatedException;
+import exception.VariableNotSetException;
 import java.util.Random;
 import java.util.HashSet;
+import olimpo.Athena;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,7 +59,7 @@ public class PowerGridTest {
     /**
      * Test of initRandom method, of class PowerGrid.
      */
-    @Test
+    //@Test
     public void testInitRandom() {
         try {
             System.out.println("initRandom");
@@ -64,10 +67,12 @@ public class PowerGridTest {
             int numberOfLoadsForGenerator = 3;
             int R = 2;
             PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
-            System.out.println("Instance created:\n"+instance.toStringFile());
+            System.out.println("Instance created:\n" + instance.toStringFile());
             for (Generator g : instance.getGenerators()) {
                 assertEquals(g.howManyLoads(), R + numberOfLoadsForGenerator);
             }
+        } catch (InitializatedException ex) {
+            ex.printStackTrace();
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();
         } catch (IllegalArgumentException ex) {
@@ -76,8 +81,6 @@ public class PowerGridTest {
             System.out.println("No more generators, sorry!");
         }
     }
-
-
 
     /**
      * Test of saveToFile method, of class PowerGrid.
@@ -95,10 +98,8 @@ public class PowerGridTest {
         PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
 
         instance.saveToFile(file);
-        
+
     }
-
-
 
     /**
      * Test of initFromFile method, of class PowerGrid.
@@ -108,9 +109,40 @@ public class PowerGridTest {
         System.out.println("initFromFile");
         String file = "/home/mik/Documenti/univr/Ragionamento Automatico/stage/powerGrid_instances/598.pg";
         PowerGrid instance = new PowerGrid(file);
-        System.out.println("string of parsed file:\n"+instance.toStringFile());
+        System.out.println("string of parsed file:\n" + instance.toStringFile());
     }
 
-    
+    @Test
+    public void testGetCop() throws PostServiceNotSetException {
+        System.out.println("getCop");
+        try {
+            PowerGrid instance = new PowerGrid(3, 4, 1);
 
+            System.out.println("Instance to string:\n" + instance.toStringFile());
+
+            System.out.println("Instance is initializated: " + instance.isInitializated());
+
+            // note: toStringFile does NOT work for these NodeArguments.
+            System.out.println("COP:\n" + instance.getCop().toStringFile());
+
+            Athena solver = new Athena(instance.getCop(),"min", "sum");
+            solver.setIterationsNumber(100);
+            solver.solve();
+            solver.conclude();
+            System.out.println("Value: "+ instance.getCop().actualValue());
+
+
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Illegal argument Exception");
+        } catch (NoMoreGeneratorsException ex) {
+            System.out.println("No more generators Exception");
+        } catch (InitializatedException ex) {
+            System.out.println("Initializated Exception");
+        } catch (UnInitializatedException ex) {
+            System.out.println("UnInitializated Exception");
+        } catch (VariableNotSetException ex) {
+            System.out.println("Variable not set");
+        }
+
+    }
 }

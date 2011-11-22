@@ -19,7 +19,11 @@ package powerGrid;
 import exception.InitializatedException;
 import exception.NoMoreGeneratorsException;
 import exception.UnInitializatedException;
+import factorgraph.NodeArgument;
+import factorgraph.NodeFunction;
+import factorgraph.NodeVariable;
 import function.CO2Simple;
+import function.TabularFunction;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,7 +34,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.StringTokenizer;
+import maxsum.Agent;
+import maxsum.MS_COP_Instance;
 import misc.Utils;
+import system.COP_Instance;
 import test.DebugVerbosity;
 
 /**
@@ -42,24 +49,28 @@ public class PowerGrid {
     private static final int debug = DebugVerbosity.debugPowerGrid;
     HashSet<Generator> generators;
     HashSet<Load> loads;
+    boolean initialized = false;
+    protected MS_COP_Instance cop = null;
 
     private PowerGrid() {
         Load.resetLoads();
         Generator.resetGenerators();
-        
+
         this.generators = new HashSet<Generator>();
         this.loads = new HashSet<Load>();
 
     }
 
-    public PowerGrid(String file) throws InitializatedException, FileNotFoundException, IOException{
+    public PowerGrid(String file) throws InitializatedException, FileNotFoundException, IOException {
         this();
         this.initFromFile(file);
+        this.initialized = true;
     }
 
-    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException {
+    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
         this();
         this.initRandom(numberOfGenerators, numberOfLoadsForGenerator, R);
+        this.initialized = true;
     }
 
     /**
@@ -68,23 +79,33 @@ public class PowerGrid {
      * @param numberOfLoadsForGenerator D
      * @param R
      */
-    public void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException {
+    private void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
+
+        if (this.initialized == true) {
+            throw new InitializatedException();
+        }
         if (R > numberOfLoadsForGenerator) {
             throw new IllegalArgumentException("R can't be greater than the number of loads for each generator!");
         }
+
         Random rnd = new Random();
         Generator gen;
         Load ld;
 
         // create the generators
         for (int i_gen = 0; i_gen < numberOfGenerators; i_gen++) {
-            gen = Generator.getNextGenerator(rnd.nextDouble());
+            //FIXME: vbh tp skip the infinite
+            // TODO: power == 1 ?
+            gen = Generator.getNextGenerator(1);
             this.generators.add(gen);
 
             // create CO2
+            //fixme
             gen.setCo2(
-                    new CO2Simple(gen.getPower(),
-                    1 + rnd.nextInt(5)));
+                    //new CO2Simple(gen.getPower(), 1 + rnd.nextInt(5))
+                    //FIXME: vbh to debug
+                    new CO2Simple(1, 1)
+                    );
 
 
             // create D loads for each generator
@@ -151,19 +172,19 @@ public class PowerGrid {
 
         }
 
-        if (debug>=3) {
-                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                System.out.println("---------------------------------------");
-                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Loads to link: "+loads_to_link.size());
-                for (Load l : loads_to_link){
-                    System.out.println(l);
-                }
-                System.out.println("Generators to link: "+generators_that_admit_another_link.size());
-                for (Generator g : generators_that_admit_another_link){
-                    System.out.println(g);
-                }
-                System.out.println("---------------------------------------");
+        if (debug >= 3) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Loads to link: " + loads_to_link.size());
+            for (Load l : loads_to_link) {
+                System.out.println(l);
+            }
+            System.out.println("Generators to link: " + generators_that_admit_another_link.size());
+            for (Generator g : generators_that_admit_another_link) {
+                System.out.println(g);
+            }
+            System.out.println("---------------------------------------");
         }
 
 
@@ -182,7 +203,7 @@ public class PowerGrid {
 
             do {
 
-                if (generators_that_admit_another_link.size()==1 && generators_that_admit_another_link.get(0).hasLoad(load_to_link)){
+                if (generators_that_admit_another_link.size() == 1 && generators_that_admit_another_link.get(0).hasLoad(load_to_link)) {
                     throw new NoMoreGeneratorsException();
                 }
 
@@ -193,7 +214,7 @@ public class PowerGrid {
                     String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                     String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                     System.out.println("---------------------------------------");
-                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "generator selected=" + generator_to_link + " while list has "+ generators_that_admit_another_link.size()+ " elements");
+                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "generator selected=" + generator_to_link + " while list has " + generators_that_admit_another_link.size() + " elements");
                     System.out.println("---------------------------------------");
                 }
 
@@ -203,12 +224,12 @@ public class PowerGrid {
             generator_to_link.addLoad(load_to_link);
 
             if (generator_to_link.howManyLoads() == numberOfLoadsForGenerator + R) {
-                if (debug>=3) {
-                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Remove "+generator_to_link+ " with "+generator_to_link.howManyLoads()+" loads: "+generator_to_link.getLoadsList());
-                        System.out.println("---------------------------------------");
+                if (debug >= 3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Remove " + generator_to_link + " with " + generator_to_link.howManyLoads() + " loads: " + generator_to_link.getLoadsList());
+                    System.out.println("---------------------------------------");
                 }
                 generators_that_admit_another_link.remove(position);
                 //generators_that_admit_another_link.remove(generator_to_link);
@@ -291,8 +312,8 @@ public class PowerGrid {
         Utils.stringToFile(this.toStringFile(), file);
     }
 
-    public void initFromFile(String file) throws InitializatedException, FileNotFoundException, IOException {
-        if (this.generators == null || this.loads == null) {
+    private void initFromFile(String file) throws InitializatedException, FileNotFoundException, IOException {
+        if (this.initialized == true) {
             throw new InitializatedException();
         }
 
@@ -363,9 +384,9 @@ public class PowerGrid {
             System.out.println("---------------------------------------");
             System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Report.\nGenerators:");
             for (Generator git : gen_loads.keySet()) {
-                    System.out.print("<"+git+"> ");
+                System.out.print("<" + git + "> ");
                 for (Integer idt : gen_loads.get(git)) {
-                    
+
                     System.out.print(Load.getLoad(idt, 1));
                 }
                 System.out.println("");
@@ -410,5 +431,186 @@ public class PowerGrid {
                         Generator.getGenerator(idt, 1));
             }
         }
+    }
+
+    private void buildCOPInstance() throws UnInitializatedException{
+        if (this.initialized == false) {
+            throw new UnInitializatedException();
+        }
+        NodeVariable.resetIds();
+        NodeFunction.resetIds();
+        this.cop = new MS_COP_Instance();
+        HashSet<NodeVariable> nodevariables = new HashSet<NodeVariable>();
+        HashSet<NodeFunction> nodefunctions = new HashSet<NodeFunction>();
+        HashSet<Agent> agents = new HashSet<Agent>();
+
+        NodeVariable nodevariable;
+        NodeArgument nodeargument;
+        NodeFunction nodefunction;
+        TabularFunction tfunction;
+        Agent agent = Agent.getAgent(0);
+        agents.add(agent);
+        int[] numberOfValues;
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Created Agent: "+agent);
+                System.out.println("---------------------------------------");
+        }
+
+
+        // nodevariables: one for each load, same id, nodeargument one for each generator
+        for (Load lit : this.getLoads()) {
+            nodevariable = NodeVariable.getNodeVariable(lit.getId());
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Created NodeVariable: "+nodevariable);
+                    System.out.println("---------------------------------------");
+            }
+            for (Generator lit_g : lit.getGenerators()) {
+                nodevariable.addValue(
+                            NodeArgument.getNodeArgument(lit_g.getId())
+                        );
+            }
+            agent.addNodeVariable(nodevariable);
+            nodevariables.add(nodevariable);
+        }
+
+        // nodefunction: one for each generator
+        // same id of the generator
+        // same values of the CO2 emission function
+        // +inf where hard constrain does not hold
+        for (Generator git : this.getGenerators()){
+            tfunction = new TabularFunction();
+            for (Load git_l : git.getLoads()) {
+                tfunction.addParameter(
+                            NodeVariable.getNodeVariable(git_l.getId())
+                        );
+            }
+
+            numberOfValues = new int[tfunction.getParameters().size()];
+            for (int index= 0; index < numberOfValues.length; index++) {
+                numberOfValues[index] =
+                        tfunction.getParameter(index).size();
+            }
+
+            int[] v = new int[numberOfValues.length];
+            NodeArgument[] params = new NodeArgument[numberOfValues.length];
+            // populate the tabular function
+            int imax = v.length-1;
+            int i=imax;
+            int quanti = 0;
+            double wattSum = 0.0;
+            while(i>=0){
+
+
+                while ( v[i] < numberOfValues[i] - 1 ) {
+                    //System.out.println(Utils.toString(v));
+                    // HERE v IS THE ARRAY!
+                    wattSum = 0.0;
+                    for (int j = 0; j < v.length; j++) {
+                        
+                        if ( tfunction.getParameter(j).getArgument(v[j]).equals(
+                                NodeArgument.getNodeArgument(git.getId()))) {
+                            if (debug>=3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "in generator "+git.getId()+ " for load " + tfunction.getParameter(j).getId()+" summing "+Load.getLoad(tfunction.getParameter(j).getId(), wattSum).getRequiredPower());
+                                    System.out.println("---------------------------------------");
+                            }
+                            wattSum += Load.getLoad(tfunction.getParameter(j).getId(),-1).getRequiredPower();
+                        }
+                        params[j] = tfunction.getParameter(j).getArgument(v[j]);
+                    }
+
+                    if (wattSum > git.getPower()){
+                        // +inf
+                        tfunction.addParametersCost(params, Double.POSITIVE_INFINITY);
+                    }
+                    else {
+                        tfunction.addParametersCost(params, git.getCO2emission(wattSum));
+                    }
+
+
+                    v[i]++;
+                    for (int j = i+1; j <= imax; j++) {
+                        v[j]=0;
+                    }
+                    i=imax;
+
+                }
+
+                i--;
+
+            }
+            //System.out.println(Utils.toString(v));
+            // HERE v IS THE ARRAY!
+            wattSum = 0.0;
+            for (int j = 0; j < v.length; j++) {
+
+                if ( tfunction.getParameter(j).getArgument(v[j]).equals(
+                        NodeArgument.getNodeArgument(git.getId()))) {
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "in generator "+git.getId()+ " for load " + tfunction.getParameter(j).getId()+" summing "+Load.getLoad(tfunction.getParameter(j).getId(), wattSum).getRequiredPower());
+                            System.out.println("---------------------------------------");
+                    }
+                    wattSum += Load.getLoad(tfunction.getParameter(j).getId(),-1).getRequiredPower();
+                }
+                params[j] = tfunction.getParameter(j).getArgument(v[j]);
+            }
+
+            if (wattSum > git.getPower()){
+                // +inf
+                tfunction.addParametersCost(params, Double.POSITIVE_INFINITY);
+            }
+            else {
+                tfunction.addParametersCost(params, git.getCO2emission(wattSum));
+            }
+            // end populating
+
+            nodefunction = NodeFunction.putNodeFunction(git.getId(), tfunction);
+            agent.addNodeFunction(nodefunction);
+            nodefunctions.add(nodefunction);
+
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "tfunction: "+tfunction.toStringForFile());
+                    System.out.println("---------------------------------------");
+            }
+
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Created NodeFunction: "+nodefunction);
+                    System.out.println("---------------------------------------");
+            }
+
+        }
+
+        this.cop = new MS_COP_Instance(nodevariables, nodefunctions, agents);
+
+    }
+
+
+    public COP_Instance getCop() throws UnInitializatedException{
+        if (this.cop == null) {
+            this.buildCOPInstance();
+        }
+        return this.cop;
+    }
+
+    public boolean isInitializated(){
+        return this.initialized;
     }
 }

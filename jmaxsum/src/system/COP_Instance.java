@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package system;
 
 import exception.VariableNotSetException;
@@ -30,6 +29,7 @@ import java.util.Iterator;
 import maxsum.Agent;
 import messages.PostService;
 import operation.Operator;
+import test.DebugVerbosity;
 
 /**
  * Instance of COP problem.<br/>
@@ -38,10 +38,12 @@ import operation.Operator;
  */
 public abstract class COP_Instance {
 
+    private static final int debug = DebugVerbosity.debugCOP_Instance;
     /*protected HashSet<NodeVariable> nodevariables;
     protected HashSet<NodeFunction> nodefunctions;
     protected HashSet<NodeArgument> nodearguments;*/
     protected FactorGraph factorgraph;
+    protected HashSet<Agent> agents;
 
     public FactorGraph getFactorgraph() {
         return factorgraph;
@@ -50,8 +52,6 @@ public abstract class COP_Instance {
     public void setFactorgraph(FactorGraph factorgraph) {
         this.factorgraph = factorgraph;
     }
-    protected HashSet<Agent> agents;
-
 
     public COP_Instance() {
         /*nodevariables = new HashSet<NodeVariable>();
@@ -59,6 +59,7 @@ public abstract class COP_Instance {
         nodearguments = new HashSet<NodeArgument>();*/
         factorgraph = new FactorGraph();
         agents = new HashSet<Agent>();
+
     }
 
     public COP_Instance(HashSet<NodeVariable> nodevariables, HashSet<NodeFunction> nodefunctions, HashSet<Agent> agents) {
@@ -67,6 +68,14 @@ public abstract class COP_Instance {
         this.nodearguments = nodeargumens;*/
         this.factorgraph = new FactorGraph(nodevariables, nodefunctions);
         this.agents = agents;
+
+        if (debug >= 3) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Instance created with " + this.agents.size() + " and the following factorGraph:\n" + this.factorgraph);
+            System.out.println("---------------------------------------");
+        }
     }
 
     public HashSet<Agent> getAgents() {
@@ -77,23 +86,22 @@ public abstract class COP_Instance {
         this.agents = agents;
     }
 
-    public boolean addAgent(Agent a){
+    public boolean addAgent(Agent a) {
         return this.agents.add(a);
     }
 
     /*public HashSet<NodeArgument> getNodeargumens() {
-        return this.factorgraph.getNodearguments();
+    return this.factorgraph.getNodearguments();
     }
 
     public boolean addNodeArgument(NodeArgument na){
-        return this.factorgraph.addNodeArgument(na);
+    return this.factorgraph.addNodeArgument(na);
     }*/
-
     public HashSet<NodeFunction> getNodefunctions() {
         return this.factorgraph.getNodefunctions();
     }
 
-    public boolean addNodeFunction(NodeFunction nf){
+    public boolean addNodeFunction(NodeFunction nf) {
         return this.factorgraph.addNode(nf);
     }
 
@@ -101,11 +109,11 @@ public abstract class COP_Instance {
         return this.factorgraph.getNodevariables();
     }
 
-    public boolean addNodeVariable(NodeVariable nv){
+    public boolean addNodeVariable(NodeVariable nv) {
         return this.factorgraph.addNode(nv);
     }
 
-    public String toTestString(){
+    public String toTestString() {
         StringBuilder string = new StringBuilder();
         string.append("Agents number: ").append(this.agents.size()).append("\n");
         Iterator<Agent> ita = this.agents.iterator();
@@ -134,8 +142,7 @@ public abstract class COP_Instance {
         return string.toString();
     }
 
-
-    public String toStringFile(){
+    public String toStringFile() {
         StringBuilder string = new StringBuilder();
 
         HashMap<NodeVariable, Integer> nodevariable_agent = new HashMap<NodeVariable, Integer>();
@@ -190,7 +197,7 @@ public abstract class COP_Instance {
 
             // variables values and function cost
             string.append(fe.toStringForFile());
-            
+
         }
 
 
@@ -199,7 +206,7 @@ public abstract class COP_Instance {
         return string.toString();
     }
 
-    public void toFile(String path){
+    public void toFile(String path) {
 
         FileOutputStream of;
 
@@ -207,8 +214,7 @@ public abstract class COP_Instance {
             of = new FileOutputStream(path);
             of.write(this.toStringFile().getBytes());
             of.close();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -240,11 +246,9 @@ public abstract class COP_Instance {
         }
     }
 
-
     public abstract double actualValue() throws VariableNotSetException;
 
-
-    public String status(){
+    public String status() {
         StringBuilder status = new StringBuilder();
         try {
             status.append(this.actualValue()).append(";");
@@ -252,11 +256,11 @@ public abstract class COP_Instance {
             status.append("err;");
         }
 
-        for (Agent agent : this.getAgents()){
-            for (NodeVariable variable : agent.getVariables()){
+        for (Agent agent : this.getAgents()) {
+            for (NodeVariable variable : agent.getVariables()) {
                 try {
                     status.append(variable.toString()).append("=").append(variable.getStateArgument().toString()).append(";");
-                }catch (Exception e) {
+                } catch (Exception e) {
                     status.append(variable.toString()).append("=err;");
                 }
             }

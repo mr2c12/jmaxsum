@@ -95,4 +95,7 @@ public class DebugVerbosity {
 
     public static final int debugPowerGrid = 3
             + DebugVerbosity.debug;
+
+    public static final int debugCOP_Instance = 3
+            + DebugVerbosity.debug;
 }
