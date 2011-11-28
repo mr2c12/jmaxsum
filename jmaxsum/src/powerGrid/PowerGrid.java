@@ -67,9 +67,9 @@ public class PowerGrid {
         this.initialized = true;
     }
 
-    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
+    public PowerGrid(int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
         this();
-        this.initRandom(numberOfGenerators, numberOfLoadsForGenerator, R);
+        this.initRandom(numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
         this.initialized = true;
     }
 
@@ -78,14 +78,19 @@ public class PowerGrid {
      * @param numberOfGenerators M
      * @param numberOfLoadsForGenerator D
      * @param R
+     * @param xmean the mean value of x
+     * @param delta the width of uniform distribution
      */
-    private void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
+    private void initRandom(int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
 
         if (this.initialized == true) {
             throw new InitializatedException();
         }
         if (R > numberOfLoadsForGenerator) {
             throw new IllegalArgumentException("R can't be greater than the number of loads for each generator!");
+        }
+        if (!(2*xmean >= delta)){
+            throw new IllegalArgumentException("Condition required: 2 * Xmean >= Delta");
         }
 
         Random rnd = new Random();
@@ -110,7 +115,11 @@ public class PowerGrid {
 
             // create D loads for each generator
             for (int id_load = 0; id_load < numberOfLoadsForGenerator; id_load++) {
-                ld = Load.getNextLoad(rnd.nextDouble());
+                // TODO: load configuration drawn from distribution
+                //ld = Load.getNextLoad(rnd.nextDouble());
+                ld = Load.getNextLoad(
+                        (rnd.nextDouble() * delta) + (xmean-(delta/2))
+                        );
                 this.loads.add(ld);
 
                 // link 'em all!

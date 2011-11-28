@@ -59,14 +59,16 @@ public class PowerGridTest {
     /**
      * Test of initRandom method, of class PowerGrid.
      */
-    //@Test
+    @Test
     public void testInitRandom() {
         try {
             System.out.println("initRandom");
             int numberOfGenerators = 5;
             int numberOfLoadsForGenerator = 3;
             int R = 2;
-            PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
+            double xmean = 0.2;
+            double delta = 0.2;
+            PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
             System.out.println("Instance created:\n" + instance.toStringFile());
             for (Generator g : instance.getGenerators()) {
                 assertEquals(g.howManyLoads(), R + numberOfLoadsForGenerator);
@@ -95,8 +97,9 @@ public class PowerGridTest {
         int numberOfGenerators = 5;
         int numberOfLoadsForGenerator = 3;
         int R = 2;
-        PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R);
-
+        double xmean = 0.5;
+        double delta = 0.1;
+        PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
         instance.saveToFile(file);
 
     }
@@ -112,11 +115,16 @@ public class PowerGridTest {
         System.out.println("string of parsed file:\n" + instance.toStringFile());
     }
 
-    @Test
+    //@Test
     public void testGetCop() throws PostServiceNotSetException {
         System.out.println("getCop");
         try {
-            PowerGrid instance = new PowerGrid(3, 4, 1);
+            int numberOfGenerators = 3;
+            int numberOfLoadsForGenerator = 4;
+            int R = 1;
+            double xmean = 0.5;
+            double delta = 0.1;
+            PowerGrid instance = new PowerGrid(numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
 
             System.out.println("Instance to string:\n" + instance.toStringFile());
 
@@ -125,11 +133,11 @@ public class PowerGridTest {
             // note: toStringFile does NOT work for these NodeArguments.
             System.out.println("COP:\n" + instance.getCop().toStringFile());
 
-            Athena solver = new Athena(instance.getCop(),"min", "sum");
+            Athena solver = new Athena(instance.getCop(), "min", "sum");
             solver.setIterationsNumber(100);
             solver.solve();
             solver.conclude();
-            System.out.println("Value: "+ instance.getCop().actualValue());
+            System.out.println("Value: " + instance.getCop().actualValue());
 
 
         } catch (IllegalArgumentException ex) {
