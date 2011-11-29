@@ -122,8 +122,9 @@ public class Agent {
     /**
      * Send Q-messages phase.
      * @throws PostServiceNotSetException if ps not set.
+     * @return true if at least one message has been updated
      */
-    public void sendQMessages() throws PostServiceNotSetException{
+    public boolean sendQMessages() throws PostServiceNotSetException{
 
         if (this.postservice == null){
             throw new PostServiceNotSetException();
@@ -132,6 +133,7 @@ public class Agent {
         Iterator<NodeVariable> iteratorv = this.getVariables().iterator();
         NodeVariable variable; // = null;
         NodeFunction function = null;
+        boolean atLeastOneUpdated = false;
         while (iteratorv.hasNext()){
             variable = iteratorv.next();
 
@@ -151,7 +153,7 @@ public class Agent {
                         System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+" preparing Q from " + variable + " to " + function);
                         System.out.println("---------------------------------------");
                 }
-                this.op.updateQ(variable, function, this.postservice);
+                atLeastOneUpdated |= this.op.updateQ(variable, function, this.postservice);
                 if (debug>=1) {
                         String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                         String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -165,14 +167,17 @@ public class Agent {
             }
 
         }
+
+        return atLeastOneUpdated;
     }
 
     //////////////////////////////
     /**
      * Send R-messages phase.
      * @throws PostServiceNotSetException if ps not set.
+     * @return true if at least one message has been updated
      */
-    public void sendRMessages() throws PostServiceNotSetException{
+    public boolean sendRMessages() throws PostServiceNotSetException{
 
         if (this.postservice == null){
             throw new PostServiceNotSetException();
@@ -181,6 +186,7 @@ public class Agent {
         Iterator<NodeFunction> iteratorf = this.getFunctions().iterator();
         NodeVariable variable = null;
         NodeFunction function = null;
+        boolean atLeastOneUpdated = false;
         while (iteratorf.hasNext()){
             function = iteratorf.next();
 
@@ -199,7 +205,7 @@ public class Agent {
                         System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+"  preparing R from " + function + " to " + variable);
                         System.out.println("---------------------------------------");
                 }
-                this.op.updateR(function, variable, this.postservice);
+                atLeastOneUpdated |= this.op.updateR(function, variable, this.postservice);
                 if (debug>=1) {
                         String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                         String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -212,6 +218,7 @@ public class Agent {
             }
 
         }
+        return atLeastOneUpdated;
     }
 
     public void setFunctions(HashSet<NodeFunction> functions) {

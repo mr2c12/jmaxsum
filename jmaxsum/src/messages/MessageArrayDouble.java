@@ -63,7 +63,11 @@ public class MessageArrayDouble implements Message{
 
     public MessageArrayDouble(Node sender, Node receiver, double[] message) {
         Double[] m = new Double[message.length];
-        System.arraycopy(message, 0, m, 0, message.length);
+        // TODO: problem! does not work!
+        //System.arraycopy(message, 0, m, 0, message.length);
+        for (int index= 0; index < message.length; index++) {
+            m[index] = message[index];
+        }
         this.sender = sender;
         this.receiver = receiver;
         this.message = new MessageContentArrayDouble(m);

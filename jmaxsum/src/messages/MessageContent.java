@@ -40,7 +40,8 @@ public abstract class MessageContent {
             return false;
         }
         for (int i = 0; i < this.size(); i++) {
-            if (this.getValue(i) != ((MessageContent)mc).getValue(i)){
+            //if (this.getValue(i) != ((MessageContent)mc).getValue(i)){
+            if (!this.getValue(i).equals( ((MessageContent)mc).getValue(i) )){
                 return false;
             }
         }

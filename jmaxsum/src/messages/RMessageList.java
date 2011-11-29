@@ -23,8 +23,8 @@ public class RMessageList extends MessageList{
     }
 
 
-    public void setValue(NodeFunction f, NodeVariable v,  MessageR value){
-        super.setValue(f, v, value);
+    public boolean setValue(NodeFunction f, NodeVariable v,  MessageR value){
+        return super.setValue(f, v, value);
     }
 
     public MessageR getValue(NodeFunction f, NodeVariable v){

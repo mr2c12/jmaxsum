@@ -20,8 +20,8 @@ public class QMessageList extends MessageList{
     }
 
 
-    public void setValue(NodeVariable v, NodeFunction f, MessageQ value){
-        super.setValue(v, f, value);
+    public boolean setValue(NodeVariable v, NodeFunction f, MessageQ value){
+        return super.setValue(v, f, value);
     }
 
     public MessageQ getValue(NodeVariable v, NodeFunction f){

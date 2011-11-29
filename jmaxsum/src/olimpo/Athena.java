@@ -147,13 +147,25 @@ public class Athena {
         this.updateOnlyAtEnd = updateOnlyAtEnd;
     }
 
-    
+
+    public void solve(int n) throws PostServiceNotSetException {
+        if (n==0){
+            this.solve_fixedPoint();
+        }
+        else {
+            // TODO: n as parameter
+            // TODO: add javadoc!
+            this.iterationsNumber = n;
+            this.solve_nIteration();
+        }
+        this.conclude();
+    }
 
     /**
      * Apply the Max Sum algorithm.
      * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
      */
-    public void solve() throws PostServiceNotSetException {
+    private void solve_nIteration() throws PostServiceNotSetException {
         if (debug >= 3) {
             System.out.println("Core: init()");
         }
@@ -238,6 +250,111 @@ public class Athena {
                         agent.sendZMessages();
                         agent.updateVariableValue();
                         
+                    }
+
+        }
+
+        // REMEMBER TO CALL Athena.Conclude()
+
+    }
+
+    /**
+     * Apply the Max Sum algorithm.
+     * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
+     */
+    public void solve_fixedPoint() throws PostServiceNotSetException {
+        if (debug >= 3) {
+            System.out.println("Core: init()");
+        }
+        this.init();
+        String status = "";
+
+        if (this.pleaseReport) {
+            this.report += "iterations_number="+this.iterationsNumber+"\n";
+            this.report += "agents_number="+this.cop.getAgents().size()+"\n";
+            this.report += "variables_number="+this.cop.getNodevariables().size()+"\n";
+            this.report += "functions_number="+this.cop.getNodefunctions().size()+"\n";
+        }
+
+        Iterator<Agent> itAgent;
+        Agent agent = null;
+        boolean keepGoing = false;
+        int i = 0;
+        //for (int i = 0; i < this.iterationsNumber; i++) {
+        //do
+        do {
+            i++;
+            keepGoing = false;
+
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Iteration number "+ (i+1));
+                    System.out.println("---------------------------------------");
+            }
+
+
+            itAgent = this.cop.getAgents().iterator();
+            while (itAgent.hasNext()) {
+                agent = itAgent.next();
+                if (debug>=1) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "at iteration "+ (i+1) +" using agent "+ agent + "----------------------------------------------------------");
+                        System.out.println("---------------------------------------");
+                }
+
+                //agent.sendRMessages();
+                keepGoing |= agent.sendQMessages();
+                keepGoing |= agent.sendRMessages();
+
+                if (!this.updateOnlyAtEnd) {
+                    agent.sendZMessages();
+                    agent.updateVariableValue();
+
+
+                    //System.out.println("iteration_" + (i+1) + "=" + cop.actualValue() + "\n");
+                    status = this.stringStatus((i+1));
+                    System.out.println(status);
+                    if (this.pleaseReport) {
+                        this.report += status +"\n";
+                    }
+
+
+
+                }
+
+            }
+
+            // pause
+
+            if (this.stepbystep) {
+                System.out.print("Iteration "+(i+1)+"/"+ this.iterationsNumber+" completed, press enter to continue");
+                try {
+                    System.in.read();
+                } catch (IOException ex) {
+                    //skip
+                }
+                System.out.println("");
+            }
+
+
+            // continue
+        //while
+        } while (keepGoing);
+
+        //finish
+
+        if (this.updateOnlyAtEnd) {
+                    // after the cicle, computeZ and update the variables.
+                    itAgent = this.cop.getAgents().iterator();
+                    while (itAgent.hasNext()) {
+                        agent = itAgent.next();
+                        agent.sendZMessages();
+                        agent.updateVariableValue();
+
                     }
 
         }

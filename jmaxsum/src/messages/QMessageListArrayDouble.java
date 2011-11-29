@@ -30,8 +30,8 @@ public class QMessageListArrayDouble extends QMessageList{
         super();
     }
 
-    public void setValue(NodeVariable v, NodeFunction f, MessageQArrayDouble value){
-        super.setValue(v, f, value);
+    public boolean setValue(NodeVariable v, NodeFunction f, MessageQArrayDouble value){
+        return super.setValue(v, f, value);
     }
 
     @Override

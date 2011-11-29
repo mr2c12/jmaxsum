@@ -30,8 +30,8 @@ public class RMessageListArrayDouble extends RMessageList{
         super();
     }
 
-    public void setValue( NodeFunction f, NodeVariable v, MessageRArrayDouble value){
-        super.setValue(v, f, value);
+    public boolean setValue( NodeFunction f, NodeVariable v, MessageRArrayDouble value){
+        return super.setValue(v, f, value);
     }
 
     @Override

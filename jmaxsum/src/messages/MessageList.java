@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class MessageList {
 
 
+    final static int debug = test.DebugVerbosity.debugMessageList;
     /**
      * The hashmap contains the list of message.
      * Each message is identified by a couple of keys.
@@ -25,12 +26,40 @@ public class MessageList {
      * @param c1 the first key
      * @param c2 the second key
      * @param value the message, can be null
+     * @return true if the new message is different
      */
-    public void setValue(Object c1, Object c2, Message value){
+    public boolean setValue(Object c1, Object c2, Message value){
+        boolean retVal;
         if (!(this.messages.containsKey(c1))){
             this.messages.put(c1, new HashMap<Object,Message>());
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "entry does not exists: return false (different)");
+                    System.out.println("---------------------------------------");
+            }
+            retVal = true;
+        }
+        else {
+            if (debug>=3) {
+                if (!value.equals(( this.messages.get(c1) ).get(c2))) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "saving "+value+" instead of "+(this.messages.get(c1) ).get(c2));
+                    System.out.println("---------------------------------------");
+                }
+            }
+            retVal = !value.equals(
+                    ( this.messages.get(c1) ).get(c2)
+                    );
+
+                    
         }
         ( this.messages.get(c1) ).put(c2, value);
+
+        return retVal;
     }
 
     /**

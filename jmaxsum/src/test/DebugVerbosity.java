@@ -93,9 +93,12 @@ public class DebugVerbosity {
     public static final int debugBoundedMaxSum = 0
             + DebugVerbosity.debug;
 
-    public static final int debugPowerGrid = 3
+    public static final int debugPowerGrid = 0
             + DebugVerbosity.debug;
 
-    public static final int debugCOP_Instance = 3
+    public static final int debugCOP_Instance = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugMessageList = 3
             + DebugVerbosity.debug;
 }

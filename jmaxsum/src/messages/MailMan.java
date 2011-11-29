@@ -33,12 +33,12 @@ public class MailMan implements PostService{
         this.rmessages = rmessages;
     }
 
-    public void sendQMessage(NodeVariable x, NodeFunction f, MessageQ value) {
-        this.qmessages.setValue(x, f, value);
+    public boolean sendQMessage(NodeVariable x, NodeFunction f, MessageQ value) {
+        return this.qmessages.setValue(x, f, value);
     }
 
-    public void sendRMessage(NodeFunction f, NodeVariable x, MessageR value) {
-        this.rmessages.setValue(f, x, value);
+    public boolean sendRMessage(NodeFunction f, NodeVariable x, MessageR value) {
+        return this.rmessages.setValue(f, x, value);
     }
 
     public MessageQ readQMessage(NodeVariable x, NodeFunction f) {

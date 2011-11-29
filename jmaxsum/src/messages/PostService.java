@@ -16,15 +16,17 @@ public interface PostService {
      * @param x the NodeVariable that is the origin of the message
      * @param f the NodeFunction that is the receiver of the message
      * @param value the value of the message
+     * @return true if the new value is different
      */
-    void sendQMessage(NodeVariable x, NodeFunction f, MessageQ value);
+    boolean sendQMessage(NodeVariable x, NodeFunction f, MessageQ value);
     /**
      * Takes a message R from f to x and it's value. It can be stored in a local enviroment or sent to the agent.
      * @param f the NodeFunction that is the origin of the message
      * @param x the NodeVariable that is the receiver of the message
      * @param value the value of the message
+     * @return true if the new value is different
      */
-    void sendRMessage(NodeFunction f, NodeVariable x, MessageR value);
+    boolean sendRMessage(NodeFunction f, NodeVariable x, MessageR value);
     /**
      * Returns the value of the q-message from x to f
      * @param x NodeVariable sender

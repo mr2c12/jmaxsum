@@ -122,7 +122,7 @@ public class MSumOperator implements Operator{
     
     
 
-    public void updateQ(NodeVariable x, NodeFunction f, PostService postservice) {
+    public boolean updateQ(NodeVariable x, NodeFunction f, PostService postservice) {
         NodeFunction function = null;
 
         LinkedList<MessageR> rmessages = new LinkedList<MessageR>();
@@ -176,10 +176,10 @@ public class MSumOperator implements Operator{
             messageq = this.otimes.nullMessage(x, function, x.size());
         }
         
-        postservice.sendQMessage(x, f, messageq);
+        return postservice.sendQMessage(x, f, messageq);
     }
 
-    public void updateR(NodeFunction f, NodeVariable x, PostService postservice) {
+    public boolean updateR(NodeFunction f, NodeVariable x, PostService postservice) {
         NodeVariable variable = null;
 
         LinkedList<MessageQ> qmessages = new LinkedList<MessageQ>();
@@ -225,7 +225,7 @@ public class MSumOperator implements Operator{
                 System.out.println("---------------------------------------");
         }
 
-        postservice.sendRMessage(f, x, messager);
+        return postservice.sendRMessage(f, x, messager);
     }
 
     public void updateZ(NodeVariable x, PostService ps) {

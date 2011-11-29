@@ -46,7 +46,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test43_mod.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
             };
 
@@ -92,15 +92,15 @@ public class Main {
                 Athena core = new Athena(cop,"max", "sum");
                 core.setIterationsNumber(100);
                 core.setStepbystep(false);
-                //core.setUpdateOnlyAtEnd(false);
-                core.solve();
-                core.conclude();
+                core.setUpdateOnlyAtEnd(false);
+                core.solve(0);
+                
 
                 /*
                 Athena core2 = new Athena(cop2,"max", "sum");
                 core2.setIterationsNumber(500);
                 core2.setStepbystep(false);
-                core2.solve();
+                core2.solve_nIteration();
                 core2.conclude();
                 */
                 /*
@@ -108,7 +108,7 @@ public class Main {
                 Athena core3 = new Athena(cop3);
                 core3.setIterationsNumber(500);
                 core3.setStepbystep(false);
-                core3.solve();
+                core3.solve_nIteration();
                 core3.conclude();
                  System.out.println("original value(cop3)= " + cop3.actualValue());
                 */
@@ -159,7 +159,7 @@ public class Main {
             report += ".report";
             core.pleaseReport(report);
 
-            core.solve();
+            core.solve_nIteration();
 
             cop = su.fixItUp();
 
