@@ -38,7 +38,7 @@ public class Main {
 
             String[] paths = {
                 //"/home/mik/NetBeansProjects/maxSum/copTest.cop2",
-                //"/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
+                "/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper_multi.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/simpleTest.cop2",
@@ -47,7 +47,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
-                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
+                //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
             };
 
             for (String path : paths){
@@ -59,7 +59,7 @@ public class Main {
                         System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Main: creating the COP instance from " + path);
                         System.out.println("---------------------------------------");
                 }
-                COP_Instance cop = Cerberus.getInstanceFromFile(path,true);
+                COP_Instance cop = Cerberus.getInstanceFromFile(path,false);
                 //COP_Instance cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/problem.cop2",true);
 
                 if (debug>=3) {

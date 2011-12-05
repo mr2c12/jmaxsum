@@ -32,7 +32,7 @@ public class GridInstanceCreator {
 
     public static void main(String[] args){
         //createNInstances(n, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
-        createNInstances(1,1, 100000, 3, 2, 0.28, 0.2);
+        createNInstances(2,1, 100000, 3, 2, 0.28, 0.2);
 
     }
 

@@ -17,6 +17,7 @@
 
 package messages;
 
+import java.util.Arrays;
 import misc.Utils;
 
 /**
@@ -26,7 +27,7 @@ import misc.Utils;
 public class MessageContentArrayDouble extends  MessageContent{
 
     protected Double[] message;
-
+    public static double epsilon=1E-7;
     final static int debug = test.DebugVerbosity.debugMessageContentMessageArrayDouble;
 
     public MessageContentArrayDouble(Double[] message){
@@ -85,5 +86,29 @@ public class MessageContentArrayDouble extends  MessageContent{
         System.arraycopy(this.message, 0, newmessage, 0, this.message.length);
         return new MessageContentArrayDouble(newmessage);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MessageContentArrayDouble other = (MessageContentArrayDouble) obj;
+
+        for (int i = 0; i < message.length; i++) {
+            if (Math.abs(message[i]-other.message[i]) > MessageContentArrayDouble.epsilon) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+
+
+
 
 }
