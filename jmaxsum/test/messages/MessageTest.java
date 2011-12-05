@@ -60,8 +60,7 @@ public class MessageTest {
         int expResult = 0;
         int result = instance.size();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -75,8 +74,7 @@ public class MessageTest {
         double expResult = 0.0;
         double result = instance.getValue(position);
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -89,8 +87,7 @@ public class MessageTest {
         double value = 0.0;
         Message instance = new MessageImpl();
         instance.setValue(position, value);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -134,8 +131,7 @@ public class MessageTest {
         MessageContent message = null;
         Message instance = new MessageImpl();
         instance.setMessage(message);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -161,8 +157,7 @@ public class MessageTest {
         Node n = null;
         Message instance = new MessageImpl();
         instance.setSender(n);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -174,8 +169,7 @@ public class MessageTest {
         Node n = null;
         Message instance = new MessageImpl();
         instance.setReceiver(n);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -188,8 +182,7 @@ public class MessageTest {
         Node expResult = null;
         Node result = instance.getReceiver();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -202,8 +195,7 @@ public class MessageTest {
         Node expResult = null;
         Node result = instance.getSender();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     public class MessageImpl implements Message {

@@ -29,6 +29,8 @@ public class Load {
     protected double requiredPower;
     HashSet<Generator> generators;
     protected static HashMap<Integer, Load> loadsMap = new HashMap<Integer, Load>();
+    // TODO: lastid
+    static int lastId = -1;
 
     private Load(int id, double power) {
         this.id = id;
@@ -40,15 +42,17 @@ public class Load {
         if (!Load.loadsMap.containsKey(id)) {
             Load.loadsMap.put(id, new Load(id, power));
         }
+        lastId = id;
         return Load.loadsMap.get(id);
     }
 
     public static void resetLoads(){
         Load.loadsMap = new HashMap<Integer, Load>();
+        lastId=-1;
     }
 
     public static Load getNextLoad(double power) {
-        int id = 0;
+        int id = lastId + 1 ;
         while (Load.loadsMap.containsKey(id)) {
             id++;
         }

@@ -47,7 +47,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
-                //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
+                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
             };
 
             for (String path : paths){
@@ -59,7 +59,7 @@ public class Main {
                         System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Main: creating the COP instance from " + path);
                         System.out.println("---------------------------------------");
                 }
-                COP_Instance cop = Cerberus.getInstanceFromFile(path,false);
+                COP_Instance cop = Cerberus.getInstanceFromFile(path,true);
                 //COP_Instance cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/problem.cop2",true);
 
                 if (debug>=3) {
@@ -70,9 +70,6 @@ public class Main {
                         System.out.println("---------------------------------------");
                 }
 
-                System.out.println("Original instance value:\n"+cop.toTestString());
-
-                System.out.println("------------------------------------------------");
                 
                 //COP_Instance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
 
@@ -90,10 +87,11 @@ public class Main {
 
                 
                 Athena core = new Athena(cop,"max", "sum");
-                core.setIterationsNumber(100);
+                core.setIterationsNumber(10000);
                 core.setStepbystep(false);
-                core.setUpdateOnlyAtEnd(false);
-                core.solve(0);
+                core.setUpdateOnlyAtEnd(true);
+                core.solve_complete();
+                System.exit(0);
                 
 
                 /*

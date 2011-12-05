@@ -140,7 +140,7 @@ public class Hermes {
                 core.pleaseReport(reportV);
             }
 
-            core.solve(iterationsV);
+            core.solve();
 
             // set the variables value to the original instance
             ic.setOriginalVariablesValues();

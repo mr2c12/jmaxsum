@@ -31,6 +31,8 @@ public class Generator {
     protected CO2Function co2 = null;
     protected static HashMap<Integer, Generator> generatorsMap = new HashMap<Integer, Generator>();
     HashSet<Load> loads;
+    // TODO: lastid
+    static int lastId = 0;
 
     private Generator(int id, double power) {
         this.id = id;
@@ -56,17 +58,19 @@ public class Generator {
 
     public static void resetGenerators() {
         Generator.generatorsMap = new HashMap<Integer, Generator>();
+        lastId = 0;
     }
 
     public static Generator getGenerator(int id, double power) {
         if (!Generator.generatorsMap.containsKey(id)) {
             Generator.generatorsMap.put(id, new Generator(id, power));
         }
+        lastId = id;
         return Generator.generatorsMap.get(id);
     }
 
     public static Generator getNextGenerator(double power) {
-        int id = 0;
+        int id = lastId + 1 ;
         while (Generator.generatorsMap.containsKey(id)) {
             id++;
         }

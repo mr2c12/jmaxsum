@@ -209,4 +209,16 @@ public class Utils {
        }
        return res;
     }
+
+    public static double[] opArray (int operation, double[] a1, double[] a2) throws LengthMismatchException, NullPointerException{
+       if (a1.length != a2.length){
+           throw new LengthMismatchException();
+       }
+       double[] res = new double[a1.length];
+       for(int index = 0; index < a1.length; index++){
+
+           res[index] = a1[index] + ( a2[index]*operation);
+       }
+       return res;
+    }
 }

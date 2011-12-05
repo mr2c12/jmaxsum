@@ -184,16 +184,16 @@ public class BoundedMaxSum {
         }
 
 
-        // TODO: change it to double, using +/- inf ?
+        
 
         // used for maximization of f over its arguments, except x
-        Double[] maxes = new Double[maxes_size];// new double[maxes_size];
+        double[] maxes = new double[maxes_size];// new double[maxes_size];
         // used for minimization of f over its arguments, except x
-        Double[] minis = new Double[maxes_size];
+        double[] minis = new double[maxes_size];
         // both initializated to null (special value that represent -infinite or +infinite)
         for (int i = 0; i< maxes.length; i++) {
-            maxes[i] = null;
-            minis[i] = null;
+            maxes[i] = Double.NEGATIVE_INFINITY;
+            minis[i] = Double.POSITIVE_INFINITY;
         }
 
 
@@ -261,18 +261,12 @@ public class BoundedMaxSum {
                     values[fixed_x_position] = n_arg;
                     temp_evaluation = fe.evaluate(fe.functionArgument(values));
                     // max
-                    if (maxes[maxes_index_to_change] == null){
-                        maxes[maxes_index_to_change] = temp_evaluation;
-                    }
-                    else if(maxes[maxes_index_to_change] < temp_evaluation)
+                    if(maxes[maxes_index_to_change] < temp_evaluation)
                     {
                         maxes[maxes_index_to_change] = temp_evaluation;
                     }
                     // min
-                    if (minis[maxes_index_to_change] == null){
-                        minis[maxes_index_to_change] = temp_evaluation;
-                    }
-                    else if(minis[maxes_index_to_change] > temp_evaluation)
+                    if(minis[maxes_index_to_change] > temp_evaluation)
                     {
                         minis[maxes_index_to_change] = temp_evaluation;
                     }
@@ -301,25 +295,19 @@ public class BoundedMaxSum {
             values[fixed_x_position] = n_arg;
             temp_evaluation = fe.evaluate(fe.functionArgument(values));
             // max
-            if (maxes[maxes_index_to_change] == null){
-                maxes[maxes_index_to_change] = temp_evaluation;
-            }
-            else if(maxes[maxes_index_to_change] < temp_evaluation)
+            if(maxes[maxes_index_to_change] < temp_evaluation)
             {
                 maxes[maxes_index_to_change] = temp_evaluation;
             }
             // min
-            if (minis[maxes_index_to_change] == null){
-                minis[maxes_index_to_change] = temp_evaluation;
-            }
-            else if(minis[maxes_index_to_change] > temp_evaluation)
+            if(minis[maxes_index_to_change] > temp_evaluation)
             {
                 minis[maxes_index_to_change] = temp_evaluation;
             }
         }
         // maximization ends
-        // TODO: change it to double, using +/- inf ?
-        Double[] diff = Utils.opArray(-1,maxes,minis);
+        
+        double[] diff = Utils.opArray(-1,maxes,minis);
 
         double weight = diff[0];
         for (int j = 1; j < diff.length; j++) {

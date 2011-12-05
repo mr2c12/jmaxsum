@@ -135,7 +135,7 @@ public class PowerGridTest {
 
             Athena solver = new Athena(instance.getCop(), "min", "sum");
             solver.setIterationsNumber(100);
-            solver.solve(100);
+            solver.solve();
             solver.conclude();
             System.out.println("Value: " + instance.getCop().actualValue());
 

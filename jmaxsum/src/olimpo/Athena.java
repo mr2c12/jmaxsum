@@ -16,7 +16,9 @@
  */
 package olimpo;
 
+import exception.MessagesFixedPointException;
 import exception.PostServiceNotSetException;
+import exception.VariableNotSetException;
 import java.io.IOException;
 import java.util.Iterator;
 import maxsum.Agent;
@@ -49,6 +51,7 @@ public class Athena {
     private Operator op;
     private OTimes otimes;
     private OPlus oplus;
+    private double latestValue_start;
     private int iterationsNumber = 3;
     final static int debug = test.DebugVerbosity.debugAthena;
     private boolean stepbystep = false;
@@ -82,9 +85,11 @@ public class Athena {
         }
         if (plus_operation.equalsIgnoreCase("max")){
             this.oplus = new OPlus_MaxSum(mfactory);
+            this.latestValue_start = Double.NEGATIVE_INFINITY;
         }
         else if (plus_operation.equalsIgnoreCase("min")){
             this.oplus = new OPlus_MinSum(mfactory);
+            this.latestValue_start = Double.POSITIVE_INFINITY;
         } else {
             throw new IllegalArgumentException("Plus Operation \""+plus_operation+"\" not recognized, sorry");
         }
@@ -148,21 +153,16 @@ public class Athena {
     }
 
 
-    public void solve(int n) throws PostServiceNotSetException {
-        if (n==0){
-            this.solve_fixedPoint();
-        }
-        else {
-            // TODO: n as parameter
-            // TODO: add javadoc!
-            this.iterationsNumber = n;
-            this.solve_nIteration();
-        }
-        this.conclude();
+    // TODO: change solver to fp + n
+    // TODO: stop when fixed
+    // TODO: compute time used for solve
+    public void solve() throws PostServiceNotSetException {
+        this.solve_complete();
     }
 
     /**
      * Apply the Max Sum algorithm.
+     * Deprecated.
      * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
      */
     private void solve_nIteration() throws PostServiceNotSetException {
@@ -253,13 +253,172 @@ public class Athena {
                     }
 
         }
+        
+        // call conclude
 
-        // REMEMBER TO CALL Athena.Conclude()
+    }
+
+    public void solve_complete() throws PostServiceNotSetException {
+        if (debug >= 3) {
+            System.out.println("Core: init()");
+        }
+        this.init();
+        String status = "";
+
+        this.report += "max_iterations_number="+this.iterationsNumber+"\n";
+        this.report += "agents_number="+this.cop.getAgents().size()+"\n";
+        this.report += "variables_number="+this.cop.getNodevariables().size()+"\n";
+        this.report += "functions_number="+this.cop.getNodefunctions().size()+"\n";
+
+
+        Iterator<Agent> itAgent;
+        Agent agent = null;
+
+        double latestValue = Double.NaN;
+        double actualValue;
+        int iteration_latestValue;
+
+        long startTime = System.currentTimeMillis();
+        boolean keepGoing;
+
+        int i=0;
+
+        try{
+            for ( i = 0; i < this.iterationsNumber; i++) {
+
+                keepGoing = false;
+
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Iteration number "+ (i+1));
+                        System.out.println("---------------------------------------");
+                }
+
+
+                itAgent = this.cop.getAgents().iterator();
+                while (itAgent.hasNext()) {
+                    agent = itAgent.next();
+                    if (debug>=1) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "at iteration "+ (i+1) +" using agent "+ agent + "----------------------------------------------------------");
+                            System.out.println("---------------------------------------");
+                    }
+
+
+                    keepGoing |= agent.sendQMessages();
+                    keepGoing |= agent.sendRMessages();
+
+                    if (!keepGoing){
+                        // messages not changed!
+                        throw new MessagesFixedPointException();
+                    }
+
+
+
+                    if (!this.updateOnlyAtEnd) {
+                        agent.sendZMessages();
+                        agent.updateVariableValue();
+                        try {
+                            actualValue = this.cop.actualValue();
+                            if (actualValue != latestValue){
+                                latestValue = actualValue;
+                                iteration_latestValue = i;
+                            }
+                        } catch (VariableNotSetException ex) {
+                            ex.printStackTrace();
+                        }
+
+
+                        //System.out.println("iteration_" + (i+1) + "=" + cop.actualValue() + "\n");
+                        status = this.stringStatus((i+1));
+                        System.out.println(status);
+                        if (this.pleaseReport) {
+                            this.report += status +"\n";
+                        }
+
+
+
+                    }
+
+                }
+
+                // pause
+
+                if (this.stepbystep) {
+                    System.out.print("Iteration "+(i+1)+"/"+ this.iterationsNumber+" completed, press enter to continue");
+                    try {
+                        System.in.read();
+                    } catch (IOException ex) {
+                        //skip
+                    }
+                    System.out.println("");
+                }
+
+
+                // continue
+            }
+        } catch (MessagesFixedPointException e){
+            
+        }
+
+        long timeElapsed = System.currentTimeMillis() - startTime;
+
+        //finish
+
+        if (this.updateOnlyAtEnd) {
+                    // after the cicle, computeZ and update the variables.
+                    itAgent = this.cop.getAgents().iterator();
+                    while (itAgent.hasNext()) {
+                        agent = itAgent.next();
+                        agent.sendZMessages();
+                        agent.updateVariableValue();
+
+                    }
+
+        }
+
+        try {
+            actualValue = this.cop.actualValue();
+            if (actualValue != latestValue){
+                latestValue = actualValue;
+                iteration_latestValue = i;
+            }
+        } catch (VariableNotSetException ex) {
+            ex.printStackTrace();
+        }
+
+        status = this.stringStatus((-1));
+        this.report += status +"\n";
+        this.report += "total time: "+timeElapsed+" ms\n";
+        this.report += "latest value got at iteration "+i+"\n";
+        if (this.pleaseReport) {
+
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "report to write is\n"+this.report);
+                    System.out.println("---------------------------------------");
+            }
+            try {
+                Utils.stringToFile(this.report, this.reportpath);
+            } catch (IOException ex) {
+                System.out.println("Sorry but I'm unable to write the report to the file "+this.reportpath);
+            }
+        }
+        else {
+            System.out.println(report);
+        }
 
     }
 
     /**
      * Apply the Max Sum algorithm.
+     * Deprecated.
      * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
      */
     public void solve_fixedPoint() throws PostServiceNotSetException {
@@ -365,6 +524,7 @@ public class Athena {
 
     /**
      * Write the conclusion and flush the report
+     * Deprecated.
      */
     public void conclude(){
         String status = this.stringStatus((-1));

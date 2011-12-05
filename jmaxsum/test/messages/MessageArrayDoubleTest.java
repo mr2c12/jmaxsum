@@ -64,8 +64,7 @@ public class MessageArrayDoubleTest {
         MessageContent expResult = null;
         MessageContent result = instance.getMessage();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -77,8 +76,7 @@ public class MessageArrayDoubleTest {
         MessageContent message = null;
         MessageArrayDouble instance = null;
         instance.setMessage(message);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -92,8 +90,7 @@ public class MessageArrayDoubleTest {
         double expResult = 0.0;
         double result = instance.getValue(position);
         assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -106,8 +103,7 @@ public class MessageArrayDoubleTest {
         double value = 0.0;
         MessageArrayDouble instance = null;
         instance.setValue(position, value);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -120,8 +116,7 @@ public class MessageArrayDoubleTest {
         int expResult = 0;
         int result = instance.size();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -134,8 +129,7 @@ public class MessageArrayDoubleTest {
         String expResult = "";
         String result = instance.toString();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -149,8 +143,7 @@ public class MessageArrayDoubleTest {
         boolean expResult = false;
         boolean result = instance.equals(m);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -164,8 +157,7 @@ public class MessageArrayDoubleTest {
         boolean expResult = false;
         boolean result = instance.equalContent(other);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -177,8 +169,7 @@ public class MessageArrayDoubleTest {
         Node n = null;
         MessageArrayDouble instance = null;
         instance.setSender(n);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -190,8 +181,7 @@ public class MessageArrayDoubleTest {
         Node n = null;
         MessageArrayDouble instance = null;
         instance.setReceiver(n);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -204,8 +194,7 @@ public class MessageArrayDoubleTest {
         Node expResult = null;
         Node result = instance.getReceiver();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -218,8 +207,7 @@ public class MessageArrayDoubleTest {
         Node expResult = null;
         Node result = instance.getSender();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
 }
