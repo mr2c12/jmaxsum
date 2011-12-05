@@ -75,7 +75,7 @@ public class PowerGrid {
 
     public PowerGrid(int core, int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta) throws IllegalArgumentException, NoMoreGeneratorsException, InitializatedException {
         this();
-        this.initRandomMultiCore(core,numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
+        this.initRandomMultiCore(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
         this.initialized = true;
     }
 
@@ -102,7 +102,10 @@ public class PowerGrid {
         Random rnd = new Random();
         Generator gen;
         Load ld;
+        LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
 
+        LinkedList<Load> loads_to_link = new LinkedList<Load>();
+        long startTime = System.currentTimeMillis();
         // create the generators
         for (int i_gen = 0; i_gen < numberOfGenerators; i_gen++) {
             gen = Generator.getNextGenerator(1);
@@ -130,6 +133,7 @@ public class PowerGrid {
                 System.out.println("---------------------------------------");
             }
 
+            int numberOfLoadsToLinkAdded = 0;
 
             // create D loads for each generator
             for (int id_load = 0; id_load < numberOfLoadsForGenerator; id_load++) {
@@ -138,6 +142,24 @@ public class PowerGrid {
                 ld = Load.getNextLoad(
                         (rnd.nextDouble() * delta) + (xmean - (delta / 2)));
                 this.loads.add(ld);
+
+
+                if (numberOfLoadsToLinkAdded >= R) {
+                    // nothing, all done
+                } else {
+                    if ((numberOfLoadsForGenerator - id_load) == (R - numberOfLoadsToLinkAdded)) {
+                        loads_to_link.add(ld);
+                        numberOfLoadsToLinkAdded++;
+                    } else if ((numberOfLoadsForGenerator - id_load) > (R - numberOfLoadsToLinkAdded)) {
+                        if (rnd.nextInt(2) == 1) {
+                            loads_to_link.add(ld);
+                            numberOfLoadsToLinkAdded++;
+                        }
+                        else {
+                            //not add
+                        }
+                    }
+                }
 
                 // link 'em all!
                 ld.addGenerator(gen);
@@ -151,6 +173,9 @@ public class PowerGrid {
                     System.out.println("---------------------------------------");
                 }
             }
+
+            // add generator
+            generators_that_admit_another_link.add(gen);
         }
 
         if (debug >= 3) {
@@ -180,16 +205,16 @@ public class PowerGrid {
         // phase 2: R
 
         //HashSet<Generator> generators_biggerable = (HashSet<Generator>) this.generators.clone();
-        LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
+        /*LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
 
-        LinkedList<Load> loads_to_link = new LinkedList<Load>();
+        LinkedList<Load> loads_to_link = new LinkedList<Load>();*/
         Load load_to_link;
         Generator generator_to_link;
         int position;
 
 
 
-        for (Generator g : this.generators) {
+        /*for (Generator g : this.generators) {
 
             // pick R random loads from it
             LinkedList<Load> temp_load_list = new LinkedList<Load>(g.getLoads());
@@ -204,6 +229,14 @@ public class PowerGrid {
             }
 
 
+        }*/
+
+        if (debug >= 1) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Phase 1 (single core): " + (System.currentTimeMillis() - startTime + " ms"));
+            System.out.println("---------------------------------------");
         }
 
         if (debug >= 3) {
@@ -271,6 +304,13 @@ public class PowerGrid {
 
         }
 
+        if (debug >= 1) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Phase 1+2 (single core): " + (System.currentTimeMillis() - startTime + " ms"));
+            System.out.println("---------------------------------------");
+        }
 
 
 
@@ -327,60 +367,65 @@ public class PowerGrid {
 
             long startTime = System.currentTimeMillis();
 
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Creating "+coreNumber+" cores");
-                    System.out.println("---------------------------------------");
+            if (debug >= 3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Creating " + coreNumber + " cores");
+                System.out.println("---------------------------------------");
             }
+
+
+            LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
+
+            LinkedList<Load> loads_to_link = new LinkedList<Load>();
 
             int generatorForeachCore = numberOfGenerators / coreNumber;
 
             LinkedList<PGCreator> pgs = new LinkedList<PGCreator>();
 
-            for (int core_i= 1; core_i < coreNumber; core_i++) {
-                PGCreator pg = new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads);
+            for (int core_i = 1; core_i < coreNumber; core_i++) {
+                PGCreator pg = new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link);
                 pg.run();
                 pgs.add(pg);
             }
             // last core, the remaining
-            PGCreator pg = new PGCreator(generatorForeachCore+(numberOfGenerators % coreNumber), numberOfLoadsForGenerator, R, xmean, delta, generators, loads);
+            PGCreator pg = new PGCreator(generatorForeachCore + (numberOfGenerators % coreNumber), numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link);
             pg.run();
             pgs.add(pg);
 
 
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Created "+ pgs.size()+" cores");
-                    System.out.println("---------------------------------------");
+            if (debug >= 3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Created " + pgs.size() + " cores");
+                System.out.println("---------------------------------------");
             }
 
             // TODO: wait until there is a thread alive
             boolean finished = false;
             do {
                 finished = true;
-                for (PGCreator pgit : pgs){
-                    if (pgit.isAlive()){
+                for (PGCreator pgit : pgs) {
+                    if (pgit.isAlive()) {
                         finished = false;
                         break;
                     }
                 }
                 try {
-                    if (debug>=3) {
-                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                            System.out.println("---------------------------------------");
-                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "At least one thread up and running, waiting..");
-                            System.out.println("---------------------------------------");
+                    if (debug >= 3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "At least one thread up and running, waiting..");
+                        System.out.println("---------------------------------------");
                     }
                     Thread.sleep(50);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
-            }while (!finished);
+            } while (!finished);
 
 
 
@@ -411,23 +456,21 @@ public class PowerGrid {
             }
 
             /*if (true) {
-                return;
+            return;
             }*/
 
-            if (debug>=1) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Phase 1: "+(System.currentTimeMillis()-startTime+" ms"));
-                    System.out.println("---------------------------------------");
+            if (debug >= 1) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Phase 1: " + (System.currentTimeMillis() - startTime + " ms"));
+                System.out.println("---------------------------------------");
             }
 
             // phase 2: R
 
             //HashSet<Generator> generators_biggerable = (HashSet<Generator>) this.generators.clone();
-            LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
 
-            LinkedList<Load> loads_to_link = new LinkedList<Load>();
             Load load_to_link;
             Generator generator_to_link;
             int position;
@@ -435,22 +478,22 @@ public class PowerGrid {
 
             // TODO: at creation time!
 
-            for (Generator g : this.generators) {
+            /*for (Generator g : this.generators) {
 
-                // pick R random loads from it
-                LinkedList<Load> temp_load_list = new LinkedList<Load>(g.getLoads());
-                for (int i = 0; i < R; i++) {
-                    loads_to_link.add(
-                            temp_load_list.remove(
-                            rnd.nextInt(temp_load_list.size())));
-                }
-
-                if (g.howManyLoads() <= numberOfLoadsForGenerator + R) {
-                    generators_that_admit_another_link.add(g);
-                }
-
-
+            // pick R random loads from it
+            LinkedList<Load> temp_load_list = new LinkedList<Load>(g.getLoads());
+            for (int i = 0; i < R; i++) {
+            loads_to_link.add(
+            temp_load_list.remove(
+            rnd.nextInt(temp_load_list.size())));
             }
+
+            if (g.howManyLoads() <= numberOfLoadsForGenerator + R) {
+            generators_that_admit_another_link.add(g);
+            }
+
+
+            }*/
 
             if (debug >= 3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -545,12 +588,12 @@ public class PowerGrid {
                 System.out.println("---------------------------------------");
             }
             //else ends
-            if (debug>=1) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Phase 1+2: "+(System.currentTimeMillis()-startTime+" ms"));
-                    System.out.println("---------------------------------------");
+            if (debug >= 1) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Phase 1+2: " + (System.currentTimeMillis() - startTime + " ms"));
+                System.out.println("---------------------------------------");
             }
         }
 
