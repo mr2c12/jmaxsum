@@ -98,7 +98,7 @@ public class MessageContentArrayDouble extends  MessageContent{
         final MessageContentArrayDouble other = (MessageContentArrayDouble) obj;
 
         for (int i = 0; i < message.length; i++) {
-            if (Math.abs(message[i]-other.message[i]) > MessageContentArrayDouble.epsilon) {
+            if (Math.abs(message[i]-other.message[i]) >= MessageContentArrayDouble.epsilon) {
                 return false;
             }
 
