@@ -337,11 +337,12 @@ public abstract class FunctionEvaluator {
 
 
     /**
-     * Compute the maximums of F fixed x
+     * Compute the maximums of F over x, i.e. max_{x}(F)
      * @param x the parameter to project the maximization
      * @return the maximums array of F
      * @throws ParameterNotFoundException if x is not a parameter of this Function Evaluator
      */
+    
     public double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
         if (!this.parameters.contains(x)) {
             throw new ParameterNotFoundException(this+" does NOT contain "+x);
@@ -371,7 +372,7 @@ public abstract class FunctionEvaluator {
         double[] maxes = new double[maxes_size];
 
         for (int i = 0; i< maxes.length; i++) {
-            maxes[i] = -100000;
+            maxes[i] = Double.NEGATIVE_INFINITY;
         }
 
 
@@ -461,6 +462,8 @@ public abstract class FunctionEvaluator {
         return maxes;
 
     }
+    
+
 
     /**
      * Remove the collection of args. It's a minimization over the removing args.<br/>
@@ -865,6 +868,48 @@ public abstract class FunctionEvaluator {
         }
 
     }
+
+
+    // TODO: minimization and maximization!
+    /**
+     * Minimize the function over all other parameters except x.<br/>
+     * For example, given F(x1,x2,x3):<br/>
+     * F.minimizeWRT(x1) = min_{x2,x3}(F(x1,x2,x3))
+     * @param x the variable of interest
+     * @return an array containing the minimum value for each possible argument of x
+     */
+    public abstract double[] minimizeWRT(NodeVariable x) throws ParameterNotFoundException;
+    
+    /**
+     * Required by oplus: use a modifier table to change function values.<br/>
+     * Minimize the function over all other parameters except x.<br/>
+     * For example, given F(x1,x2,x3):<br/>
+     * F.minimizeWRT(x1) = min_{x2,x3}(F(x1,x2,x3))
+     * @param x the variable of interest
+     * @return an array containing the minimum value for each possible argument of x
+     */
+    public abstract double[] minimizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException;
+    
+
+    /**
+     * Maximize the function over all other parameters except x.<br/>
+     * For example, given F(x1,x2,x3):<br/>
+     * F.maximizeWRT(x1) = max_{x2,x3}(F(x1,x2,x3))
+     * @param x the variable of interest
+     * @return an array containing the maximum value for each possible argument of x
+     */
+    public abstract double[] maximizeWRT(NodeVariable x) throws ParameterNotFoundException;
+
+    /**
+     * Required by oplus: use a modifier table to change function values.<br/>
+     * Maximize the function over all other parameters except x.<br/>
+     * For example, given F(x1,x2,x3):<br/>
+     * F.maximizeWRT(x1) = max_{x2,x3}(F(x1,x2,x3))
+     * @param x the variable of interest
+     * @return an array containing the maximum value for each possible argument of x
+     */
+    public abstract double[] maximizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException;
+
 
     public static String buildString(int[] values){
         String string ="";

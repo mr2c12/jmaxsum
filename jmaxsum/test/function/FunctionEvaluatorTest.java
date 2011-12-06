@@ -17,6 +17,7 @@
 
 package function;
 
+import exception.ParameterNotFoundException;
 import java.util.LinkedList;
 import java.util.Collection;
 import misc.Utils;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import messages.MessageQ;
+import messages.MessageQArrayDouble;
 import olimpo.Cerberus;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,7 +54,8 @@ public class FunctionEvaluatorTest {
     public static void setUpClass() throws Exception {
         COP_Instance cop = null;
         try {
-            cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
+            //cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_simple.cop2");
+            cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/jMaxSumSVN/bounded_arity5.cop2");
         } catch (InvalidInputFileException ex) {
             ex.printStackTrace();
         }
@@ -127,13 +130,73 @@ public class FunctionEvaluatorTest {
     /**
      * Test of maxFfixedX method, of class FunctionEvaluator.
      */
-    //@Test
+    @Test
     public void testMaxFfixedX() throws Exception {
         System.out.println("maxFfixedX");
         NodeVariable x = NodeVariable.getNodeVariable(2);
         System.out.println("Found variable "+x);
+        System.out.println("Function selected:\n"+instance);
         double[] expResult = {7,5,8,9};
         double[] result = instance.maxFfixedX(x);
+        System.out.println("Result: "+Utils.toString(result));
+        assertEquals(Utils.toString(result),Utils.toString(expResult));
+    }
+
+    @Test
+    public void testMaximizeWRT() throws Exception {
+        System.out.println("MaximizeWRT");
+        NodeVariable x = NodeVariable.getNodeVariable(5);
+        System.out.println("Found variable "+x);
+
+        instance = NodeFunction.getNodeFunction(4).getFunction();
+
+        System.out.println("Function selected:\n"+instance);
+        double[] expResult = {96,98};
+        double[] result = instance.maximizeWRT(x);
+        System.out.println("Result: "+Utils.toString(result));
+        assertEquals(Utils.toString(result),Utils.toString(expResult));
+
+        expResult[0] = 3;
+        expResult[1] = 2;
+        x = NodeVariable.getNodeVariable(1);
+        result = instance.minimizeWRT(x);
+        System.out.println("Result: "+Utils.toString(result));
+        assertEquals(Utils.toString(result),Utils.toString(expResult));
+    }
+
+    @Test
+    public void testMaximizeWRTTwo() throws Exception {
+        System.out.println("MaximizeWRT");
+        NodeVariable x = NodeVariable.getNodeVariable(1);
+        System.out.println("Found variable "+x);
+
+        instance = NodeFunction.getNodeFunction(1).getFunction();
+
+        HashMap<NodeVariable, MessageQ> modifierTable = new HashMap<NodeVariable, MessageQ>();
+
+        double[] message = {1.0,20.0};
+
+        modifierTable.put(
+                NodeVariable.getNodeVariable(2),
+                new MessageQArrayDouble(x, null, message)
+                );
+
+        double[] message2 = {15.0,10.0};
+
+        modifierTable.put(
+                NodeVariable.getNodeVariable(3),
+                new MessageQArrayDouble(x, null, message2)
+                );
+
+        System.out.println("Function selected:\n"+instance);
+        double[] expResult = {42,43};
+        double[] result = instance.maximizeWRT(x,modifierTable);
+        System.out.println("Result: "+Utils.toString(result));
+        assertEquals(Utils.toString(result),Utils.toString(expResult));
+        
+        expResult[0] = 16;
+        expResult[1] = 17;
+        result = instance.minimizeWRT(x,modifierTable);
         System.out.println("Result: "+Utils.toString(result));
         assertEquals(Utils.toString(result),Utils.toString(expResult));
     }
@@ -254,6 +317,26 @@ public class FunctionEvaluatorTest {
 
         public FunctionEvaluator getClone() {
             return null;
+        }
+
+        @Override
+        public double[] minimizeWRT(NodeVariable x) throws ParameterNotFoundException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public double[] minimizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public double[] maximizeWRT(NodeVariable x) throws ParameterNotFoundException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public double[] maximizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 
