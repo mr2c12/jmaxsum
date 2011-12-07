@@ -140,6 +140,17 @@ public class TabularFunction extends FunctionEvaluator {
         return table;
     }
 
+    public NodeArgument[] getArgsFromKey(String string){
+        StringTokenizer t = new StringTokenizer(string, ";");
+        NodeArgument[] args = new NodeArgument[this.parametersNumber()];
+        int index = 0;
+        while (t.hasMoreTokens()) {
+            args[index] = NodeArgument.getNodeArgument(t.nextToken());
+            index++;
+        }
+        return args;
+    }
+
     public String toStringForFile() {
         StringBuilder string = new StringBuilder();
         HashMap<NodeArgument[], Double> table = this.getParametersCost();
