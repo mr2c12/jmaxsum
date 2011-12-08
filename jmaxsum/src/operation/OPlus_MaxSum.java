@@ -94,7 +94,7 @@ public class OPlus_MaxSum implements OPlus{
 
     public MessageR nullMessage(NodeFunction sender, NodeVariable receiver, int size) {
         double nullValue = 1.0;
-        Double[] content = new Double[size];
+        double[] content = new double[size];
         for (int i = 0; i < size; i++) {
             content[i] = nullValue;
         }
@@ -144,7 +144,7 @@ public class OPlus_MaxSum implements OPlus{
         }
 
         try {
-            int xIndex = fe.getParameterPosition(x);
+            /*int xIndex = fe.getParameterPosition(x);
 
             // number of parameters of f
             int fzParametersNumber = fe.parametersNumber();
@@ -189,7 +189,10 @@ public class OPlus_MaxSum implements OPlus{
                     System.out.println("---------------------------------------");
                     System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "maxCost is "+Utils.toString(maxCost));
                     System.out.println("---------------------------------------");
-            }
+            }*/
+
+            double[] maxCost = fe.maximizeWRT(x, modifierTable);
+
             return this.factory.getMessageR(sender, x, maxCost);
         } catch (ParameterNotFoundException ex) {
             // if x is not found, return a null message

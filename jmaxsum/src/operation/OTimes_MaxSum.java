@@ -44,7 +44,7 @@ public class OTimes_MaxSum implements OTimes{
             throw new IllegalArgumentException();
         }
 
-        Double[] content = new Double[m1.size()];
+        double[] content = new double[m1.size()];
         for (int i = 0; i < content.length; i++) {
             content[i] = m1.getValue(i) + m2.getValue(i);
         }
@@ -52,7 +52,7 @@ public class OTimes_MaxSum implements OTimes{
     }
 
     public MessageQ nullMessage(NodeVariable sender, NodeFunction receiver, int size) {
-        Double[] content = new Double[size];
+        double[] content = new double[size];
         for (int i = 0; i < content.length; i++) {
             content[i] = 0.0;
         }
@@ -111,7 +111,7 @@ public class OTimes_MaxSum implements OTimes{
             return null;
 
         int dimension = messagearray[0].size();
-        Double[] content = new Double[dimension];
+        double[] content = new double[dimension];
         for (int i = 0; i < messagearray.length; i++) {
             if (messagearray[i].size()!= dimension) {
                 throw new IllegalArgumentException();
@@ -133,11 +133,12 @@ public class OTimes_MaxSum implements OTimes{
                         System.out.println("---------------------------------------");
                 }
 
-                if (content[j] == null){
+                // TODO: check!
+                /*if (content[j] == null){
                     content[j] = messagearray[i].getValue(j);
-                } else {
+                } else {*/
                     content[j]+=messagearray[i].getValue(j);
-                }
+                //}
 
             }
         }

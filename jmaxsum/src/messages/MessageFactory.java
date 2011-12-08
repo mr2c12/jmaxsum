@@ -26,8 +26,8 @@ import factorgraph.NodeVariable;
  */
 public interface MessageFactory {
 
-    MessageQ getMessageQ(NodeVariable sender, NodeFunction receiver,Double[] content);
+    MessageQ getMessageQ(NodeVariable sender, NodeFunction receiver,double[] content);
 
-    MessageR getMessageR(NodeFunction sender, NodeVariable receiver,Double[] content);
+    MessageR getMessageR(NodeFunction sender, NodeVariable receiver,double[] content);
 
 }

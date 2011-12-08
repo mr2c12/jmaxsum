@@ -28,11 +28,11 @@ public class MessageFactoryArrayDouble implements MessageFactory{
 
     final static int debug = test.DebugVerbosity.debugMessageFactoryArrayDouble;
 
-    public MessageQ getMessageQ(NodeVariable sender, NodeFunction receiver, Double[] content) {
+    public MessageQ getMessageQ(NodeVariable sender, NodeFunction receiver, double[] content) {
         return new MessageQArrayDouble(sender, receiver, content);
     }
 
-    public MessageR getMessageR(NodeFunction sender, NodeVariable receiver, Double[] content) {
+    public MessageR getMessageR(NodeFunction sender, NodeVariable receiver, double[] content) {
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
