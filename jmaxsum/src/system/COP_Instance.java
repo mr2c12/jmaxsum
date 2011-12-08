@@ -186,7 +186,9 @@ public abstract class COP_Instance {
         itnf = this.factorgraph.getNodefunctions().iterator();
         while (itnf.hasNext()) {
             NodeFunction nodeFunction = itnf.next();
-            string.append("CONSTRAINT ").append(nodeFunction.id()).append(" ").append(nodefunction_agent.get(nodeFunction)).append(" ");
+            //string.append("CONSTRAINT ").append(nodeFunction.id()).append(" ").append(nodefunction_agent.get(nodeFunction)).append(" ");
+            // constraint?!
+            string.append(nodeFunction.getTypeOfFe()).append(nodeFunction.id()).append(" ").append(nodefunction_agent.get(nodeFunction)).append(" ");
 
             // variables id
             fe = nodeFunction.getFunction();

@@ -52,7 +52,7 @@ public class Athena {
     private OTimes otimes;
     private OPlus oplus;
     private double latestValue_start;
-    private int iterationsNumber = 3;
+    private int iterationsNumber = 500;
     final static int debug = test.DebugVerbosity.debugAthena;
     private boolean stepbystep = false;
 
@@ -165,7 +165,7 @@ public class Athena {
      * Deprecated.
      * @throws PostServiceNotSetException if Post Service is not set, strictly required for messages sending and reading.
      */
-    private void solve_nIteration() throws PostServiceNotSetException {
+    public void solve_nIteration() throws PostServiceNotSetException {
         if (debug >= 3) {
             System.out.println("Core: init()");
         }
@@ -282,10 +282,12 @@ public class Athena {
         boolean keepGoing;
 
         int i=0;
+        int lastIteration=0;
+        boolean ffFound = false;
 
         try{
             for ( i = 0; i < this.iterationsNumber; i++) {
-
+                lastIteration = i+1;
                 keepGoing = false;
 
                 if (debug>=3) {
@@ -313,6 +315,7 @@ public class Athena {
                     keepGoing |= agent.sendRMessages();
 
                     if (!keepGoing){
+                        ffFound = true;
                         // messages not changed!
                         throw new MessagesFixedPointException();
                     }
@@ -395,6 +398,8 @@ public class Athena {
         this.report += status +"\n";
         this.report += "total time: "+timeElapsed+" ms\n";
         this.report += "latest value got at iteration "+i+"\n";
+        this.report += "total number of iteration "+lastIteration+"\n";
+        this.report += "fixed point found? "+ffFound+"\n";
         if (this.pleaseReport) {
 
             if (debug>=3) {

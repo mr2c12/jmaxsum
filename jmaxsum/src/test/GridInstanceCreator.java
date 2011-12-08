@@ -30,9 +30,13 @@ import powerGrid.PowerGrid;
 public class GridInstanceCreator {
 
     public static void main(String[] args) {
+
+               
         //createNInstances(n, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
-        int[] Ma = {200, 1000, 2000, 10000, 20000, 100000};
-        int[] na = {100, 100, 100, 100, 100, 20};
+        /*int[] Ma = {200, 1000, 2000, 10000, 20000, 100000};
+        int[] na = {100, 100, 100, 100, 100, 20};*/
+        int[] Ma = {10000, 20000, 100000};
+        int[] na = {100, 100, 20};
         int n;
         int M;
         double xmeanbase = 0.29;
@@ -67,7 +71,7 @@ public class GridInstanceCreator {
                         oldtime=time;
                         // create n instances
                         path = "./report/" + M + "/" + xmean + "/" + n + ".pg";
-                        createInstanceAndSave(2, M, numberOfLoadsForGenerator, R, xmean, delta, path);
+                        createInstanceAndSave(1, M, numberOfLoadsForGenerator, R, xmean, delta, path);
                     }
                 }
             }

@@ -52,6 +52,7 @@ public class PGCreator implements Runnable {
         this.loads_to_link = loads_to_link;
     }
 
+    @Override
     public void run() {
 
         this.isAlive = true;
@@ -95,6 +96,13 @@ public class PGCreator implements Runnable {
                 //ld = Load.getNextLoad(rnd.nextDouble());
                 ld = Load.getNextLoad(
                         (rnd.nextDouble() * delta) + (xmean - (delta / 2)));
+
+                if (ld == null){
+                    System.out.println("ld is null!");
+                    System.exit(-1);
+                }
+
+
                 this.loads.add(ld);
 
 
@@ -150,6 +158,7 @@ public class PGCreator implements Runnable {
         this.isAlive = false;
     }
 
+    
     boolean isAlive() {
         return this.isAlive;
     }

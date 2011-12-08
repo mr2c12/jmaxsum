@@ -944,4 +944,6 @@ public abstract class FunctionEvaluator {
         }
     }
 
+    public abstract String getType();
+
 }

@@ -17,6 +17,7 @@
 
 package function;
 
+import java.util.Arrays;
 import messages.MessageQArrayDouble;
 import exception.InvalidInputFileException;
 import olimpo.Cerberus;
@@ -102,6 +103,13 @@ public class TabularFunctionOnlyValidRowsTest {
         params[1] = NodeArgument.getNodeArgument(0);
         params[2] = NodeArgument.getNodeArgument(0);
 
+        NodeArgument[] params2 = new NodeArgument[3];
+        params2[0] = NodeArgument.getNodeArgument(1);
+        params2[1] = NodeArgument.getNodeArgument(0);
+        params2[2] = NodeArgument.getNodeArgument(0);
+
+        System.out.println("Param arrays are "+ Arrays.equals(params, params2));
+
         double expResult = 0.0;
         double result = instance.evaluate(params);
         assertEquals(expResult, result, 0.0);
@@ -127,6 +135,7 @@ public class TabularFunctionOnlyValidRowsTest {
         for (NodeVariable par : instance.getParameters()){
             System.out.println("- "+par);
         }
+        System.out.println("Function\n"+instance.toStringForFile());
         String op = "max";
         NodeVariable x = NodeVariable.getNodeVariable(1);
         HashMap<NodeVariable, MessageQ> modifierTable = null;
@@ -158,6 +167,15 @@ public class TabularFunctionOnlyValidRowsTest {
         expResult[0] = 35;
         expResult[1] = 16;
         result = instance.maxminWRT(op, x, modifierTable);
+        for (int i = 0; i < result.length; i++) {
+            assertEquals(result[i],expResult[i],1E-5) ;
+
+        }
+
+        expResult[0] = 11;
+        expResult[1] = 16;
+        instance.setOtherValue(Double.POSITIVE_INFINITY);
+        result = instance.maxminWRT("min", x, modifierTable);
         for (int i = 0; i < result.length; i++) {
             assertEquals(result[i],expResult[i],1E-5) ;
 

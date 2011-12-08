@@ -385,6 +385,7 @@ public class PowerGrid {
             LinkedList<PGCreator> pgs = new LinkedList<PGCreator>();
 
             for (int core_i = 1; core_i < coreNumber; core_i++) {
+                //Thread pg = new Thread(new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link));
                 PGCreator pg = new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link);
                 pg.run();
                 pgs.add(pg);
@@ -862,6 +863,7 @@ public class PowerGrid {
                     if (wattSum > git.getPower()) {
                         // +inf
                         tfunction.addParametersCost(params, Double.POSITIVE_INFINITY);
+                        //tfunction.addParametersCost(params, Double.NEGATIVE_INFINITY);
                     } else {
                         tfunction.addParametersCost(params, git.getCO2emission(wattSum));
                     }
@@ -906,8 +908,14 @@ public class PowerGrid {
             // end populating
 
             nodefunction = NodeFunction.putNodeFunction(git.getId(), tfunction);
+
             agent.addNodeFunction(nodefunction);
             nodefunctions.add(nodefunction);
+
+            // FIXME: nodeVariable neighbours!
+            for (NodeVariable x : nodefunction.getNeighbour()){
+                x.addNeighbour(nodefunction);
+            }
 
             if (debug >= 3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();

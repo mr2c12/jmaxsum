@@ -212,4 +212,12 @@ public class NodeFunction implements Node{
     public static void resetIds(){
         NodeFunction.table = new HashMap<Integer, NodeFunction>();
     }
+
+    /**
+     * Used to save function to file
+     * @return
+     */
+    public String getTypeOfFe(){
+        return this.function.getType();
+    }
 }

@@ -27,7 +27,7 @@ import misc.Utils;
 public class MessageContentArrayDouble extends  MessageContent{
 
     protected Double[] message;
-    public static double epsilon=1E-7;
+    public static double epsilon=1E-5;
     final static int debug = test.DebugVerbosity.debugMessageContentMessageArrayDouble;
 
     public MessageContentArrayDouble(Double[] message){

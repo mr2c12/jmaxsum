@@ -38,7 +38,7 @@ public class Load {
         this.generators = new HashSet<Generator>();
     }
 
-    public static Load getLoad(int id, double power) {
+    public synchronized static Load getLoad(int id, double power) {
         if (!Load.loadsMap.containsKey(id)) {
             Load.loadsMap.put(id, new Load(id, power));
         }

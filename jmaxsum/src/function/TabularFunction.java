@@ -60,11 +60,13 @@ public class TabularFunction extends FunctionEvaluator {
         this.costTable.put(key.toString(), cost);
 
         // set the min and the max
-        if (this.minCost == null || cost < this.minCost) {
-            this.minCost = cost;
-        }
-        if (this.maxCost == null || cost > this.maxCost) {
-            this.maxCost = cost;
+        if ((cost!= Double.NEGATIVE_INFINITY) && (cost!= Double.POSITIVE_INFINITY) ){
+            if (this.minCost == null || cost < this.minCost) {
+                this.minCost = cost;
+            }
+            if (this.maxCost == null || cost > this.maxCost) {
+                this.maxCost = cost;
+            }
         }
     }
 
@@ -419,5 +421,10 @@ public class TabularFunction extends FunctionEvaluator {
             }
         }
         return max;
+    }
+
+    @Override
+    public String getType() {
+        return "CONSTRAINT ";
     }
 }

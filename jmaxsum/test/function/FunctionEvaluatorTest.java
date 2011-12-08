@@ -338,6 +338,11 @@ public class FunctionEvaluatorTest {
         public double[] maximizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        @Override
+        public String getType() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
 

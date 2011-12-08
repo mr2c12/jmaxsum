@@ -36,7 +36,9 @@ public class CO2Simple implements CO2Function{
 
 
     public double emission(double consumption) {
+
         return (consumption/this.maxPower)*this.mult;
+
     }
 
     @Override

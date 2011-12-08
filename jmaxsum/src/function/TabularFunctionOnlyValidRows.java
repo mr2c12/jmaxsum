@@ -20,8 +20,10 @@ import exception.ParameterNotFoundException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeVariable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import messages.MessageQ;
+import misc.NodeArgumentArray;
 
 /**
  * A version of TabularFunction where only valid tuples are stored.
@@ -30,31 +32,52 @@ import messages.MessageQ;
  */
 public class TabularFunctionOnlyValidRows extends TabularFunction {
 
+
+
     /**
      * Value of invalid rows
      */
     private double otherValue;
+    protected HashMap<NodeArgumentArray, Double> costTable;
 
     public TabularFunctionOnlyValidRows(double oth) {
-        super();
+        this.costTable = new HashMap<NodeArgumentArray, Double>();
+
         this.otherValue = oth;
     }
 
+    @Override
+    public void addParametersCost(NodeArgument[] params, double cost) {
+        this.costTable.put(NodeArgumentArray.getNodeArgumentArray(params), cost);
+
+                // set the min and the max
+        if ((cost!= Double.NEGATIVE_INFINITY) && (cost!= Double.POSITIVE_INFINITY) ){
+            if (this.minCost == null || cost < this.minCost) {
+                this.minCost = cost;
+            }
+            if (this.maxCost == null || cost > this.maxCost) {
+                this.maxCost = cost;
+            }
+        }
+    }
+    
     public double evaluate(NodeArgument[] params) {
-        StringBuilder key = new StringBuilder();
+        /*StringBuilder key = new StringBuilder();
 
         for (int i = 0; i < params.length; i++) {
             key.append(params[i].toString()).append(";");
-        }
-        if (!this.costTable.containsKey(key.toString())) {
+        }*/
+
+        NodeArgumentArray paramsa = NodeArgumentArray.getNodeArgumentArray(params);
+
+        if (!this.costTable.containsKey(paramsa)) {
             return this.otherValue;
         } else {
-            return this.costTable.get(key.toString());
+            return this.costTable.get(paramsa);
         }
     }
 
     // TODO: nodearguments can only be a string since the representation of KEY
-
     @Override
     public double[] maxminWRT(String op, NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException {
         double[] maxes = new double[x.size()];
@@ -68,27 +91,36 @@ public class TabularFunctionOnlyValidRows extends TabularFunction {
         double cost;
         int parametersNumber = this.parametersNumber();
 
-        for (String key : this.costTable.keySet()){
-            
+        /*for (String key : this.costTable.keySet()) {
+
             t = new StringTokenizer(key, ";");
-            args  = new NodeArgument[parametersNumber];
+            args = new NodeArgument[parametersNumber];
             int index = 0;
             while (t.hasMoreTokens()) {
 
-                // FIXME: what type of nodeArgument here? only integer!
-                args[index] = NodeArgument.getNodeArgument( Integer.parseInt(t.nextToken()));
+                args[index] = NodeArgument.getNodeArgument(Integer.parseInt(t.nextToken()));
                 index++;
-            }
+            }*/
+        
 
-            if (modifierTable==null){
-                cost = this.costTable.get(key);
-            } else{
+        for (NodeArgumentArray argsa : this.costTable.keySet()){
+
+            
+
+            args = argsa.getArray();
+
+
+            if (modifierTable == null) {
+                //cost = this.costTable.get(key);
+                //cost = this.costTable.get(argsa);
+                cost =this.evaluate(args);
+            } else {
                 cost = this.evaluateMod(args, modifierTable);
             }
 
             /*System.out.println("x is: "+x.toString() +" with arguments: ");
             for (NodeArgument a : x.getValues()){
-                System.out.println(a);
+            System.out.println(a);
             }
             System.out.println("looking for: "+ args[xIndex]);
 
@@ -96,15 +128,14 @@ public class TabularFunctionOnlyValidRows extends TabularFunction {
 
             System.out.println("modIndex is: "+ modIndex);*/
 
-            modIndex = x.numberOfArgument(  args[xIndex]  );
-            if (op.equals("max")){
-                if (maxes[modIndex] < cost ) {
+            modIndex = x.numberOfArgument(args[xIndex]);
+            if (op.equals("max")) {
+                if (maxes[modIndex] < cost) {
                     maxes[modIndex] = cost;
                 }
 
-            }
-            else if (op.equals("min")){
-                if (maxes[modIndex] > cost ) {
+            } else if (op.equals("min")) {
+                if (maxes[modIndex] > cost) {
                     maxes[modIndex] = cost;
                 }
             }
@@ -118,4 +149,32 @@ public class TabularFunctionOnlyValidRows extends TabularFunction {
         return maxes;
     }
 
+
+    public String toStringForFile() {
+        StringBuilder string = new StringBuilder();
+
+        for (NodeArgumentArray key : this.costTable.keySet() ){
+            NodeArgument[] nodeArguments = key.getArray();
+            string.append("F ");
+            for (int i = 0; i < nodeArguments.length; i++) {
+                string.append(nodeArguments[i]).append(" ");
+            }
+            string.append(costTable.get(key)).append("\n");
+        }
+        
+        return string.toString();
+    }
+
+    public double getOtherValue() {
+        return otherValue;
+    }
+
+    public void setOtherValue(double otherValue) {
+        this.otherValue = otherValue;
+    }
+
+        @Override
+    public String getType() {
+        return "CONSTRAINTOVV ";
+    }
 }

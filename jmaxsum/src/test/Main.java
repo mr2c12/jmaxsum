@@ -87,7 +87,7 @@ public class Main {
 
                 
                 Athena core = new Athena(cop,"max", "sum");
-                core.setIterationsNumber(10000);
+                core.setIterationsNumber(1000);
                 core.setStepbystep(false);
                 core.setUpdateOnlyAtEnd(true);
                 core.solve_complete();
