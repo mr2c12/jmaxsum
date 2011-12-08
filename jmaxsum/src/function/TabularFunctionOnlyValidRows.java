@@ -74,6 +74,8 @@ public class TabularFunctionOnlyValidRows extends TabularFunction {
             args  = new NodeArgument[parametersNumber];
             int index = 0;
             while (t.hasMoreTokens()) {
+
+                // FIXME: what type of nodeArgument here? only integer!
                 args[index] = NodeArgument.getNodeArgument( Integer.parseInt(t.nextToken()));
                 index++;
             }

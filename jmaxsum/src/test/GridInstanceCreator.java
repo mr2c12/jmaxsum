@@ -14,12 +14,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package test;
 
 import exception.InitializatedException;
 import exception.NoMoreGeneratorsException;
 import exception.UnInitializatedException;
+import java.io.IOException;
 import java.util.ArrayList;
 import powerGrid.PowerGrid;
 
@@ -29,25 +29,67 @@ import powerGrid.PowerGrid;
  */
 public class GridInstanceCreator {
 
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         //createNInstances(n, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
-        createNInstances(2,1, 100000, 3, 2, 0.28, 0.2);
+        int[] Ma = {200, 1000, 2000, 10000, 20000, 100000};
+        int[] na = {100, 100, 100, 100, 100, 20};
+        int n;
+        int M;
+        double xmeanbase = 0.29;
+        double xmean;
+        double modxmean;
+        double delta = 0.2;
+        int numberOfLoadsForGenerator = 3;
+        int R = 2;
+        long time = System.currentTimeMillis();
+        long oldtime = time;
+        String path;
+        //System.out.println("[" + time + "ms] Begin.");
+        try {
+            Runtime.getRuntime().exec("mkdir ./report");
+
+
+            for (int index = 0; index < Ma.length; index++) {
+
+                M = Ma[index];
+                Runtime.getRuntime().exec("mkdir -p ./report/"+M);
+
+                for (modxmean = 0; modxmean < 11; modxmean++){
+
+                    xmean = xmeanbase + (modxmean/1000);
+
+
+                    Runtime.getRuntime().exec("mkdir -p ./report/"+M+"/"+xmean);
+
+                    for (n = 0; n < na[index]; n++) {
+                        time = System.currentTimeMillis();
+                        System.out.println("[" + (time-oldtime)/1000.0 + "s] M="+M+" xmean="+xmean+" iteration="+(n+1)+"/"+(na[index]));
+                        oldtime=time;
+                        // create n instances
+                        path = "./report/" + M + "/" + xmean + "/" + n + ".pg";
+                        createInstanceAndSave(2, M, numberOfLoadsForGenerator, R, xmean, delta, path);
+                    }
+                }
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
-    public static void createNInstances(int core, int n,int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta){
+    public static void createNInstances(int core, int n, int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta) {
         ArrayList<PowerGrid> pgList = new ArrayList<PowerGrid>();
         PowerGrid tempInstance;
-        while (n>0){
+        while (n > 0) {
             try {
-                System.out.println("Attempt to create instance "+n);
-                tempInstance = new PowerGrid(core,numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
+                System.out.println("Attempt to create instance " + n);
+                tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
                 pgList.add(tempInstance);
                 n--;
                 System.out.println("Created instance");
                 //System.out.println(tempInstance.toStringFile());
-            
+
             } catch (NoMoreGeneratorsException ex) {
                 System.out.println("No more generators! Retrying!");
             } catch (Exception ex) {
@@ -57,4 +99,20 @@ public class GridInstanceCreator {
 
     }
 
+    public static void createInstanceAndSave(int core, int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta, String path) {
+        PowerGrid tempInstance;
+
+        try {
+
+            tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
+
+            tempInstance.saveToFile(path);
+
+
+        } catch (NoMoreGeneratorsException ex) {
+            System.out.println("No more generators! Retrying!");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
