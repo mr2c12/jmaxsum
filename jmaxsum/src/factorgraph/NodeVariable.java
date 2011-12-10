@@ -30,10 +30,7 @@ public class NodeVariable implements Node{
      */
     private int id;
 
-    /**
-     * max number of NodeVariables
-     */
-    public static final int MAXNODEVARIABLENUMBER = 1000;
+    static int lastId = -1;
 
     /**
      * arraylist of the possible values of the variable represented by this node
@@ -47,6 +44,7 @@ public class NodeVariable implements Node{
 
     private NodeVariable (int id){
         this.id = id;
+        this.lastId = id;
         this.values = new ArrayList<NodeArgument>();
         this.neighbours = new HashSet<NodeFunction>();
     }
@@ -131,13 +129,12 @@ public class NodeVariable implements Node{
         return NodeVariable.table.get(id);
     }
 
-    public static NodeVariable getNewNextNodeVariable() throws OutOfNodeVariableNumberException{
-        for (int id = 1; id < NodeVariable.MAXNODEVARIABLENUMBER; id++){
-            if (!NodeVariable.table.containsKey(id)) {
-                return NodeVariable.getNodeVariable(id);
-            }
+    public static NodeVariable getNewNextNodeVariable(){
+        int id = lastId++;
+        while (NodeVariable.table.containsKey(id)) {
+            id++;
         }
-        throw new OutOfNodeVariableNumberException();
+        return NodeVariable.getNodeVariable(id);
     }
 
     void clearValues() {
@@ -255,6 +252,7 @@ public class NodeVariable implements Node{
 
     public static void resetIds(){
         NodeVariable.table = new HashMap<Integer, NodeVariable>();
+        lastId = -1;
     }
 
 }

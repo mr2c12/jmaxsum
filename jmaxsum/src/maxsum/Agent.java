@@ -56,7 +56,7 @@ public class Agent {
     private PostService postservice = null;
 
     private int id;
-    public static final int MAXAGENTNUMBER = 1000;
+    static int lastId = -1;
 
     /**
      * NodeVariables controlled by the agent
@@ -69,6 +69,7 @@ public class Agent {
     
     private Agent(int id){
         this.id = id;
+        lastId = id;
         this.variables = new HashSet<NodeVariable>();
         this.functions = new HashSet<NodeFunction>();
 
@@ -81,13 +82,12 @@ public class Agent {
         return Agent.table.get(id);
     }
 
-    public static Agent getNewNextAgent() throws OutOfAgentNumberException{
-        for (int id = 1; id < Agent.MAXAGENTNUMBER; id++){
-            if (!Agent.table.containsKey(id)) {
-                return Agent.getAgent(id);
-            }
+    public static Agent getNewNextAgent(){
+        int id = lastId ++;
+        while (Agent.table.containsKey(id)) {
+            id++;
         }
-        throw new OutOfAgentNumberException();
+        return Agent.getAgent(id);
     }
 
     public void setOp(Operator op) {
@@ -434,4 +434,8 @@ public class Agent {
         this.functions.add(newv);
     }
 
+    public static void resetIds(){
+        table = new HashMap<Integer, Agent>();
+        lastId = -1;
+    }
 }

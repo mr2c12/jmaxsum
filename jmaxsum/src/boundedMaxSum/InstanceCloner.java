@@ -234,23 +234,9 @@ public class InstanceCloner{
             }
 
         
-        } catch (OutOfAgentNumberException a){
-            System.out.println("Out of the maximum number of Agents (more than "
-                    +Agent.MAXAGENTNUMBER+"?)\n"
-                    + "If this should not be an error, please change the field Agent.MAXAGENTNUMBER");
-            System.exit(1);
 
-        } catch (OutOfNodeFunctionNumberException f) {
-            System.out.println("Out of the maximum number of Functions (more than "
-                    +NodeFunction.MAXNODEFUNCTIONNUMBER+"?)\n"
-                    + "If this should not be an error, please change the field NodeFunction.MAXNODEFUNCTIONNUMBER");
-            System.exit(1);
-
-        } catch (OutOfNodeVariableNumberException x) {
-            System.out.println("Out of the maximum number of Variables (more than "
-                    +NodeVariable.MAXNODEVARIABLENUMBER+"?)\n"
-                    + "If this should not be an error, please change the field NodeVariable.MAXNODEVARIABLENUMBER");
-            System.exit(1);
+        } catch (Exception ex) {
+            ex.printStackTrace();
 
         }
     }

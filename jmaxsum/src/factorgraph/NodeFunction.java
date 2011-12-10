@@ -33,14 +33,13 @@ public class NodeFunction implements Node{
      * id.. what else?
      */
     private int id;
-    /**
-     * max number of NodeFunction. Used in getNextNodeFunction.
-     */
-    public static final int MAXNODEFUNCTIONNUMBER = 1000;
+
+    static int lastId = -1;
     private static final int debug = DebugVerbosity.debugNodeFunction;
 
     private NodeFunction (int id){
         this.id = id;
+        lastId = id;
         //this.neighbours = new HashSet<NodeVariable>();
     }
 
@@ -126,13 +125,13 @@ public class NodeFunction implements Node{
      * @return the new NodeFunction
      * @throws OutOfNodeFunctionNumberException if there are more than NodeFunction.MAXNODEFUNCTIONNUMBER NodeFunctions.
      */
-    public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe) throws OutOfNodeFunctionNumberException{
-        for (int id = 1; id < NodeFunction.MAXNODEFUNCTIONNUMBER;id++){
-            if (!NodeFunction.table.containsKey(id)) {
-                return NodeFunction.putNodeFunction(id, fe);
-            }
+    public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe){
+        int id = lastId++;
+        while (NodeFunction.table.containsKey(id)) {
+            id++;
         }
-        throw new OutOfNodeFunctionNumberException();
+        
+        return NodeFunction.putNodeFunction(id, fe);
     }
 
     public String toString(){
@@ -211,6 +210,7 @@ public class NodeFunction implements Node{
 
     public static void resetIds(){
         NodeFunction.table = new HashMap<Integer, NodeFunction>();
+        lastId = -1;
     }
 
     /**

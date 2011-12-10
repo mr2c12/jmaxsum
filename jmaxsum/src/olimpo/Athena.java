@@ -50,7 +50,7 @@ public class Athena {
      * 0 -> no
      * 1 -> shuffle array
      */
-    public static int shuffleMessage = 0;
+    public static int shuffleMessage = 1;
 
     private COP_Instance cop;
     private PostService ps;

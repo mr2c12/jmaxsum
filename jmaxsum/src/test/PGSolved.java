@@ -36,7 +36,8 @@ public class PGSolved {
         try {
             System.out.println("Generating powergrid.");
             //PowerGrid pg = new PowerGrid(2, 3, 2, 0.292, 0.002);
-            PowerGrid pg = new PowerGrid("./dati_08_12_11/pg_200_1000_2000/1000/0.29/0.pg");//"trovalerrore.pg");
+            //PowerGrid pg = new PowerGrid("./dati_08_12_11/pg_200_1000_2000/1000/0.29/0.pg");//"trovalerrore.pg");
+            PowerGrid pg = new PowerGrid("trovalerrore.pg");
             System.out.println(pg.toStringFile());
             System.out.println("Generation complete.");
 
@@ -53,8 +54,8 @@ public class PGSolved {
             System.out.println(cop.toStringFile());*/
             Athena athena = new Athena(cop, "min", "sum");
 
-            athena.setIterationsNumber(5);
-            athena.setUpdateOnlyAtEnd(true);
+            athena.setIterationsNumber(50);
+            athena.setUpdateOnlyAtEnd(false);
             athena.setStepbystep(false);
 
             System.out.println("Start solver!");
