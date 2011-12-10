@@ -29,6 +29,8 @@ import java.util.Set;
 import messages.MessageQ;
 import messages.MessageR;
 import messages.PostService;
+import misc.Utils;
+import olimpo.Athena;
 import operation.Operator;
 
 /**
@@ -130,44 +132,75 @@ public class Agent {
             throw new PostServiceNotSetException();
         }
 
-        Iterator<NodeVariable> iteratorv = this.getVariables().iterator();
-        NodeVariable variable; // = null;
-        NodeFunction function = null;
         boolean atLeastOneUpdated = false;
-        while (iteratorv.hasNext()){
-            variable = iteratorv.next();
 
-            // gotcha a variable, looking for its functions
+        switch (Athena.shuffleMessage){
 
-            //Iterator<NodeFunction> iteratorf = this.variableToFunctions.get(variable).iterator();
-            Iterator<NodeFunction> iteratorf = this.getFunctionsOfVariable(variable).iterator();
-            while (iteratorf.hasNext()){
+            case 1:
+                Object[] arrayx = this.getVariables().toArray();
+                arrayx = Utils.shuffleArrayFY(arrayx);
 
-                function = iteratorf.next();
-                // got variable, function
+                for (Object nodeVariable : arrayx) {
+                    Object[] arrayf = this.getFunctionsOfVariable(((NodeVariable)nodeVariable)).toArray();
+                    arrayf = Utils.shuffleArrayFY(arrayf);
 
-                if (debug>=1) {
-                        String dmethod = Thread.currentThread().getStackTrace()[1].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[1].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+" preparing Q from " + variable + " to " + function);
-                        System.out.println("---------------------------------------");
+                    // TODO: shuffling is DA WAY
+                    
+                    for (Object nodeFunction : arrayf) {
+                        //atLeastOneUpdated |= this.op.updateQ(variable, function, this.postservice);
+                        atLeastOneUpdated |= this.op.updateQ((NodeVariable)nodeVariable, (NodeFunction)nodeFunction, this.postservice);
+                    }
+
+
                 }
-                atLeastOneUpdated |= this.op.updateQ(variable, function, this.postservice);
-                if (debug>=1) {
-                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "messageQ updated:");
-                        MessageQ mq = this.postservice.readQMessage(variable, function);
-                        System.out.println("Sender "+ mq.getSender() + " Receiver " + mq.getReceiver() + " message "+ mq );
-                        System.out.println("---------------------------------------");
-                }
+                break;
 
-            }
+            case 0:
+            default:
+            //do not shuffle, use them as-is
+                Iterator<NodeVariable> iteratorv = this.getVariables().iterator();
+                NodeVariable variable; // = null;
+                NodeFunction function = null;
+
+                while (iteratorv.hasNext()){
+                    variable = iteratorv.next();
+
+                    // gotcha a variable, looking for its functions
+
+                    //Iterator<NodeFunction> iteratorf = this.variableToFunctions.get(variable).iterator();
+                    Iterator<NodeFunction> iteratorf = this.getFunctionsOfVariable(variable).iterator();
+                    while (iteratorf.hasNext()){
+
+                        function = iteratorf.next();
+                        // got variable, function
+
+                        if (debug>=1) {
+                                String dmethod = Thread.currentThread().getStackTrace()[1].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[1].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+" preparing Q from " + variable + " to " + function);
+                                System.out.println("---------------------------------------");
+                        }
+                        atLeastOneUpdated |= this.op.updateQ(variable, function, this.postservice);
+                        if (debug>=1) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "messageQ updated:");
+                                MessageQ mq = this.postservice.readQMessage(variable, function);
+                                System.out.println("Sender "+ mq.getSender() + " Receiver " + mq.getReceiver() + " message "+ mq );
+                                System.out.println("---------------------------------------");
+                        }
+
+                    }
+
+                }
+                break;
+                //end of case 0
+
+
 
         }
-
         return atLeastOneUpdated;
     }
 
@@ -183,40 +216,67 @@ public class Agent {
             throw new PostServiceNotSetException();
         }
 
-        Iterator<NodeFunction> iteratorf = this.getFunctions().iterator();
-        NodeVariable variable = null;
-        NodeFunction function = null;
         boolean atLeastOneUpdated = false;
-        while (iteratorf.hasNext()){
-            function = iteratorf.next();
 
-            // gotcha a variable, looking for its functions
+        switch (Athena.shuffleMessage){
 
-            //Iterator<NodeFunction> iteratorf = this.variableToFunctions.get(variable).iterator();
-            Iterator<NodeVariable> iteratorv = this.getVariablesOfFunction(function).iterator();
-            while (iteratorv.hasNext()){
+            case 1:
+                Object[] arrayf = this.getFunctions().toArray();
+                arrayf = Utils.shuffleArrayFY(arrayf);
 
-                variable = iteratorv.next();
-                // got variable, function
-                if (debug>=1) {
-                        String dmethod = Thread.currentThread().getStackTrace()[1].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[1].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+"  preparing R from " + function + " to " + variable);
-                        System.out.println("---------------------------------------");
+                for (Object nodeFunction : arrayf) {
+                    Object[] arrayx = this.getVariablesOfFunction((NodeFunction)nodeFunction).toArray();
+                    arrayx = Utils.shuffleArrayFY(arrayx);
+
+                    // TODO: shuffling is DA WAY
+
+                    for (Object nodeVariable : arrayx) {
+                        //atLeastOneUpdated |= this.op.updateQ(variable, function, this.postservice);
+                        atLeastOneUpdated |= this.op.updateR((NodeFunction)nodeFunction, (NodeVariable)nodeVariable, this.postservice);
+                    }
+
+
                 }
-                atLeastOneUpdated |= this.op.updateR(function, variable, this.postservice);
-                if (debug>=1) {
-                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "messageR updated:");
-                        MessageR mq = this.postservice.readRMessage(function, variable);
-                        System.out.println("Sender "+ mq.getSender() + " Receiver " + mq.getReceiver() + " message "+ mq );
-                        System.out.println("---------------------------------------");
-                }
-            }
+                break;
 
+            case 0:
+            default:
+
+                Iterator<NodeFunction> iteratorf = this.getFunctions().iterator();
+                NodeVariable variable = null;
+                NodeFunction function = null;
+
+                while (iteratorf.hasNext()){
+                    function = iteratorf.next();
+
+                    // gotcha a variable, looking for its functions
+
+                    //Iterator<NodeFunction> iteratorf = this.variableToFunctions.get(variable).iterator();
+                    Iterator<NodeVariable> iteratorv = this.getVariablesOfFunction(function).iterator();
+                    while (iteratorv.hasNext()){
+
+                        variable = iteratorv.next();
+                        // got variable, function
+                        if (debug>=1) {
+                                String dmethod = Thread.currentThread().getStackTrace()[1].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[1].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "agent "+this+"  preparing R from " + function + " to " + variable);
+                                System.out.println("---------------------------------------");
+                        }
+                        atLeastOneUpdated |= this.op.updateR(function, variable, this.postservice);
+                        if (debug>=1) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "messageR updated:");
+                                MessageR mq = this.postservice.readRMessage(function, variable);
+                                System.out.println("Sender "+ mq.getSender() + " Receiver " + mq.getReceiver() + " message "+ mq );
+                                System.out.println("---------------------------------------");
+                        }
+                    }
+
+                }
         }
         return atLeastOneUpdated;
     }
@@ -242,16 +302,29 @@ public class Agent {
             throw new PostServiceNotSetException();
         }
 
+        switch (Athena.shuffleMessage){
 
-        for (NodeVariable nodeVariable:this.getVariables()){
-            if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] agent "+this+"" + "preparing to update ZMessage for "+nodeVariable);
-                    System.out.println("---------------------------------------");
-            }
-            this.op.updateZ(nodeVariable, postservice);
+            case 1:
+                Object[] arrayx = this.getVariables().toArray();
+                arrayx = Utils.shuffleArrayFY(arrayx);
+
+                for (Object nodeVariable : arrayx) {
+                    this.op.updateZ((NodeVariable)nodeVariable, postservice);
+                }
+                break;
+
+            case 0:
+            default:
+                for (NodeVariable nodeVariable:this.getVariables()){
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] agent "+this+"" + "preparing to update ZMessage for "+nodeVariable);
+                            System.out.println("---------------------------------------");
+                    }
+                    this.op.updateZ(nodeVariable, postservice);
+                }
         }
 
     }

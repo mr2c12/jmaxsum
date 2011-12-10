@@ -4,6 +4,7 @@ import exception.LengthMismatchException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 
 /**
@@ -220,5 +221,30 @@ public class Utils {
            res[index] = a1[index] + ( a2[index]*operation);
        }
        return res;
+    }
+
+    /**
+     * Implementation of modern variation of Fisher–Yates shuffle algorithm
+     * @param a array to be shuffled
+     * @return a shuffled
+     */
+    public static Object[] shuffleArrayFY(Object[] a){
+        /*
+         * To shuffle an array a of n elements (indices 0..n-1):
+          for i from n − 1 downto 1 do
+               j ← random integer with 0 ≤ j ≤ i
+               exchange a[j] and a[i]
+         */
+        int n = a.length;
+        Random rnd = new Random();
+        int j;
+        Object tmp;
+        for (int i = n-1; n>=1; n--){
+            j = rnd.nextInt(i+1);
+            tmp = a[j];
+            a[j] = a[i];
+            a[i] = tmp;
+        }
+        return a;
     }
 }

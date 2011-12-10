@@ -253,7 +253,8 @@ public abstract class COP_Instance {
     public String status() {
         StringBuilder status = new StringBuilder();
         try {
-            status.append(this.actualValue()).append(";");
+            double actualValue = this.actualValue();
+            status.append(actualValue).append(";");
         } catch (VariableNotSetException ex) {
             status.append("err;");
         }

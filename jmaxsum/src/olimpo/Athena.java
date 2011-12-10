@@ -45,6 +45,13 @@ import system.COP_Instance;
  */
 public class Athena {
 
+    /**
+     * Shuffle the order of messages sent?
+     * 0 -> no
+     * 1 -> shuffle array
+     */
+    public static int shuffleMessage = 0;
+
     private COP_Instance cop;
     private PostService ps;
     private MessageFactory mfactory;
@@ -396,10 +403,17 @@ public class Athena {
 
         status = this.stringStatus((-1));
         this.report += status +"\n";
-        this.report += "total time: "+timeElapsed+" ms\n";
-        this.report += "latest value got at iteration "+i+"\n";
-        this.report += "total number of iteration "+lastIteration+"\n";
-        this.report += "fixed point found? "+ffFound+"\n";
+        this.report += "total time [ms]="+timeElapsed+"\n";
+        this.report += "latest value got at iteration="+i+"\n";
+        this.report += "total number of iteration="+lastIteration+"\n";
+        this.report += "fixed point found=";
+        if (ffFound){
+            this.report += "Y";
+        }
+        else {
+            this.report += "N";
+        }
+        this.report +="\n";
         if (this.pleaseReport) {
 
             if (debug>=3) {

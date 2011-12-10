@@ -54,11 +54,27 @@ public class UtilsTest {
     /**
      * Test of enumerate method, of class Utils.
      */
-    @Test
+    //@Test
     public void testEnumerate_intArr() {
         System.out.println("enumerate");
         int[] max = {2,2,2,2,2};
         Utils.enumerate(max);
+
+    }
+
+
+    /**
+     * Test of shuffleArrayFY method, of class Utils.
+     */
+    @Test
+    public void testShuffleArrayFY() {
+        System.out.println("shuffleArrayFY");
+        Object[] a = {0,1,2,3,4,5,6,7,8,9};
+        Object[] original_a = {0,1,2,3,4,5,6,7,8,9};
+        Object[] result = Utils.shuffleArrayFY(a);
+
+        assertArrayEquals(a, result);
+        System.out.println("a is:"+Utils.toString(a));
 
     }
 

@@ -41,8 +41,8 @@ public class PGToData {
             
             Athena athena = new Athena(pg.getCop(), "min", "sum");
             athena.pleaseReport(args[2]);
-            athena.setUpdateOnlyAtEnd(false);
-            athena.setIterationsNumber(500);
+            athena.setUpdateOnlyAtEnd(true);
+            athena.setIterationsNumber(300);
             athena.solve();
 
             
