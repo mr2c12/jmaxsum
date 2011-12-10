@@ -83,7 +83,7 @@ public class Agent {
     }
 
     public static Agent getNewNextAgent(){
-        int id = lastId ++;
+        int id = lastId + 1;
         while (Agent.table.containsKey(id)) {
             id++;
         }

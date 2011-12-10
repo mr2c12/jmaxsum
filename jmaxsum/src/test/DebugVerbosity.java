@@ -40,7 +40,7 @@ public class DebugVerbosity {
     public static final int debugTabularFunction = 0
             + DebugVerbosity.debug;
 
-    public static final int debugAgent = 0
+    public static final int debugAgent = 3
             + DebugVerbosity.debug;
 
     public static final int debugMessageArrayDouble = 0
@@ -58,7 +58,7 @@ public class DebugVerbosity {
     public static final int debugMessageContentMessageArrayDouble = 0
             + DebugVerbosity.debug;
     
-    public static final int debugMSumOperator = 0
+    public static final int debugMSumOperator = 3
             + DebugVerbosity.debug;
 
     public static final int debugOPlus_MaxSum = 0
@@ -93,7 +93,7 @@ public class DebugVerbosity {
     public static final int debugBoundedMaxSum = 0
             + DebugVerbosity.debug;
 
-    public static final int debugPowerGrid = 1
+    public static final int debugPowerGrid = 3
             + DebugVerbosity.debug;
 
     public static final int debugCOP_Instance = 0

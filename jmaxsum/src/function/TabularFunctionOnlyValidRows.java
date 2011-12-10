@@ -17,6 +17,7 @@
 package function;
 
 import exception.ParameterNotFoundException;
+import exception.ValueNotSetException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeVariable;
 import java.util.HashMap;
@@ -59,6 +60,11 @@ public class TabularFunctionOnlyValidRows extends TabularFunction {
                 this.maxCost = cost;
             }
         }
+    }
+
+    public double getDelta() throws ValueNotSetException{
+        // FIXME
+        return 0;
     }
     
     public double evaluate(NodeArgument[] params) {

@@ -126,12 +126,12 @@ public class NodeFunction implements Node{
      * @throws OutOfNodeFunctionNumberException if there are more than NodeFunction.MAXNODEFUNCTIONNUMBER NodeFunctions.
      */
     public static NodeFunction getNewNextNodeFunction(FunctionEvaluator fe){
-        int id = lastId++;
-        while (NodeFunction.table.containsKey(id)) {
-            id++;
+        int idn = lastId + 1;
+        while (NodeFunction.table.containsKey(idn)) {
+            idn++;
         }
         
-        return NodeFunction.putNodeFunction(id, fe);
+        return NodeFunction.putNodeFunction(idn, fe);
     }
 
     public String toString(){

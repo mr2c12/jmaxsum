@@ -130,11 +130,11 @@ public class NodeVariable implements Node{
     }
 
     public static NodeVariable getNewNextNodeVariable(){
-        int id = lastId++;
-        while (NodeVariable.table.containsKey(id)) {
-            id++;
+        int idn = NodeVariable.lastId + 1;
+        while (NodeVariable.table.containsKey(idn)) {
+            idn++;
         }
-        return NodeVariable.getNodeVariable(id);
+        return NodeVariable.getNodeVariable(idn);
     }
 
     void clearValues() {
