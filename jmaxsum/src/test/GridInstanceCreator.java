@@ -35,8 +35,18 @@ public class GridInstanceCreator {
         //createNInstances(n, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
         /*int[] Ma = {200, 1000, 2000, 10000, 20000, 100000};
         int[] na = {100, 100, 100, 100, 100, 20};*/
-        int[] Ma = {10000, 20000, 100000};
-        int[] na = {100, 100, 20};
+
+
+        int[] Ma = {100000};
+        int[] na = {20};
+
+        if (args.length == 1){
+            Ma[0] = Integer.parseInt(args[0]);
+        }
+        else if ( args.length == 2){
+            Ma[0] = Integer.parseInt(args[0]);
+            na[0] = Integer.parseInt(args[1]);
+        }
         int n;
         int M;
         double xmeanbase = 0.29;
@@ -71,7 +81,9 @@ public class GridInstanceCreator {
                         oldtime=time;
                         // create n instances
                         path = "./report/" + M + "/" + xmean + "/" + n + ".pg";
+                        //System.out.println("Starting creating istance.");
                         createInstanceAndSave(1, M, numberOfLoadsForGenerator, R, xmean, delta, path);
+                        //System.out.println("Istance created.");
                     }
                 }
             }
@@ -87,11 +99,11 @@ public class GridInstanceCreator {
         PowerGrid tempInstance;
         while (n > 0) {
             try {
-                System.out.println("Attempt to create instance " + n);
+                //System.out.println("Attempt to create instance " + n);
                 tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
                 pgList.add(tempInstance);
                 n--;
-                System.out.println("Created instance");
+                //System.out.println("Created instance");
                 //System.out.println(tempInstance.toStringFile());
 
             } catch (NoMoreGeneratorsException ex) {
@@ -107,10 +119,11 @@ public class GridInstanceCreator {
         PowerGrid tempInstance;
 
         try {
-
+            //System.out.println("New object PowerGrid");
             tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
-
+            //System.out.println("New object PowerGrid ready, saving..");
             tempInstance.saveToFile(path);
+            //System.out.println("New object PowerGrid saved,");
 
 
         } catch (NoMoreGeneratorsException ex) {

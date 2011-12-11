@@ -35,37 +35,38 @@ public class PGSolved {
     public static void main(String[] args){
         try {
             System.out.println("Generating powergrid.");
-            PowerGrid pg = new PowerGrid(2, 2, 1, 0.25, 0.002);
+            PowerGrid pg = new PowerGrid(2, 2, 1, 0.35, 0.02);
             //PowerGrid pg = new PowerGrid("./dati_08_12_11/pg_200_1000_2000/1000/0.29/0.pg");//"trovalerrore.pg");
-            //PowerGrid pg = new PowerGrid("trovalerrore.pg");
+            //PowerGrid pg = new PowerGrid("/home/mik/NetBeansProjects/jMaxSumSVN/dati_08_12_11/pg_200_1000_2000/200/0.29/2.pg");
             System.out.println(pg.toStringFile());
-            System.out.println("Generation complete.");
+            //System.out.println("Generation complete.");
 
-            ScrewerUp screwerup = null;
+            //ScrewerUp screwerup = null;
 
-            COP_Instance cop = pg.getMCCop();
+            COP_Instance cop = pg.getCopM();
 
             
 
             System.out.println(cop.toStringFile());
 
-               screwerup = new ScrewerUp(cop);
-                cop = screwerup.screwItUp();
+            
+               /*screwerup = new ScrewerUp(cop);
+                cop = screwerup.screwItUp();*/
 
 
-            System.out.println(cop.toStringFile());
+            //System.out.println(cop.toStringFile());
             Athena athena = new Athena(cop, "min", "sum");
 
-            athena.setIterationsNumber(50);
-            athena.setUpdateOnlyAtEnd(false);
+            athena.setIterationsNumber(30000);
+            athena.setUpdateOnlyAtEnd(true);
             athena.setStepbystep(false);
 
             System.out.println("Start solver!");
             athena.solve();
 
-            System.out.println("Fixing..");
-            cop = screwerup.fixItUp();
-            System.out.println("Fixed cop:\n"+cop.toStringFile());
+            /*System.out.println("Fixing..");
+            cop = screwerup.fixItUp();*/
+            //System.out.println("Fixed cop:\n"+cop.toStringFile());
 
         } catch (PostServiceNotSetException ex) {
             ex.printStackTrace();
