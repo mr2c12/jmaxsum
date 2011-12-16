@@ -35,21 +35,23 @@ public class PGSolved {
     public static void main(String[] args){
         try {
             System.out.println("Generating powergrid.");
-            PowerGrid pg = new PowerGrid(2, 2, 1, 0.35, 0.02);
+            //PowerGrid pg = new PowerGrid(2, 3, 2, 0.35, 0.02);
             //PowerGrid pg = new PowerGrid("./dati_08_12_11/pg_200_1000_2000/1000/0.29/0.pg");//"trovalerrore.pg");
             //PowerGrid pg = new PowerGrid("/home/mik/NetBeansProjects/jMaxSumSVN/dati_08_12_11/pg_200_1000_2000/200/0.29/2.pg");
-            System.out.println(pg.toStringFile());
+            PowerGrid pg = new PowerGrid("/home/mik/NetBeansProjects/jMaxSumSVN/232.pg");
+            //System.out.println(pg.toStringFile());
             //System.out.println("Generation complete.");
 
             //ScrewerUp screwerup = null;
 
-            COP_Instance cop = pg.getCopM();
+            COP_Instance cop = pg.getMCCop();
 
-            
+            /*pg.saveToFile("/home/mik/NetBeansProjects/jMaxSumSVN/232.pg");
+            System.exit(0);*/
 
             System.out.println(cop.toStringFile());
 
-            
+            System.exit(0);
                /*screwerup = new ScrewerUp(cop);
                 cop = screwerup.screwItUp();*/
 

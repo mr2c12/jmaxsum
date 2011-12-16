@@ -1285,6 +1285,8 @@ public class PowerGrid {
 
     public COP_Instance getCop() throws UnInitializatedException {
         if (this.cop == null) {
+            this.mccop = null;
+            this.copm = null;
             this.buildCOPInstance();
         }
         return this.cop;
@@ -1292,6 +1294,8 @@ public class PowerGrid {
 
     public COP_Instance getCopM() throws UnInitializatedException {
         if (this.copm == null) {
+            this.cop = null;
+            this.mccop = null;
             this.buildCOPMInstance();
         }
         return this.copm;
@@ -1299,6 +1303,8 @@ public class PowerGrid {
 
     public COP_Instance getMCCop() throws UnInitializatedException {
         if (this.mccop == null) {
+            this.cop = null;
+            this.copm = null;
             this.buildMCCOPInstance();
         }
         return this.mccop;

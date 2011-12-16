@@ -57,7 +57,7 @@ public abstract class MessageContent {
         return hash;
     }
 
-    public String StringContent(){
+    public String stringContent(){
         StringBuilder s = new StringBuilder("[");
         for (int i = 0; i < this.size(); i++) {
             if (this.getValue(i) == null){

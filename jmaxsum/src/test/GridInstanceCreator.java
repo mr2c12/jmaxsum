@@ -39,19 +39,22 @@ public class GridInstanceCreator {
 
         int[] Ma = {100000};
         int[] na = {20};
+        double xmeanbase = 0.29;
+        double modxmean;
+        double modxmean_startvalue=0;
 
-        if (args.length == 1){
+        if (args.length >= 1){
             Ma[0] = Integer.parseInt(args[0]);
         }
-        else if ( args.length == 2){
-            Ma[0] = Integer.parseInt(args[0]);
+        if ( args.length >= 2){
             na[0] = Integer.parseInt(args[1]);
+        }
+        if ( args.length >= 3){
+            modxmean_startvalue = Double.parseDouble(args[2]);
         }
         int n;
         int M;
-        double xmeanbase = 0.29;
         double xmean;
-        double modxmean;
         double delta = 0.2;
         int numberOfLoadsForGenerator = 3;
         int R = 2;
@@ -68,9 +71,9 @@ public class GridInstanceCreator {
                 M = Ma[index];
                 Runtime.getRuntime().exec("mkdir -p ./report/"+M);
 
-                for (modxmean = 0; modxmean < 11; modxmean++){
+                for (modxmean = modxmean_startvalue; modxmean < 11; modxmean++){
 
-                    xmean = xmeanbase + (modxmean/1000);
+                    xmean = xmeanbase + (modxmean/1000.0);
 
 
                     Runtime.getRuntime().exec("mkdir -p ./report/"+M+"/"+xmean);

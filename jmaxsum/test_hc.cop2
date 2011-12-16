@@ -1,0 +1,24 @@
+AGENT 1 
+VARIABLE 1 1 2
+VARIABLE 2 1 2
+VARIABLE 3 1 2
+CONSTRAINT 1 1 1 2 3
+F 0 0 0 -inf
+F 0 0 1 0
+F 0 1 0 0
+F 0 1 1 -inf
+F 1 0 0 0
+F 1 0 1 -inf
+F 1 1 0 -inf
+F 1 1 1 -inf
+CONSTRAINT 2 1 1
+F 0 20
+F 1 0
+CONSTRAINT 3 1 2
+F 0 21
+F 1 0
+CONSTRAINT 4 1 3
+F 0 50
+F 1 +inf
+
+

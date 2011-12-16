@@ -280,11 +280,13 @@ public class FactorGraph{
         // step 1&2
         // minimize function on remaining args
         // remove NodeVariable from function
+        // TODO: change with entryset
         for (NodeFunction key_f : f_xs.keySet()){
             key_f.removeNeighbours(
                     f_xs.get(key_f)
                     );
         }
+
         // step 3
         // remove NodeFunction from variable
         for (NodeVariable key_x : x_fs.keySet()){

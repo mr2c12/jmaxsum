@@ -91,7 +91,7 @@ public class TabularFunction extends FunctionEvaluator {
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
-        StringBuilder append = string.append("Function evaluator with " + this.entryNumber() + " entries\n");
+        string.append("Function evaluator with ").append(this.entryNumber()).append(" entries\n");
         string.append("NodeVariable used: ");
         /*Iterator<NodeVariable> it = this.parameters.iterator();
         while (it.hasNext()) {
@@ -99,7 +99,7 @@ public class TabularFunction extends FunctionEvaluator {
         StringBuilder append1 = string.append(nodeVariable + " ");
         }*/
         for (int i = 0; i < this.parameters.size(); i++) {
-            StringBuilder append1 = string.append(this.parameters.get(i) + " ");
+            string.append(this.parameters.get(i)).append(" ");
         }
         string.append("\n");
         /*Iterator<String> keyit = this.costTable.keySet().iterator();

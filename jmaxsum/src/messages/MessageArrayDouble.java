@@ -125,7 +125,7 @@ public class MessageArrayDouble implements Message{
 
     @Override
     public String toString(){
-        return "Message from "+ this.sender + " to " + this.receiver + " = " + this.message.StringContent();
+        return "Message from "+ this.sender + " to " + this.receiver + " = " + this.message.stringContent();
                 //Utils.toString(this.message);
     }
 
@@ -152,6 +152,30 @@ public class MessageArrayDouble implements Message{
     public Node getSender() {
         return sender;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MessageArrayDouble other = (MessageArrayDouble) obj;
+        if (this.message != other.message && (this.message == null || !this.message.equals(other.message))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.message != null ? this.message.hashCode() : 0);
+        return hash;
+    }
+
+
     
 
 }

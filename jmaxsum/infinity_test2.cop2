@@ -1,0 +1,7 @@
+AGENT 1 
+VARIABLE 1 1 2
+CONSTRAINT 1 1 1
+F 0 2
+F 1 +inf
+
+
