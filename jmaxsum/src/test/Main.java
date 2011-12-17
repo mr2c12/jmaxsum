@@ -32,7 +32,9 @@ public class Main {
         /*PowerGrid pg = new PowerGrid();
         pg.initRandom(4, 3, 1);*/
 
-
+        boolean cond = (0.0 > Double.NaN);
+        System.out.println("Cond is:"+cond);
+        System.exit(0);
 
         try {
 

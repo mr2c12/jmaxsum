@@ -1,5 +1,6 @@
 package factorgraph;
 
+import exception.NoMoreValuesException;
 import exception.OutOfNodeVariableNumberException;
 import exception.VariableNotSetException;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * The NodeVariable of the Factor Graph.
@@ -189,6 +191,21 @@ public class NodeVariable implements Node{
             throw new VariableNotSetException();
         }
         return this.getArgument(this.index_actual_argument);
+    }
+
+    public void setAnotherRandomValidValue() throws NoMoreValuesException {
+        if (this.size() == 1){
+            if (this.index_actual_argument == -1) {
+                this.setStateIndex(0);
+            }
+            else {
+                throw new NoMoreValuesException();
+            }
+        }
+        else {
+            Random rnd = new Random();
+            this.setStateIndex(rnd.nextInt(this.size()));
+        }
     }
 
     public int id() {

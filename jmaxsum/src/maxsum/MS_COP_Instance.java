@@ -42,8 +42,20 @@ public class MS_COP_Instance extends COP_Instance{
     // make it "static"?!
     public double actualValue() throws VariableNotSetException {
         double value = 0.0;
+        double actualFValue;
         for(NodeFunction nf : this.factorgraph.getNodefunctions()){
-            value += nf.actualValue();
+            actualFValue = nf.actualValue();
+
+            // TODO: check if it works
+            /*if (actualFValue == Double.NEGATIVE_INFINITY){
+                return Double.NEGATIVE_INFINITY;
+            }
+            else if (actualFValue == Double.POSITIVE_INFINITY){
+                return Double.POSITIVE_INFINITY;
+            }
+            else {*/
+                value += actualFValue;
+            //}
         }
 
         return value;

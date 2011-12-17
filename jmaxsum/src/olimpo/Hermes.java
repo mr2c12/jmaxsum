@@ -27,6 +27,8 @@ import jargs.gnu.CmdLineParser;
 import java.io.File;
 import java.io.IOException;
 import misc.Utils;
+import operation.Solver;
+import powerGrid.PowerGrid;
 import system.COP_Instance;
 
 /**
@@ -47,11 +49,13 @@ public class Hermes {
         CmdLineParser.Option report = parser.addStringOption('R', "report");
         CmdLineParser.Option screwup = parser.addBooleanOption("screw-it-up");
         CmdLineParser.Option updateel = parser.addBooleanOption('U', "update-each-iteration");
-        CmdLineParser.Option noBounded = parser.addBooleanOption("no-bounded-max-sum");
+        CmdLineParser.Option noBounded = parser.addBooleanOption("bounded-max-sum");
         CmdLineParser.Option printFactorGraph = parser.addBooleanOption('F', "print-factor-graph");
         CmdLineParser.Option time = parser.addBooleanOption('T', "time");
         CmdLineParser.Option oplus = parser.addStringOption("oplus");
         CmdLineParser.Option otimes = parser.addStringOption("otimes");
+        CmdLineParser.Option solver = parser.addStringOption("solver");
+        CmdLineParser.Option powerGrid = parser.addBooleanOption("is-power-grid");
 
         try {
             parser.parse(args);
@@ -66,10 +70,11 @@ public class Hermes {
         Boolean stepbystepV = (Boolean) parser.getOptionValue(stepbystep, false);
         Boolean screwupV = (Boolean) parser.getOptionValue(screwup, false);
         Boolean updateelV = (Boolean) parser.getOptionValue(updateel, false);
-        Boolean noBoundedV = (Boolean) parser.getOptionValue(noBounded, false);
+        Boolean boundedV = (Boolean) parser.getOptionValue(noBounded, false);
         Boolean printFactorGraphV = (Boolean) parser.getOptionValue(printFactorGraph, false);
         Boolean timeV = (Boolean) parser.getOptionValue(time, false);
-
+        
+        Boolean powerGridV = (Boolean) parser.getOptionValue(powerGrid, false);
         // what if no report? -> null!
         String reportV = (String) parser.getOptionValue(report);
 
@@ -77,14 +82,26 @@ public class Hermes {
 
         String oplusV = (String) parser.getOptionValue(oplus, "max");
         String otimesV = (String) parser.getOptionValue(otimes, "sum");
+        String solverV = (String) parser.getOptionValue(solver, "athena");
 
         String[] otherArgs = parser.getRemainingArgs();
         String filepath = "";
         try {
             if ((otherArgs.length == 1) && (new File(otherArgs[0]).exists())) {
                 filepath = otherArgs[0];
+
             } else {
                 throw new Exception("Invalid file or unrecognized argument/s!\n\n");
+            }
+
+            if (!((oplusV.equalsIgnoreCase("max") || oplusV.equalsIgnoreCase("min")))) {
+                throw new Exception("Invalid value for OPlus!\n\n");
+            }
+            if (!( (otimesV.equalsIgnoreCase("sum")) || (otimesV.equalsIgnoreCase("prod")))) {
+                throw new Exception("Invalid value for OTimes!\n\n");
+            }
+            if (!((solverV.equalsIgnoreCase("athena")) || (solverV.equalsIgnoreCase("eris")))) {
+                throw new Exception("Invalid solver!\n\n");
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -106,10 +123,28 @@ public class Hermes {
 
             long startTime = System.currentTimeMillis();
 
-            COP_Instance original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
+            /*COP_Instance original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
+            PowerGrid pg = new PowerGrid(args[1]);*/
 
-            InstanceCloner ic = new InstanceCloner(original_cop);
-            COP_Instance cop = ic.getClonedInstance();
+            COP_Instance original_cop;
+            if (powerGridV){
+                PowerGrid pg = new PowerGrid(filepath);
+                original_cop = pg.getCopM();
+            }
+            else {
+                original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
+            }
+
+
+            COP_Instance cop;
+            InstanceCloner ic = null;
+            if (screwupV || boundedV){
+                 ic = new InstanceCloner(original_cop);
+                 cop = ic.getClonedInstance();
+            }
+            else {
+                cop = original_cop;
+            }
 
 
             ScrewerUp screwerup = null;
@@ -118,16 +153,22 @@ public class Hermes {
                 screwerup = new ScrewerUp(cop);
                 cop = screwerup.screwItUp();
             }
-            
+
             BoundedMaxSum BMax = null;
-            if (!noBoundedV) {
+            if (boundedV) {
                 // time for BoundedMaxSum to do his best!
                 BMax = new BoundedMaxSum(cop.getFactorgraph());
                 //BMax.weightTheGraph();
                 BMax.letsBound();
             }
 
-            Athena core = new Athena(cop, oplusV, otimesV);
+            Solver core = null;
+            if (solverV.equalsIgnoreCase("athena")){
+                core = new Athena(cop, oplusV, otimesV);
+            }
+            else if (solverV.equalsIgnoreCase("eris")){
+                core = new Eris(oplusV, cop);
+            }
 
             core.setIterationsNumber(iterationsV);
 
@@ -142,8 +183,10 @@ public class Hermes {
 
             core.solve();
 
-            // set the variables value to the original instance
-            ic.setOriginalVariablesValues();
+            if (screwupV || boundedV){
+                // set the variables value to the original instance
+                ic.setOriginalVariablesValues();
+            }
 
             long endTime = System.currentTimeMillis();
 
@@ -154,7 +197,7 @@ public class Hermes {
                 finale += "==========================================\n"
                         + "Original factor graph:\n" + original_cop.getFactorgraph().toString()
                         + "==========================================\n";
-                if (!noBoundedV) {
+                if (boundedV) {
                     // bounded version printed only if created
                     finale += "==========================================\n"
                             + "Bounded factor graph:\n" + cop.getFactorgraph().toString()
@@ -162,17 +205,16 @@ public class Hermes {
                 }
             }
 
-            if (!noBoundedV) {
+            if (boundedV) {
                 // bounded version printed only if created
                 try {
-                    finale += "Approximation Ratio: "+
-                            BMax.getApproximationRatio(cop.actualValue(), original_cop.actualValue())
-                            +"\n";
+                    finale += "Approximation Ratio: "
+                            + BMax.getApproximationRatio(cop.actualValue(), original_cop.actualValue())
+                            + "\n";
                     finale += "Sanity check: ";
-                    if (BMax.sanityCheckOnSolution(cop.actualValue(), original_cop.actualValue())){
+                    if (BMax.sanityCheckOnSolution(cop.actualValue(), original_cop.actualValue())) {
                         finale += "OK\n";
-                    }
-                    else {
+                    } else {
                         finale += "ERROR\n";
                     }
                 } catch (VariableNotSetException e1) {
@@ -181,24 +223,24 @@ public class Hermes {
                     System.out.println(e2);
                 }
             }
-            
-            finale += "Conclusion for original cop=" + original_cop.status()+"\n";
 
-            if (timeV){
-                finale += "Time needed: "+((endTime - startTime)/(double)1000)+" [s]";
+            finale += "Conclusion for original cop=" + original_cop.status() + "\n";
+
+            if (timeV) {
+                finale += "Time needed: " + ((endTime - startTime) / (double) 1000) + " [s]";
             }
 
             if (reportV != null) {
                 try {
                     Utils.stringToFile(finale, reportV);
                 } catch (IOException ex) {
-                    System.out.println("Unable to write the report to "+reportV);
+                    System.out.println("Unable to write the report to " + reportV);
                 }
             } else {
                 System.out.println(finale);
             }
 
-        }catch (IllegalArgumentException iaex) {
+        } catch (IllegalArgumentException iaex) {
             System.out.println(iaex.getMessage());
         } catch (PostServiceNotSetException pse) {
             System.out.println("Fatal problem in the process of initialization: no PostService set!");
@@ -214,6 +256,7 @@ public class Hermes {
         String usage = "Usage: java -jar maxSum.jar [-options] inputfile\n";
         usage += "where inputfile is the path of the file containing an instance of a COP problem\n";
         usage += "and where options include:\n";
+        usage += "\t--solver\t\tthe solver method, can be \"athena\" for MaxSum or \"eris\" for Simulated Annealing (default: \"athena\")\n";
         usage += "\t--oplus\t\tthe oplus operator, can be \"max\" or \"min\" (default: \"max\")\n";
         usage += "\t--otimes\tthe otimes operator, only \"sum\" available at the moment (default: \"sum\")\n";
 
@@ -223,7 +266,7 @@ public class Hermes {
         usage += "\t--update-each-iteration <n> | -U <n>\n\t\tprint the utility value and variables value at every iteration\n";
         usage += "\t--print-factor-graph | -F\n\t\tprint both version of factor graph, original and after the bounded-max-sum phase\n";
         usage += "\t--screw-it-up\tto use the preferences-on-values hack\n";
-        usage += "\t--no-bounded-max-sum\tskip the Bounded Max Sum phase\n";
+        usage += "\t--bounded-max-sum\tuse the Bounded Max Sum phase\n";
         usage += "\t--time | -T\n\t\tprint total time usage\n";
         usage += "\t--report <file>\twrite the report of the execution on <file>";
 

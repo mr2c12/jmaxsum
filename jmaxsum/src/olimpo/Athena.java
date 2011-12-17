@@ -16,6 +16,7 @@
  */
 package olimpo;
 
+import operation.Solver;
 import exception.MessagesFixedPointException;
 import exception.PostServiceNotSetException;
 import exception.VariableNotSetException;
@@ -43,7 +44,7 @@ import system.COP_Instance;
  * It implements the Max Sum Algorithm.
  * @author Michele Roncalli <roncallim at gmail dot com>
  */
-public class Athena {
+public class Athena implements Solver {
 
     /**
      * Shuffle the order of messages sent?
