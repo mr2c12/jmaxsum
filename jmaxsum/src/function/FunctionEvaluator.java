@@ -342,7 +342,7 @@ public abstract class FunctionEvaluator {
      * @return the maximums array of F
      * @throws ParameterNotFoundException if x is not a parameter of this Function Evaluator
      */
-    
+
     public double[] maxFfixedX(NodeVariable x) throws ParameterNotFoundException{
         if (!this.parameters.contains(x)) {
             throw new ParameterNotFoundException(this+" does NOT contain "+x);
@@ -462,7 +462,7 @@ public abstract class FunctionEvaluator {
         return maxes;
 
     }
-    
+
 
 
     /**
@@ -879,7 +879,7 @@ public abstract class FunctionEvaluator {
      * @return an array containing the minimum value for each possible argument of x
      */
     public abstract double[] minimizeWRT(NodeVariable x) throws ParameterNotFoundException;
-    
+
     /**
      * Required by oplus: use a modifier table to change function values.<br/>
      * Minimize the function over all other parameters except x.<br/>
@@ -889,7 +889,7 @@ public abstract class FunctionEvaluator {
      * @return an array containing the minimum value for each possible argument of x
      */
     public abstract double[] minimizeWRT(NodeVariable x, HashMap<NodeVariable, MessageQ> modifierTable) throws ParameterNotFoundException;
-    
+
 
     /**
      * Maximize the function over all other parameters except x.<br/>

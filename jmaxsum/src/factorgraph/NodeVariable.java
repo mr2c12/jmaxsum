@@ -46,7 +46,7 @@ public class NodeVariable implements Node{
 
     private NodeVariable (int id){
         this.id = id;
-        this.lastId = id;
+        lastId = id;
         this.values = new ArrayList<NodeArgument>();
         this.neighbours = new HashSet<NodeFunction>();
     }

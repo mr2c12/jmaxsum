@@ -1,16 +1,16 @@
 /*
  *  Copyright (C) 2011 Michele Roncalli <roncallim at gmail dot com>
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,7 +38,6 @@ public class Eris implements Solver{
     private COP_Instance cop;
     private String op = "max";
     private ArrayList<NodeVariable> variables;
-    private ArrayList<NodeFunction> functions;
     double costo;
     int passi = -1;
     long inizio, fine;
@@ -70,8 +69,16 @@ public class Eris implements Solver{
         this.cop = cop;
 
         // TODO: copy only variables with domain > 1
-        this.variables = new ArrayList<NodeVariable>(this.cop.getNodevariables());
-        this.functions = new ArrayList<NodeFunction>(this.cop.getNodefunctions());
+        //this.variables = new ArrayList<NodeVariable>(this.cop.getNodevariables());
+        this.variables = new ArrayList<NodeVariable>();
+        for (NodeVariable nv : this.cop.getNodevariables()){
+            if (nv.size()>1){
+                this.variables.add(nv);
+            }
+            else if (nv.size()==1){
+                nv.setStateIndex(0);
+            }
+        }
     }
 
 
@@ -240,7 +247,7 @@ public class Eris implements Solver{
 
         if (!this.updateOnlyAtEnd) {
             if (this.pleaseReport) {
-                
+
             } else {
                 System.out.println(status);
             }
@@ -248,7 +255,7 @@ public class Eris implements Solver{
 
         this.report += status + "\n";
         this.report += "total time [ms]="+(fine-inizio)+"\n";
-        
+
         this.report += "latest value got at iteration="+mink+"\n";
         this.report += "total number of iteration="+passi+"\n";
         this.report += "fixed point found=";

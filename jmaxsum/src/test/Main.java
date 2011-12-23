@@ -72,29 +72,29 @@ public class Main {
                         System.out.println("---------------------------------------");
                 }
 
-                
+
                 //COP_Instance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
 
-                
+
 
                 /*
                 InstanceCloner ic = new InstanceCloner(cop);
                 COP_Instance cop2 = ic.getClonedInstance();
-                
+
 
                 System.out.println("Cloned instance value:\n"+cop2.toTestString());
 
                 System.out.println("------------------------------------------------");
                 */
 
-                
+
                 Athena core = new Athena(cop,"max", "sum");
                 core.setIterationsNumber(1000);
                 core.setStepbystep(false);
                 core.setUpdateOnlyAtEnd(true);
                 core.solve_complete();
                 System.exit(0);
-                
+
 
                 /*
                 Athena core2 = new Athena(cop2,"max", "sum");
@@ -127,7 +127,7 @@ public class Main {
                 //System.out.println(ic.testString());
 
 
-                
+
 
 
                 /*if (cop.actualValue() == cop2.actualValue()){
@@ -183,6 +183,6 @@ public class Main {
     }
 
 
-    
+
 
 }
