@@ -50,8 +50,9 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
-                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
+                //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/report/2/0.25/0.pg",
+                "/home/mik/NetBeansProjects/jMaxSumSVN/232.pg",
             };
 
             for (String path : paths) {
@@ -80,7 +81,7 @@ public class Main {
                 boolean oldformatV = false;
                 boolean screwupV = false;
                 boolean boundedV = false;
-                String solverV = "eris";
+                String solverV = "athena";
                 String oplusV = "min";
                 String otimesV = "sum";
 
@@ -94,15 +95,15 @@ public class Main {
 
                 COP_Instance original_cop;
                 if (powerGridV) {
-                    PowerGrid pg = new PowerGrid(filepath);
-                    //PowerGrid pg = new PowerGrid(3, 3, 2, 0.2, 0.1);
+                    //PowerGrid pg = new PowerGrid(filepath);
+                    PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
                     original_cop = pg.getCopM();
-                    //System.out.println(pg.toStringFile());
+                    System.out.println(pg.toStringFile());
                 } else {
                     original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
                 }
 
-                //System.out.println(original_cop.toStringFile());
+                System.out.println(original_cop.toStringFile());
 
                 COP_Instance cop;
                 InstanceCloner ic = null;

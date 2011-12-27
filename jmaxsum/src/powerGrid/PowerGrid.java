@@ -968,7 +968,6 @@ public class PowerGrid {
         HashSet<Agent> agents = new HashSet<Agent>();
 
         NodeVariable nodevariable;
-        NodeArgument nodeargument;
         NodeFunction nodefunction;
         TabularFunction tfunction;
         Agent agent = Agent.getAgent(0);
@@ -995,6 +994,10 @@ public class PowerGrid {
                 System.out.println("---------------------------------------");
             }
             for (Generator lit_g : lit.getGenerators()) {
+
+                //FIX ME: to string?
+                /*nodevariable.addValue(
+                        NodeArgument.getNodeArgument(Integer.toString(lit_g.getId())));*/
                 nodevariable.addValue(
                         NodeArgument.getNodeArgument(lit_g.getId()));
             }
