@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package test;
+
+import boundedMaxSum.BoundedMaxSum;
 import boundedMaxSum.InstanceCloner;
 import hacks.ScrewerUp;
 import java.util.Random;
@@ -12,6 +13,8 @@ import misc.Utils;
 import system.COP_Instance;
 import olimpo.Cerberus;
 import olimpo.Athena;
+import olimpo.Eris;
+import operation.Solver;
 import powerGrid.PowerGrid;
 
 /**
@@ -29,18 +32,15 @@ public class Main {
         long startTime = System.currentTimeMillis();
         System.out.println("Started");
 
-        /*PowerGrid pg = new PowerGrid();
-        pg.initRandom(4, 3, 1);*/
-
-        boolean cond = (0.0 > Double.NaN);
-        System.out.println("Cond is:"+cond);
-        System.exit(0);
+        /*double res = Math.exp(-1*Double.POSITIVE_INFINITY/200);
+        System.out.println("res: " +res);
+        System.exit(0);*/
 
         try {
 
             String[] paths = {
                 //"/home/mik/NetBeansProjects/maxSum/copTest.cop2",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper_multi.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/simpleTest.cop2",
@@ -50,27 +50,125 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
+                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/report/2/0.25/0.pg",
             };
 
-            for (String path : paths){
+            for (String path : paths) {
 
-                if (debug>=1) {
-                        String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Main: creating the COP instance from " + path);
-                        System.out.println("---------------------------------------");
+                /*if (debug >= 1) {
+                String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Main: creating the COP instance from " + path);
+                System.out.println("---------------------------------------");
                 }
-                COP_Instance cop = Cerberus.getInstanceFromFile(path,false);
+                COP_Instance cop = Cerberus.getInstanceFromFile(path, false);
                 //COP_Instance cop = Cerberus.getInstanceFromFile("/home/mik/NetBeansProjects/maxSum/problem.cop2",true);
 
-                if (debug>=3) {
-                        String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
-                        String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
-                        System.out.println("---------------------------------------");
-                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "original instance is: " + cop.toTestString());
-                        System.out.println("---------------------------------------");
+                if (debug >= 3) {
+                String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "original instance is: " + cop.toTestString());
+                System.out.println("---------------------------------------");
+                }*/
+
+
+                boolean powerGridV = true;
+                String filepath = path;
+                boolean oldformatV = false;
+                boolean screwupV = false;
+                boolean boundedV = false;
+                String solverV = "eris";
+                String oplusV = "min";
+                String otimesV = "sum";
+
+                int iterationsV = 20000;
+
+                boolean stepbystepV = false;
+                boolean updateelV = false;
+
+                String reportV = null;
+
+
+                COP_Instance original_cop;
+                if (powerGridV) {
+                    PowerGrid pg = new PowerGrid(filepath);
+                    //PowerGrid pg = new PowerGrid(3, 3, 2, 0.2, 0.1);
+                    original_cop = pg.getCopM();
+                    //System.out.println(pg.toStringFile());
+                } else {
+                    original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
                 }
+
+                //System.out.println(original_cop.toStringFile());
+
+                COP_Instance cop;
+                InstanceCloner ic = null;
+                if (screwupV || boundedV) {
+                    ic = new InstanceCloner(original_cop);
+                    cop = ic.getClonedInstance();
+                } else {
+                    cop = original_cop;
+                }
+
+
+                ScrewerUp screwerup = null;
+
+                if (screwupV) {
+                    screwerup = new ScrewerUp(cop);
+                    cop = screwerup.screwItUp();
+                }
+
+                BoundedMaxSum BMax = null;
+                if (boundedV) {
+                    // time for BoundedMaxSum to do his best!
+                    BMax = new BoundedMaxSum(cop.getFactorgraph());
+                    //BMax.weightTheGraph();
+                    BMax.letsBound();
+                }
+
+                Solver core = null;
+                if (solverV.equalsIgnoreCase("athena")) {
+                    core = new Athena(cop, oplusV, otimesV);
+                } else if (solverV.equalsIgnoreCase("eris")) {
+                    core = new Eris(oplusV, cop);
+                }
+
+                core.setIterationsNumber(iterationsV);
+
+                core.setStepbystep(stepbystepV);
+                core.setUpdateOnlyAtEnd(!stepbystepV);
+
+                core.setUpdateOnlyAtEnd(!updateelV);
+
+                if (reportV != null) {
+                    core.pleaseReport(reportV);
+                }
+
+                core.solve();
+
+                if (screwupV || boundedV) {
+                    // set the variables value to the original instance
+                    ic.setOriginalVariablesValues();
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                 //COP_Instance cop2 = new ClonedMSInstance((MS_COP_Instance) cop);
@@ -85,16 +183,16 @@ public class Main {
                 System.out.println("Cloned instance value:\n"+cop2.toTestString());
 
                 System.out.println("------------------------------------------------");
-                */
+                 */
 
-
-                Athena core = new Athena(cop,"max", "sum");
+                /*
+                Athena core = new Athena(cop, "max", "sum");
                 core.setIterationsNumber(1000);
                 core.setStepbystep(false);
                 core.setUpdateOnlyAtEnd(true);
                 core.solve_complete();
                 System.exit(0);
-
+                */
 
                 /*
                 Athena core2 = new Athena(cop2,"max", "sum");
@@ -102,7 +200,7 @@ public class Main {
                 core2.setStepbystep(false);
                 core2.solve_nIteration();
                 core2.conclude();
-                */
+                 */
                 /*
                 ClonedMSInstance cop3 = new ClonedMSInstance((MS_COP_Instance) cop);
                 Athena core3 = new Athena(cop3);
@@ -110,17 +208,17 @@ public class Main {
                 core3.setStepbystep(false);
                 core3.solve_nIteration();
                 core3.conclude();
-                 System.out.println("original value(cop3)= " + cop3.actualValue());
-                */
+                System.out.println("original value(cop3)= " + cop3.actualValue());
+                 */
 
 
                 //ic.setOriginalVariablesValues();
                 //System.out.println("original value(ic)= " + ic.getActualOriginalValue());
-                System.out.println("original value(cop)= " + cop.actualValue());
+                //System.out.println("original value(cop)= " + cop.actualValue());
                 /*System.out.println("original value(cop2)= " + cop2.actualValue());
 
                 ic.setOriginalVariablesValues();*/
-                System.out.println("cop new status: "+cop.status());
+                //System.out.println("cop new status: " + cop.status());
 
                 //System.out.println("original renewed value(cop)= " + cop.actualValue());
 
@@ -131,10 +229,10 @@ public class Main {
 
 
                 /*if (cop.actualValue() == cop2.actualValue()){
-                    System.out.println("OK on "+path);
+                System.out.println("OK on "+path);
                 }
                 else {
-                    System.out.println("FAIL on "+path);
+                System.out.println("FAIL on "+path);
                 }*/
             }
             /*
@@ -143,11 +241,11 @@ public class Main {
             cop = su.screwItUp();
 
             if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "screwed instance is: "+ cop.toTestString());
-                    System.out.println("---------------------------------------");
+            String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "screwed instance is: "+ cop.toTestString());
+            System.out.println("---------------------------------------");
             }
 
             Athena core = new Athena(cop);
@@ -167,22 +265,18 @@ public class Main {
 
 
             if (debug>=3) {
-                    String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
-                    String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
-                    System.out.println("---------------------------------------");
-                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fixed instance is: "+ cop.toTestString());
-                    System.out.println("---------------------------------------");
+            String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[0].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "fixed instance is: "+ cop.toTestString());
+            System.out.println("---------------------------------------");
             }*/
 
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("Finish in " + ((System.currentTimeMillis() - startTime)/(double)1000) + " s");
+        System.out.println("Finish in " + ((System.currentTimeMillis() - startTime) / (double) 1000) + " s");
     }
-
-
-
-
 }

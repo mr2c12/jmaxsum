@@ -202,9 +202,14 @@ public class NodeVariable implements Node{
                 throw new NoMoreValuesException();
             }
         }
-        else {
+        else if (this.size() > 1) {
             Random rnd = new Random();
-            this.setStateIndex(rnd.nextInt(this.size()));
+            int oldValue = this.getStateIndex();
+            int pos;
+            do {
+                pos = rnd.nextInt(this.size());
+            } while (pos == oldValue);
+            this.setStateIndex(pos);
         }
     }
 

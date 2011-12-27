@@ -73,6 +73,9 @@ public class DebugVerbosity {
     public static final int debugAthena = 0
             + DebugVerbosity.debug;
 
+    public static final int debugEris = 0
+            + DebugVerbosity.debug;
+
     public static final int debugUtils = 0
             + DebugVerbosity.debug;
 

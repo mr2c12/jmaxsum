@@ -37,9 +37,9 @@ public class GridInstanceCreator {
         int[] na = {100, 100, 100, 100, 100, 20};*/
 
 
-        int[] Ma = {100000};
-        int[] na = {20};
-        double xmeanbase = 0.29;
+        int[] Ma = {2};
+        int[] na = {1};
+        double xmeanbase = 0.25;
         double modxmean;
         double modxmean_startvalue=0;
 
