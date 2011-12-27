@@ -272,7 +272,7 @@ public class TabularFunctionTest {
     /**
      * Test of getParametersCost method, of class TabularFunction.
      */
-    @Test
+    /*@Test
     public void testGetParametersCost() {
         System.out.println("getParametersCost");
         HashMap<NodeArgument[], Double> expResult = null;
@@ -288,7 +288,7 @@ public class TabularFunctionTest {
 
         }
         assertTrue(true);
-    }
+    }*/
 
     /**
      * Test of toStringForFile method, of class TabularFunction.

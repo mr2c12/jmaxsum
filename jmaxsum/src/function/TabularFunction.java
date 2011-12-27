@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import messages.MessageQ;
+import misc.NodeArgumentArray;
 import misc.Utils;
 
 /**
@@ -39,10 +41,10 @@ public class TabularFunction extends FunctionEvaluator {
      * Correspondence between parameters and function values.<br/>
      * The parameters are represented in a String.
      */
-    protected HashMap<String, Double> costTable;
+    protected HashMap<NodeArgumentArray, Double> costTable;
 
     public TabularFunction() {
-        this.costTable = new HashMap<String, Double>();
+        this.costTable = new HashMap<NodeArgumentArray, Double>();
     }
 
     /**
@@ -52,12 +54,8 @@ public class TabularFunction extends FunctionEvaluator {
      * @param cost the cost for the params
      */
     public void addParametersCost(NodeArgument[] params, double cost) {
-        StringBuilder key = new StringBuilder();
-        key.append("");
-        for (int i = 0; i < params.length; i++) {
-            key.append(params[i].toString()).append(";");
-        }
-        this.costTable.put(key.toString(), cost);
+        
+        this.costTable.put(NodeArgumentArray.getNodeArgumentArray(params), cost);
 
         // set the min and the max
         if ((cost!= Double.NEGATIVE_INFINITY) && (cost!= Double.POSITIVE_INFINITY) ){
@@ -72,12 +70,8 @@ public class TabularFunction extends FunctionEvaluator {
 
     @Override
     public double evaluate(NodeArgument[] params) {
-        StringBuilder key = new StringBuilder();
-
-        for (int i = 0; i < params.length; i++) {
-            key.append(params[i].toString()).append(";");
-        }
-        return this.costTable.get(key.toString());
+        
+        return this.costTable.get(NodeArgumentArray.getNodeArgumentArray(params));
     }
 
     /**
@@ -107,42 +101,33 @@ public class TabularFunction extends FunctionEvaluator {
         String key = keyit.next();
         string += "["+key+"] "+this.costTable.get(key)+"\n";
         }*/
-        HashMap<NodeArgument[], Double> table = this.getParametersCost();
-        Iterator<NodeArgument[]> ita = table.keySet().iterator();
-        while (ita.hasNext()) {
-            NodeArgument[] nodeArguments = ita.next();
+        NodeArgument[] nodeArguments;
+        for (Entry<NodeArgumentArray, Double> entry : this.costTable.entrySet()){
             string.append("[ ");
+            nodeArguments = entry.getKey().getArray();
             for (int i = 0; i < nodeArguments.length; i++) {
                 string.append(nodeArguments[i]).append(" ");
             }
-            string.append("] ").append(table.get(nodeArguments)).append("\n");
+
+            string.append(entry.getValue()).append("\n");
+            string.append("] ");
         }
+        
 
         return string.toString();
     }
 
-    public HashMap<NodeArgument[], Double> getParametersCost() {
+    /*public HashMap<NodeArgument[], Double> getParametersCost() {
         HashMap<NodeArgument[], Double> table = new HashMap<NodeArgument[], Double>();
-        Iterator<String> its = this.costTable.keySet().iterator();
-        String string;
-        StringTokenizer t;
-        LinkedList<NodeArgument> argumentlist;
-        while (its.hasNext()) {
-            string = its.next();
-            t = new StringTokenizer(string, ";");
-            argumentlist = new LinkedList<NodeArgument>();
-            while (t.hasMoreTokens()) {
-                argumentlist.add(NodeArgument.getNodeArgument(t.nextToken()));
-            }
-            NodeArgument[] array = argumentlist.toArray(new NodeArgument[0]);
-            table.put(array, this.costTable.get(string));
+        
+        for (Entry<NodeArgumentArray, Double> entry : this.costTable.entrySet()){
+            table.put(entry.getKey().getArray(), entry.getValue());
         }
-
-
+        
         return table;
-    }
+    }*/
 
-    public NodeArgument[] getArgsFromKey(String string){
+    /*public NodeArgument[] getArgsFromKey(String string){
         StringTokenizer t = new StringTokenizer(string, ";");
         NodeArgument[] args = new NodeArgument[this.parametersNumber()];
         int index = 0;
@@ -151,21 +136,21 @@ public class TabularFunction extends FunctionEvaluator {
             index++;
         }
         return args;
-    }
+    }*/
 
     public String toStringForFile() {
         StringBuilder string = new StringBuilder();
-        HashMap<NodeArgument[], Double> table = this.getParametersCost();
-        Iterator<NodeArgument[]> ita = table.keySet().iterator();
-        while (ita.hasNext()) {
-            NodeArgument[] nodeArguments = ita.next();
+        NodeArgument[] nodeArguments;
+        for (Entry<NodeArgumentArray, Double> entry : this.costTable.entrySet()){
             string.append("F ");
+            nodeArguments = entry.getKey().getArray();
             for (int i = 0; i < nodeArguments.length; i++) {
                 string.append(nodeArguments[i]).append(" ");
             }
-            string.append(table.get(nodeArguments)).append("\n");
+            string.append(entry.getValue()).append("\n");
+            
         }
-
+        
         return string.toString();
     }
 
@@ -198,7 +183,12 @@ public class TabularFunction extends FunctionEvaluator {
             System.out.println("---------------------------------------");
         }
 
-        for (NodeArgument[] arguments : this.getParametersCost().keySet()) {
+        for (Entry<NodeArgumentArray, Double> entry : this.costTable.entrySet()){
+            clonedT.addParametersCost(entry.getKey().getArray(), entry.getValue());
+        }
+
+
+        /*for (NodeArgument[] arguments : this.getParametersCost().keySet()) {
             clonedT.addParametersCost(arguments, this.evaluate(arguments));
             if (debug >= 3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -220,14 +210,14 @@ public class TabularFunction extends FunctionEvaluator {
                 }
                 System.out.println("---------------------------------------");
             }
-        }
+        }*/
 
         return clonedT;
     }
 
     @Override
     public void clearCosts() {
-        this.costTable = new HashMap<String, Double>();
+        this.costTable = new HashMap<NodeArgumentArray, Double>();
     }
 
     @Override

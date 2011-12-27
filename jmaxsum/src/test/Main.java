@@ -50,9 +50,10 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/infinity_test3.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
+                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node20Domain03InducedWidth5Den0.1-01.dcop",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/report/2/0.25/0.pg",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/232.pg",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/232.pg",
             };
 
             for (String path : paths) {
@@ -76,9 +77,9 @@ public class Main {
                 }*/
 
 
-                boolean powerGridV = true;
+                boolean powerGridV = false;
                 String filepath = path;
-                boolean oldformatV = false;
+                boolean oldformatV = true;
                 boolean screwupV = false;
                 boolean boundedV = false;
                 String solverV = "athena";

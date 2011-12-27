@@ -196,7 +196,8 @@ public class Cerberus {
                         arguments = new NodeArgument[nodefunction.getFunction().parametersNumber()];
                         for (int i = 0; i < nodefunction.getFunction().parametersNumber(); i++) {
                             //arguments[i] = NodeArgument.getNodeArgument(Integer.parseInt(t.nextToken()));
-                            arguments[i] = NodeArgument.getNodeArgument(t.nextToken());
+                            //FIXME integer or string?!
+                            arguments[i] = NodeArgument.getNodeArgument(Integer.parseInt(t.nextToken()));
                         }
                         /*cost = (Integer.parseInt(t.nextToken()));
                         nodefunction.getFunction().addParametersCost(arguments, cost);*/

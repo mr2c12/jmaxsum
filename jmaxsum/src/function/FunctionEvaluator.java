@@ -215,7 +215,7 @@ public abstract class FunctionEvaluator {
      * @return a HashMap<NodeArgument[], Double> where the key is an array of parameters and the value
      * is the corresponding cost
      */
-    public abstract HashMap<NodeArgument[], Double> getParametersCost();
+    //public abstract HashMap<NodeArgument[], Double> getParametersCost();
 
      /**
      * Create a string representing the function. This string is used when saving the instance to a file
