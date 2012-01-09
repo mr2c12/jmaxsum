@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import olimpo.Athena;
 import powerGrid.PowerGrid;
+import system.SARecycler;
 
 /**
  *
@@ -38,12 +39,17 @@ public class PGToData {
         }
         try {
             PowerGrid pg = new PowerGrid(args[1]);
-            
-            Athena athena = new Athena(pg.getCop(), "min", "sum");
-            athena.pleaseReport(args[2]);
-            athena.setUpdateOnlyAtEnd(true);
-            athena.setIterationsNumber(300);
-            athena.solve();
+
+            if (args[0].equalsIgnoreCase("sarecycler")){
+                SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2]);
+            }
+            else {
+                Athena athena = new Athena(pg.getCop(), "min", "sum");
+                athena.pleaseReport(args[2]);
+                athena.setUpdateOnlyAtEnd(true);
+                athena.setIterationsNumber(300);
+                athena.solve();
+            }
 
             
             

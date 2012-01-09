@@ -946,4 +946,6 @@ public abstract class FunctionEvaluator {
 
     public abstract String getType();
 
+    public abstract boolean changeValueToValue(double oldValue, double newValue);
+
 }

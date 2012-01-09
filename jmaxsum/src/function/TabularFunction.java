@@ -417,4 +417,16 @@ public class TabularFunction extends FunctionEvaluator {
     public String getType() {
         return "CONSTRAINT ";
     }
+
+    @Override
+    public boolean changeValueToValue(double oldValue, double newValue) {
+        boolean atLeastOneChange = false;
+        for (Entry<NodeArgumentArray, Double> entry : this.costTable.entrySet()){
+            if (entry.getValue() == oldValue){
+                this.costTable.put(entry.getKey(), newValue);
+                atLeastOneChange |= true;
+            }
+        }
+        return atLeastOneChange;
+    }
 }

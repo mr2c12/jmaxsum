@@ -343,6 +343,11 @@ public class FunctionEvaluatorTest {
         public String getType() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        @Override
+        public boolean changeValueToValue(double oldValue, double newValue) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
 

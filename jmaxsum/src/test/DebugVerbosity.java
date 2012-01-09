@@ -29,7 +29,7 @@ public class DebugVerbosity {
      */
     public static final int debug = 0;
 
-    public static final int debugNodeVariable = 0
+    public static final int debugNodeVariable = 2
             + DebugVerbosity.debug;
     public static final int debugNodeFunction = 0
             + DebugVerbosity.debug;
@@ -74,6 +74,9 @@ public class DebugVerbosity {
             + DebugVerbosity.debug;
 
     public static final int debugEris = 0
+            + DebugVerbosity.debug;
+
+    public static final int debugSARecycler = 3
             + DebugVerbosity.debug;
 
     public static final int debugUtils = 0

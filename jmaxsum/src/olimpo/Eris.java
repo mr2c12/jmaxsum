@@ -22,12 +22,12 @@ import exception.ResultOkException;
 import exception.VariableNotSetException;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
+import function.FunctionEvaluator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import misc.Utils;
 import operation.Solver;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import system.COP_Instance;
 
 /**
@@ -39,13 +39,15 @@ public class Eris implements Solver {
     private COP_Instance cop;
     private String op = "max";
     private ArrayList<NodeVariable> variables;
+    private ArrayList<FunctionEvaluator> functions;
     double costo;
     int passi = -1;
     long inizio, fine;
+    int mink;
     // massimo numero di passi
     private int kMax = 10000;
     // parametri per il simulated annealing
-    private double T = 300;
+    private double T = 1000;
     private double costValue = Double.NaN;
     private double haltValue = Double.NaN;
     private boolean pleaseReport = false;
@@ -53,26 +55,32 @@ public class Eris implements Solver {
     private String report = "";
     private boolean stepbystep = false;
     private boolean updateOnlyAtEnd = true;
-    private boolean time = false;
     final static int debug = test.DebugVerbosity.debugEris;
 
     public Eris(String op, COP_Instance cop) throws ParameterNotFoundException {
+
+        double changeInfinityTo = 0;
+        double infinity;
 
         if (op.equalsIgnoreCase("max")) {
             this.op = "max";
             this.costValue = Double.NEGATIVE_INFINITY;
             this.haltValue = Double.POSITIVE_INFINITY;
+            infinity = Double.NEGATIVE_INFINITY;
+            changeInfinityTo = -1e05;
         } else if (op.equalsIgnoreCase("min")) {
             this.op = "min";
             this.costValue = Double.POSITIVE_INFINITY;
             this.haltValue = Double.NEGATIVE_INFINITY;
+            infinity = Double.POSITIVE_INFINITY;
+            changeInfinityTo = 5000;//1e05;
         } else {
             throw new ParameterNotFoundException("Unknown operation: " + op);
         }
 
         this.cop = cop;
 
-        // TODO: copy only variables with domain > 1
+
         //this.variables = new ArrayList<NodeVariable>(this.cop.getNodevariables());
         this.variables = new ArrayList<NodeVariable>();
         for (NodeVariable nv : this.cop.getNodevariables()) {
@@ -80,6 +88,18 @@ public class Eris implements Solver {
                 this.variables.add(nv);
             } else if (nv.size() == 1) {
                 nv.setStateIndex(0);
+            }
+        }
+
+        this.functions = new ArrayList<FunctionEvaluator>();
+        FunctionEvaluator oldFe, newFe;
+        for (NodeFunction oldNf : this.cop.getNodefunctions()) {
+            oldFe = oldNf.getFunction();
+            newFe = oldFe.getClone();
+            if (newFe.changeValueToValue(infinity, changeInfinityTo)) {
+                functions.add(newFe);
+            } else {
+                functions.add(oldFe);
             }
         }
     }
@@ -94,13 +114,14 @@ public class Eris implements Solver {
     public void randomInit() {
         for (NodeVariable x : this.variables) {
             try {
-                x.setAnotherRandomValidValue();
+                x.setRandomValidValue();
             } catch (NoMoreValuesException ex) {
                 // do nothing
             }
         }
         try {
-            this.costo = this.cop.actualValue();
+            //this.costo = this.cop.actualValue();
+            this.costo = this.getCosto();
         } catch (VariableNotSetException ex) {
             ex.printStackTrace();
         }
@@ -120,20 +141,54 @@ public class Eris implements Solver {
 
     public void solve() {
 
+
+        if (this.op.equalsIgnoreCase("max")) {
+            this.costValue = Double.NEGATIVE_INFINITY;
+        } else if (this.op.equalsIgnoreCase("min")) {
+            this.costValue = Double.POSITIVE_INFINITY;
+        }
+
         // inizializza random
         this.randomInit();
         this.inizio = System.currentTimeMillis();
-
+        this.report = "";
         // costo
-        double costoPrecedente = this.costo;
+        double costoPrecedente = Double.NaN;
+        try {
+            costoPrecedente = this.getCosto();
+        } catch (VariableNotSetException ex) {
+            ex.printStackTrace();
+        }
         int k = 0;
-        int mink = 0;
+        mink = 0;
         NodeVariable nodo = null;
         boolean ripeti = false;
         int valorePrecedente = -1;
         double delta = 0;
+        
         double probab = -1;
-        double temperatura = this.T;
+        double temperatura = 0;
+        if (this.T >= 0) {
+            temperatura = this.T;
+        } else {
+            boolean repeat = true;
+            do {
+                try {
+                    temperatura = this.stimaT(1000, 0.8);
+                    repeat = false;
+                } catch (VariableNotSetException ex) {
+                    this.randomInit();
+                    repeat = true;
+                }
+            } while (repeat);
+        }
+        if (debug >= 2) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Temperatura iniziale = " + temperatura);
+            System.out.println("---------------------------------------");
+        }
         Random rnd = new Random();
         String status;
         boolean ffFound = false;
@@ -171,7 +226,8 @@ public class Eris implements Solver {
                     System.out.println("---------------------------------------");
                 }
                 try {
-                    this.costo = this.cop.actualValue();
+                    //this.costo = this.cop.actualValue();
+                    this.costo = this.getCosto();
                 } catch (VariableNotSetException ex) {
                     ex.printStackTrace();
                 }
@@ -411,5 +467,81 @@ public class Eris implements Solver {
 
     public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
         this.updateOnlyAtEnd = updateOnlyAtEnd;
+    }
+
+    private double getCosto() throws VariableNotSetException {
+        // FIXME! only for sum!
+        double cost = 0;
+        for (FunctionEvaluator fe : this.functions) {
+            cost += fe.actualValue();
+        }
+        return cost;
+    }
+
+    public void setTemperature(double T) {
+        this.T = T;
+    }
+
+    public void temperaturaStimata() {
+        this.T = -1;
+    }
+
+    private double stimaT(int numCicli, double prob) throws VariableNotSetException {
+        int count = 0;
+        double deltaSum = 0;
+        for (int i = 0; i < numCicli; i++) {
+
+            if (debug >= 3) {
+                System.out.println("Ciclo di stima numero: " + i);
+            }
+
+            NodeVariable nodo = null;
+            boolean ripeti = false;
+            int valorePrecedente = -1;
+            double delta = 0;
+            double costoIniziale = 0;
+            do {
+                try {
+                    ripeti = false;
+                    nodo = this.randomNodo();
+                    valorePrecedente = nodo.getStateIndex();
+                    nodo.setAnotherRandomValidValue();
+                } catch (NoMoreValuesException ex) {
+                    //} catch (Exception ex) {
+                    ripeti = true;
+                }
+            } while (ripeti);
+
+            if (this.op.equalsIgnoreCase("max")) {
+                delta = this.getCosto() - costoIniziale;
+                if (delta > 0) {
+                    if (debug >= 3) {
+                        System.out.println("delta vale: " + delta);
+                    }
+                    count++;
+                    deltaSum += delta;
+                }
+            } else if (this.op.equalsIgnoreCase("min")) {
+                delta = costoIniziale - this.getCosto();
+                if (delta < 0) {
+                    if (debug >= 3) {
+                        System.out.println("delta vale: " + delta);
+                    }
+                    count++;
+                    deltaSum += -1.0*(delta);
+                }
+            }
+
+            nodo.setStateIndex(valorePrecedente);
+
+
+        }
+
+        return (double) (-(deltaSum / (double) count) / Math.log(prob));
+
+    }
+
+    public int minK(){
+        return this.mink;
     }
 }
