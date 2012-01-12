@@ -35,15 +35,17 @@ public class SARecycler {
 
     final static int debug = test.DebugVerbosity.debugSARecycler;
 
-    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report) {
+
+
+    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report, String type) {
 
         try {
 
             double finalValue = Double.POSITIVE_INFINITY;
             int mink = 0;
-            Eris eris = new Eris("min", cop);
+            Eris eris = new Eris("min", cop,type);
             eris.setIterationsNumber(iteration);
-            eris.setTemperature(1000);
+            eris.setTemperature(500);
             long start = System.currentTimeMillis();
             for (int i = 0; i < numberOfExecutions; i++) {
 
@@ -57,6 +59,13 @@ public class SARecycler {
                     System.out.println("---------------------------------------");
                 }
                 eris.solve();
+                if (debug>=3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "cop actual value: "+cop.actualValue());
+                        System.out.println("---------------------------------------");
+                }
                 if (cop.actualValue() < finalValue) {
                     finalValue = cop.actualValue();
                     mink = eris.minK();
@@ -66,6 +75,10 @@ public class SARecycler {
                     String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                     System.out.println("---------------------------------------");
                     System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Iteration " + (i + 1) + " concluded with final=" + finalValue + " and k=" + mink);
+                                    if (type.equalsIgnoreCase("noinf")){
+                    double finalRelaxed = ((RelaxableCop_Instance)cop).actualRelaxedValue();
+                    System.out.println("relaxed=" + finalRelaxed + "\n");
+                }
                     System.out.println("---------------------------------------");
                 }
 
@@ -80,6 +93,8 @@ public class SARecycler {
             long finish = System.currentTimeMillis();
 
             if (report == null){
+
+
                 System.out.println("final="+finalValue+";");
                 System.out.println("total time [ms]="+(finish-start));
                 System.out.println("latest value got at iteration="+mink);
@@ -104,8 +119,9 @@ public class SARecycler {
             String filepath = "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg";
             PowerGrid pg = new PowerGrid(filepath);
             //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
-            COP_Instance original_cop = pg.getCopM();
-            SARecycler sar = new SARecycler(10, 25000, original_cop, null);
+
+            COP_Instance original_cop = pg.getCopMnotInf();
+            SARecycler sar = new SARecycler(10, 25000, original_cop, null, "noinf");
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();
         } catch (InitializatedException ex) {

@@ -25,6 +25,7 @@ import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.CO2Simple;
 import function.FunctionEvaluator;
+import function.RelaxedTabularFunction;
 import function.TabularFunction;
 import function.TabularFunctionOnlyValidRows;
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 import maxsum.Agent;
 import maxsum.MS_COP_Instance;
+import maxsum.Relaxable_MS_COP_Instance;
 import misc.TwoKeysHashtable;
 import misc.Utils;
 import system.COP_Instance;
@@ -1140,7 +1142,7 @@ public class PowerGrid {
 
         NodeVariable nodevariable;
         NodeFunction nodefunction;
-        TabularFunction tfunction;
+        RelaxedTabularFunction tfunction;
         Agent agent = Agent.getAgent(0);
         agents.add(agent);
         int[] numberOfValues;
@@ -1181,7 +1183,7 @@ public class PowerGrid {
         // same values of the CO2 emission function
         // +inf where hard constrain does not hold
         for (Generator git : this.getGenerators()) {
-            tfunction = new TabularFunction();
+            tfunction = new RelaxedTabularFunction();
 
             double tmod = 0.0;
 
@@ -1236,6 +1238,7 @@ public class PowerGrid {
                         // +inf
                         tfunction.addParametersCost(params, Double.POSITIVE_INFINITY);
                         //tfunction.addParametersCost(params, Double.NEGATIVE_INFINITY);
+                        tfunction.addParametersRelaxedCost(params, git.getCO2emission(wattSum + tmod));
                     } else {
                         tfunction.addParametersCost(params, git.getCO2emission(wattSum + tmod));
                     }
@@ -1274,6 +1277,7 @@ public class PowerGrid {
             if (wattSum + tmod > git.getPower()) {
                 // +inf
                 tfunction.addParametersCost(params, Double.POSITIVE_INFINITY);
+                tfunction.addParametersRelaxedCost(params, git.getCO2emission(wattSum + tmod));
             } else {
                 tfunction.addParametersCost(params, git.getCO2emission(wattSum+tmod));
             }
@@ -1292,7 +1296,7 @@ public class PowerGrid {
 
         }
 
-        this.copm = new MS_COP_Instance(nodevariables, nodefunctions, agents);
+        this.copmnoinf = new Relaxable_MS_COP_Instance(nodevariables, nodefunctions, agents);
 
     }
 
@@ -1481,7 +1485,7 @@ public class PowerGrid {
             this.mccop = null;
             this.buildCOPMnoInfInstance();
         }
-        return this.copm;
+        return this.copmnoinf;
     }
 
     public COP_Instance getMCCop() throws UnInitializatedException {

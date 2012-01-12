@@ -23,9 +23,13 @@ import exception.VariableNotSetException;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
+import function.RelaxableFunctionEvaluator;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
+import maxsum.Relaxable_MS_COP_Instance;
 import misc.Utils;
 import operation.Solver;
 import system.COP_Instance;
@@ -56,6 +60,10 @@ public class Eris implements Solver {
     private boolean stepbystep = false;
     private boolean updateOnlyAtEnd = true;
     final static int debug = test.DebugVerbosity.debugEris;
+    // 0 -> inf
+    // 1 -> relaxed
+    private int type = 0;
+    private HashMap<NodeVariable, Integer> assegnamenti = new HashMap<NodeVariable, Integer>();
 
     public Eris(String op, COP_Instance cop) throws ParameterNotFoundException {
 
@@ -99,6 +107,64 @@ public class Eris implements Solver {
             if (newFe.changeValueToValue(infinity, changeInfinityTo)) {
                 functions.add(newFe);
             } else {
+                functions.add(oldFe);
+            }
+        }
+    }
+
+    public Eris(String op, COP_Instance cop, String type) throws ParameterNotFoundException {
+
+        if (type.equalsIgnoreCase("noinf")) {
+            this.type = 1;
+        }
+        double changeInfinityTo = 0;
+        double infinity;
+
+        if (op.equalsIgnoreCase("max")) {
+            this.op = "max";
+            this.costValue = Double.NEGATIVE_INFINITY;
+            this.haltValue = Double.POSITIVE_INFINITY;
+            infinity = Double.NEGATIVE_INFINITY;
+            changeInfinityTo = -1e05;
+        } else if (op.equalsIgnoreCase("min")) {
+            this.op = "min";
+            this.costValue = Double.POSITIVE_INFINITY;
+            this.haltValue = Double.NEGATIVE_INFINITY;
+            infinity = Double.POSITIVE_INFINITY;
+            changeInfinityTo = 5000;//1e05;
+        } else {
+            throw new ParameterNotFoundException("Unknown operation: " + op);
+        }
+
+        this.cop = cop;
+
+
+        //this.variables = new ArrayList<NodeVariable>(this.cop.getNodevariables());
+        this.variables = new ArrayList<NodeVariable>();
+        for (NodeVariable nv : this.cop.getNodevariables()) {
+            if (nv.size() > 1) {
+                this.variables.add(nv);
+            } else if (nv.size() == 1) {
+                nv.setStateIndex(0);
+            }
+        }
+
+        this.functions = new ArrayList<FunctionEvaluator>();
+        FunctionEvaluator oldFe, newFe;
+        if (this.type == 0) {
+            for (NodeFunction oldNf : this.cop.getNodefunctions()) {
+                oldFe = oldNf.getFunction();
+                newFe = oldFe.getClone();
+                if (newFe.changeValueToValue(infinity, changeInfinityTo)) {
+                    functions.add(newFe);
+                } else {
+                    functions.add(oldFe);
+                }
+            }
+            // no inf
+        } else if (this.type == 1) {
+            for (NodeFunction oldNf : this.cop.getNodefunctions()) {
+                oldFe = oldNf.getFunction();
                 functions.add(oldFe);
             }
         }
@@ -154,8 +220,11 @@ public class Eris implements Solver {
         this.report = "";
         // costo
         double costoPrecedente = Double.NaN;
+        double relaxedCostoPrecedente = Double.NaN;
+        double relaxedCosto = Double.NaN;
         try {
             costoPrecedente = this.getCosto();
+            relaxedCostoPrecedente = ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
         } catch (VariableNotSetException ex) {
             ex.printStackTrace();
         }
@@ -165,7 +234,7 @@ public class Eris implements Solver {
         boolean ripeti = false;
         int valorePrecedente = -1;
         double delta = 0;
-        
+
         double probab = -1;
         double temperatura = 0;
         if (this.T >= 0) {
@@ -228,6 +297,7 @@ public class Eris implements Solver {
                 try {
                     //this.costo = this.cop.actualValue();
                     this.costo = this.getCosto();
+                    relaxedCosto = ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
                 } catch (VariableNotSetException ex) {
                     ex.printStackTrace();
                 }
@@ -235,12 +305,14 @@ public class Eris implements Solver {
 
                 if (this.costo == costoPrecedente) {
                     if (Double.isInfinite(this.costo)) {
-
-                        probab = 1;//0.33;
+                        delta = relaxedCosto - relaxedCostoPrecedente;
+                        probab = Math.exp(-delta / temperatura);
+                        
                         if (rnd.nextDouble() < probab) {
                             // aggiorno
                             // aggiorno
                             costoPrecedente = this.costo;
+                            relaxedCostoPrecedente = relaxedCosto;
                             // aggiorno il minimo
                             // non devo aggiornare
                             if (debug >= 3) {
@@ -254,6 +326,7 @@ public class Eris implements Solver {
                             // non aggiorno
                             nodo.setStateIndex(valorePrecedente);
                             this.costo = costoPrecedente;
+                            relaxedCosto = relaxedCostoPrecedente;
                             if (debug >= 3) {
                                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -274,6 +347,7 @@ public class Eris implements Solver {
                         // non aggiorno
                         nodo.setStateIndex(valorePrecedente);
                         this.costo = costoPrecedente;
+                        relaxedCosto = relaxedCostoPrecedente;
                     }
                 } else {
 
@@ -293,16 +367,18 @@ public class Eris implements Solver {
                             }
                             // aggiorna
                             costoPrecedente = this.costo;
+                            relaxedCostoPrecedente = relaxedCosto;
                             // aggiorno solo se..
                             if (this.costValue > this.costo) {
                                 this.costValue = this.costo;
+                                salvaAssegnamento();
                                 mink = k;
                             }
                         } else {
                             // cost > oldCost
                             if (Double.isInfinite(this.costo)) {
-
-                                probab = Math.exp(-(2 * this.T) / temperatura);
+                                delta = relaxedCosto - relaxedCostoPrecedente;
+                                probab = Math.exp(-delta / temperatura);
 
                                 if (rnd.nextDouble() < probab) {
                                     if (debug >= 2) {
@@ -315,6 +391,7 @@ public class Eris implements Solver {
                                     // aggiorno
                                     // aggiorno
                                     costoPrecedente = this.costo;
+                                    relaxedCostoPrecedente = relaxedCosto;
                                     // aggiorno il minimo
                                     // non devo aggiornare
                                 } else {
@@ -328,6 +405,7 @@ public class Eris implements Solver {
                                     // non aggiorno
                                     nodo.setStateIndex(valorePrecedente);
                                     this.costo = costoPrecedente;
+                                    relaxedCosto = relaxedCostoPrecedente;
                                 }
                             } else {
                                 // new cost is not an infinite, still greater than oldCost
@@ -345,6 +423,7 @@ public class Eris implements Solver {
                                     // aggiorno
                                     // aggiorno
                                     costoPrecedente = this.costo;
+                                    relaxedCostoPrecedente = relaxedCosto;
                                     // aggiorno il minimo
                                     // non devo aggiornare
                                 } else {
@@ -358,6 +437,7 @@ public class Eris implements Solver {
                                     // non aggiorno
                                     nodo.setStateIndex(valorePrecedente);
                                     this.costo = costoPrecedente;
+                                    relaxedCosto = relaxedCostoPrecedente;
                                 }
                             }
                         }
@@ -408,6 +488,8 @@ public class Eris implements Solver {
         }
 
         this.fine = System.currentTimeMillis();
+        //ripristino assegnamento OK
+        this.ripristinaAssegnamento();
         this.passi = k - 1;
 
 
@@ -471,11 +553,26 @@ public class Eris implements Solver {
 
     private double getCosto() throws VariableNotSetException {
         // FIXME! only for sum!
-        double cost = 0;
+        /*double cost = 0;
+        RelaxableFunctionEvaluator rfe;
         for (FunctionEvaluator fe : this.functions) {
-            cost += fe.actualValue();
+            if (this.type==0){
+                cost += fe.actualValue();
+            } else if (this.type==1){
+                rfe = (RelaxableFunctionEvaluator) fe;
+                cost += rfe.relaxedActualValue();
+            }
         }
-        return cost;
+        return cost;*/
+        if (this.type==0){
+            return this.cop.actualValue();
+        } else if (this.type==1){
+            //return ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
+            return this.cop.actualValue();
+        }
+        else {
+            return this.cop.actualValue();
+        }
     }
 
     public void setTemperature(double T) {
@@ -528,7 +625,7 @@ public class Eris implements Solver {
                         System.out.println("delta vale: " + delta);
                     }
                     count++;
-                    deltaSum += -1.0*(delta);
+                    deltaSum += -1.0 * (delta);
                 }
             }
 
@@ -541,7 +638,23 @@ public class Eris implements Solver {
 
     }
 
-    public int minK(){
+    public int minK() {
         return this.mink;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    private void salvaAssegnamento() {
+        for (NodeVariable x : this.variables){
+            this.assegnamenti.put(x, x.getStateIndex());
+        }
+    }
+
+    private void ripristinaAssegnamento(){
+        for (Entry<NodeVariable, Integer> entry : this.assegnamenti.entrySet()){
+            entry.getKey().setStateIndex(entry.getValue());
+        }
     }
 }
