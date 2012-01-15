@@ -116,6 +116,8 @@ public class Eris implements Solver {
 
         if (type.equalsIgnoreCase("noinf")) {
             this.type = 1;
+        } else if (type.equalsIgnoreCase("modinf")) {
+            this.type = 2;
         }
         double changeInfinityTo = 0;
         double infinity;
@@ -151,7 +153,7 @@ public class Eris implements Solver {
 
         this.functions = new ArrayList<FunctionEvaluator>();
         FunctionEvaluator oldFe, newFe;
-        if (this.type == 0) {
+        if (this.type == 2) {
             for (NodeFunction oldNf : this.cop.getNodefunctions()) {
                 oldFe = oldNf.getFunction();
                 newFe = oldFe.getClone();
@@ -163,6 +165,11 @@ public class Eris implements Solver {
             }
             // no inf
         } else if (this.type == 1) {
+            for (NodeFunction oldNf : this.cop.getNodefunctions()) {
+                oldFe = oldNf.getFunction();
+                functions.add(oldFe);
+            }
+        } else {
             for (NodeFunction oldNf : this.cop.getNodefunctions()) {
                 oldFe = oldNf.getFunction();
                 functions.add(oldFe);
@@ -206,8 +213,22 @@ public class Eris implements Solver {
     }
 
     public void solve() {
+        if (this.type == 1) {
+            // no inf!
+            this.relaxedSolve();
+        } else if (this.type == 2) {
+            // no inf!
+            this.modSolve();
+        } else {
+            try {
+                throw new Exception("Please implement the correct solve method.");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-
+    public void relaxedSolve() {
         if (this.op.equalsIgnoreCase("max")) {
             this.costValue = Double.NEGATIVE_INFINITY;
         } else if (this.op.equalsIgnoreCase("min")) {
@@ -219,17 +240,19 @@ public class Eris implements Solver {
         this.inizio = System.currentTimeMillis();
         this.report = "";
         // costo
-        double costoPrecedente = Double.NaN;
-        double relaxedCostoPrecedente = Double.NaN;
-        double relaxedCosto = Double.NaN;
+        double OLD = Double.NaN;
+        double OLDR = Double.NaN;
+        double NEWR = Double.NaN;
+        double NEW = Double.NaN;
         try {
-            costoPrecedente = this.getCosto();
-            relaxedCostoPrecedente = ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
+            OLD = this.cop.actualValue();
+            OLDR = ((Relaxable_MS_COP_Instance) cop).actualRelaxedValue();
         } catch (VariableNotSetException ex) {
             ex.printStackTrace();
         }
+
         int k = 0;
-        mink = 0;
+        this.mink = 0;
         NodeVariable nodo = null;
         boolean ripeti = false;
         int valorePrecedente = -1;
@@ -251,13 +274,7 @@ public class Eris implements Solver {
                 }
             } while (repeat);
         }
-        if (debug >= 2) {
-            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-            System.out.println("---------------------------------------");
-            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Temperatura iniziale = " + temperatura);
-            System.out.println("---------------------------------------");
-        }
+
         Random rnd = new Random();
         String status;
         boolean ffFound = false;
@@ -275,13 +292,8 @@ public class Eris implements Solver {
                     try {
                         ripeti = false;
                         nodo = this.randomNodo();
-
                         valorePrecedente = nodo.getStateIndex();
-
-
                         nodo.setAnotherRandomValidValue();
-
-
                     } catch (NoMoreValuesException ex) {
                         //} catch (Exception ex) {
                         ripeti = true;
@@ -295,174 +307,189 @@ public class Eris implements Solver {
                     System.out.println("---------------------------------------");
                 }
                 try {
-                    //this.costo = this.cop.actualValue();
-                    this.costo = this.getCosto();
-                    relaxedCosto = ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
+                    NEW = this.cop.actualValue();
+                    NEWR = ((Relaxable_MS_COP_Instance) cop).actualRelaxedValue();
+                    if (debug >= 3) {
+                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                        System.out.println("---------------------------------------");
+                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "step k=" + k + " NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                        System.out.println("---------------------------------------");
+                    }
                 } catch (VariableNotSetException ex) {
                     ex.printStackTrace();
                 }
+                if (this.op.equalsIgnoreCase("max")) {
+                    // TODO: implement max!
+                    throw new Exception("Please implement maximization");
+                } else if (this.op.equalsIgnoreCase("min")) {
 
+                    if (NEW == OLD) {
+                        if (Double.isInfinite(NEW)) {
+                            if (NEWR < OLDR) {
+                                // case I : new = old = inf, newr < oldr
+                                // prendo
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso I accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
+                                }
+                                if (this.costValue >= NEW) {
+                                    salvaAssegnamento();
+                                    mink = k;
+                                    this.costValue = NEW;
+                                }
+                                OLD = NEW;
+                                OLDR = NEWR;
 
-                if (this.costo == costoPrecedente) {
-                    if (Double.isInfinite(this.costo)) {
-                        delta = relaxedCosto - relaxedCostoPrecedente;
-                        probab = Math.exp(-delta / temperatura);
-                        
-                        if (rnd.nextDouble() < probab) {
-                            // aggiorno
-                            // aggiorno
-                            costoPrecedente = this.costo;
-                            relaxedCostoPrecedente = relaxedCosto;
-                            // aggiorno il minimo
-                            // non devo aggiornare
-                            if (debug >= 3) {
-                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                System.out.println("---------------------------------------");
-                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs INFINITE: aggiorno " + this.costo);
-                                System.out.println("---------------------------------------");
+                            } else if (NEWR == OLDR) {
+                                // rollback
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso IIb: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
+                                }
+                                NEW = OLD;
+                                NEWR = OLDR;
+                                nodo.setStateIndex(valorePrecedente);
+                            } else {
+                                // case II : new = old = inf, newr >= oldr
+                                delta = NEWR - OLDR;
+                                probab = Math.exp(-delta / temperatura);
+                                if (rnd.nextDouble() < probab) {
+                                    // accetta ma
+                                    if (debug >= 3) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso II accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    OLD = NEW;
+                                    OLDR = NEWR;
+                                } else {
+                                    // rollback
+                                    if (debug >= 3) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso II non accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    NEW = OLD;
+                                    NEWR = OLDR;
+                                    nodo.setStateIndex(valorePrecedente);
+                                }
                             }
                         } else {
-                            // non aggiorno
-                            nodo.setStateIndex(valorePrecedente);
-                            this.costo = costoPrecedente;
-                            relaxedCosto = relaxedCostoPrecedente;
+                            // case III : new = old != inf
+                            // rollback
                             if (debug >= 3) {
                                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                                 System.out.println("---------------------------------------");
-                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs INFINITE: non aggiorno " + this.costo);
+                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso III non accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
                                 System.out.println("---------------------------------------");
                             }
+                            NEW = OLD;
+                            NEWR = OLDR;
+                            nodo.setStateIndex(valorePrecedente);
                         }
-
-                    } else {
+                    } else if (NEW < OLD) {
+                        // case IV : new != inf, new < old
+                        // prendo
                         if (debug >= 3) {
                             String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                             String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
                             System.out.println("---------------------------------------");
-                            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs EQUAL not infinite: non aggiorno " + this.costo);
+                            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso IV accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
                             System.out.println("---------------------------------------");
                         }
-                        // non aggiorno
-                        nodo.setStateIndex(valorePrecedente);
-                        this.costo = costoPrecedente;
-                        relaxedCosto = relaxedCostoPrecedente;
-                    }
-                } else {
-
-                    if (this.op.equalsIgnoreCase("max")) {
-                        //delta = costoPrecedente - this.costo;
-                        // TODO: implement max!
-                        throw new Exception("Please implement maximization");
-                    } else if (this.op.equalsIgnoreCase("min")) {
-                        //delta = this.costo - costoPrecedente;
-                        if (this.costo < costoPrecedente) {
-                            if (debug >= 2) {
-                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                System.out.println("---------------------------------------");
-                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Cost < Old: aggiorno " + this.costo);
-                                System.out.println("---------------------------------------");
-                            }
-                            // aggiorna
-                            costoPrecedente = this.costo;
-                            relaxedCostoPrecedente = relaxedCosto;
-                            // aggiorno solo se..
-                            if (this.costValue > this.costo) {
-                                this.costValue = this.costo;
-                                salvaAssegnamento();
-                                mink = k;
-                            }
-                        } else {
-                            // cost > oldCost
-                            if (Double.isInfinite(this.costo)) {
-                                delta = relaxedCosto - relaxedCostoPrecedente;
-                                probab = Math.exp(-delta / temperatura);
-
-                                if (rnd.nextDouble() < probab) {
-                                    if (debug >= 2) {
-                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                        System.out.println("---------------------------------------");
-                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost infinite: aggiorno " + this.costo);
-                                        System.out.println("---------------------------------------");
-                                    }
-                                    // aggiorno
-                                    // aggiorno
-                                    costoPrecedente = this.costo;
-                                    relaxedCostoPrecedente = relaxedCosto;
-                                    // aggiorno il minimo
-                                    // non devo aggiornare
-                                } else {
-                                    if (debug >= 3) {
-                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                        System.out.println("---------------------------------------");
-                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost infinite: non aggiorno " + this.costo);
-                                        System.out.println("---------------------------------------");
-                                    }
-                                    // non aggiorno
-                                    nodo.setStateIndex(valorePrecedente);
-                                    this.costo = costoPrecedente;
-                                    relaxedCosto = relaxedCostoPrecedente;
+                        if (this.costValue >= NEW) {
+                            salvaAssegnamento();
+                            mink = k;
+                            this.costValue = NEW;
+                        }
+                        OLD = NEW;
+                        OLDR = NEWR;
+                    } else { // NEW > OLD
+                        if (Double.isInfinite(NEW)) {
+                            // case V : new = inf, old != new, new > old
+                            delta = Math.abs(NEWR - OLD);
+                            probab = Math.exp(-delta / temperatura);
+                            if (rnd.nextDouble() < probab) {
+                                // accetta ma
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso V accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
                                 }
+                                OLD = NEW;
+                                OLDR = NEWR;
                             } else {
-                                // new cost is not an infinite, still greater than oldCost
-                                delta = this.costo - costoPrecedente;
-                                probab = Math.exp(-delta / temperatura);
-                                //probab = 0.5;
-                                if (rnd.nextDouble() < probab) {
-                                    if (debug >= 2) {
-                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                        System.out.println("---------------------------------------");
-                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost finite: aggiorno " + this.costo);
-                                        System.out.println("---------------------------------------");
-                                    }
-                                    // aggiorno
-                                    // aggiorno
-                                    costoPrecedente = this.costo;
-                                    relaxedCostoPrecedente = relaxedCosto;
-                                    // aggiorno il minimo
-                                    // non devo aggiornare
-                                } else {
-                                    if (debug >= 3) {
-                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
-                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
-                                        System.out.println("---------------------------------------");
-                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost finite: non aggiorno " + this.costo);
-                                        System.out.println("---------------------------------------");
-                                    }
-                                    // non aggiorno
-                                    nodo.setStateIndex(valorePrecedente);
-                                    this.costo = costoPrecedente;
-                                    relaxedCosto = relaxedCostoPrecedente;
+                                // rollback
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso V non accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
                                 }
+                                NEW = OLD;
+                                NEWR = OLDR;
+                                nodo.setStateIndex(valorePrecedente);
+                            }
+
+                        } else {
+                            // case VI : new != inf, old != new, new > old
+                            delta = (NEW - OLD);
+                            probab = Math.exp(-delta / temperatura);
+                            if (rnd.nextDouble() < probab) {
+                                // accetta ma
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso VI accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
+                                }
+                                OLD = NEW;
+                                OLDR = NEWR;
+                            } else {
+                                // rollback
+                                if (debug >= 3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "caso VI non accetto: NEW=" + NEW + " NEWR=" + NEWR + " OLD=" + OLD + " OLDR=" + OLDR);
+                                    System.out.println("---------------------------------------");
+                                }
+                                NEW = OLD;
+                                NEWR = OLDR;
+                                nodo.setStateIndex(valorePrecedente);
                             }
                         }
                     }
+                } // end of min
 
 
-                }
 
-
-                if (checkValue(this.costo)) {
+                if (checkValue(NEW)) {
                     throw new ResultOkException();
                 }
-
-
-
-
 
                 // è ora di aggiornare
                 k++;
                 temperatura = update(temperatura, k);
 
-                status = "iteration_" + k + "=" + this.cop.status();
-
-
                 if (!this.updateOnlyAtEnd) {
+                    status = "iteration_" + k + "=" + NEW;
                     if (this.pleaseReport) {
                         this.report += status + "\n";
                     } else {
@@ -528,6 +555,317 @@ public class Eris implements Solver {
 
     }
 
+    public void modSolve() {
+        if (this.op.equalsIgnoreCase("max")) {
+            this.costValue = Double.NEGATIVE_INFINITY;
+        } else if (this.op.equalsIgnoreCase("min")) {
+            this.costValue = Double.POSITIVE_INFINITY;
+        }
+
+
+        // inizializza random
+        this.randomInit();
+        this.inizio = System.currentTimeMillis();
+        this.report = "";
+        // costo
+        double costoPrecedente = Double.NaN;
+        try {
+            costoPrecedente = this.getCosto();
+        } catch (VariableNotSetException ex) {
+            ex.printStackTrace();
+        }
+        int k = 0;
+        mink = 0;
+        NodeVariable nodo = null;
+        boolean ripeti = false;
+        int valorePrecedente = -1;
+        double delta = 0;
+
+        double probab = -1;
+        double temperatura = 0;
+        if (this.T >= 0) {
+            temperatura = this.T;
+        } else {
+            boolean repeat = true;
+            do {
+                try {
+                    temperatura = this.stimaT(1000, 0.8);
+                    repeat = false;
+                } catch (VariableNotSetException ex) {
+                    this.randomInit();
+                    repeat = true;
+                }
+            } while (repeat);
+        }
+        if (debug >= 2) {
+            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+            System.out.println("---------------------------------------");
+            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Temperatura iniziale = " + temperatura);
+            System.out.println("---------------------------------------");
+        }
+        Random rnd = new Random();
+        String status;
+        boolean ffFound = false;
+        this.report += "max_iterations_number=" + this.kMax + "\n";
+
+        try {
+            //while (temperatura > this.TLow) {
+            while (k <= this.kMax) {
+
+
+                do {
+                    try {
+                        ripeti = false;
+                        nodo = this.randomNodo();
+                        valorePrecedente = nodo.getStateIndex();
+                        nodo.setAnotherRandomValidValue();
+                    } catch (NoMoreValuesException ex) {
+                        //} catch (Exception ex) {
+                        ripeti = true;
+                    }
+                } while (ripeti);
+                if (debug >= 3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "nodo scelto: " + nodo);
+                    System.out.println("---------------------------------------");
+                }
+                try {
+                    //this.costo = this.cop.actualValue();
+                    this.costo = this.getCosto();
+                } catch (VariableNotSetException ex) {
+                    ex.printStackTrace();
+                }
+
+
+
+
+                if (this.costo == costoPrecedente) {
+                    if (Double.isInfinite(this.costo)) {
+
+                        // 0.33 a T=1000
+                        probab = Math.exp(-(0.0011) / temperatura);
+                        if (rnd.nextDouble() < probab) {
+                            // aggiorno
+                            // aggiorno
+                            costoPrecedente = this.costo;
+                            // aggiorno il minimo
+                            // non devo aggiornare
+                            if (debug >= 3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs INFINITE: aggiorno " + this.costo);
+                                System.out.println("---------------------------------------");
+                            }
+                        } else {
+                            // non aggiorno
+                            nodo.setStateIndex(valorePrecedente);
+                            this.costo = costoPrecedente;
+                            if (debug >= 3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs INFINITE: non aggiorno " + this.costo);
+                                System.out.println("---------------------------------------");
+                            }
+                        }
+
+
+                    } else {
+                        if (debug >= 3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs EQUAL not infinite: non aggiorno " + this.costo);
+                            System.out.println("---------------------------------------");
+                        }
+                        // non aggiorno
+                        nodo.setStateIndex(valorePrecedente);
+                        this.costo = costoPrecedente;
+                    }
+                } else {
+
+
+                    if (this.op.equalsIgnoreCase("max")) {
+                        //delta = costoPrecedente - this.costo;
+                        // TODO: implement max!
+                        throw new Exception("Please implement maximization");
+                    } else if (this.op.equalsIgnoreCase("min")) {
+                        //delta = this.costo - costoPrecedente;
+                        if (this.costo < costoPrecedente) {
+                            if (debug >= 2) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Cost < Old: aggiorno " + this.costo);
+                                System.out.println("---------------------------------------");
+                            }
+                            // aggiorna
+                            costoPrecedente = this.costo;
+                            // aggiorno solo se..
+                            if (this.costValue > this.costo) {
+                                this.costValue = this.costo;
+                                mink = k;
+                                this.salvaAssegnamento();
+                            }
+                        } else {
+                            // cost > oldCost
+                            if (Double.isInfinite(this.costo)) {
+
+
+                                probab = Math.exp(-(0.0011) / temperatura);
+
+
+                                if (rnd.nextDouble() < probab) {
+                                    if (debug >= 2) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost infinite: aggiorno " + this.costo);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    // aggiorno
+                                    // aggiorno
+                                    costoPrecedente = this.costo;
+                                    // aggiorno il minimo
+                                    // non devo aggiornare
+                                } else {
+                                    if (debug >= 3) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost infinite: non aggiorno " + this.costo);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    // non aggiorno
+                                    nodo.setStateIndex(valorePrecedente);
+                                    this.costo = costoPrecedente;
+                                }
+                            } else {
+                                // new cost is not an infinite, still greater than oldCost
+                                delta = this.costo - costoPrecedente;
+                                probab = Math.exp(-delta / temperatura);
+                                //probab = 0.5;
+                                if (rnd.nextDouble() < probab) {
+                                    if (debug >= 2) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost finite: aggiorno " + this.costo);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    // aggiorno
+                                    // aggiorno
+                                    costoPrecedente = this.costo;
+                                    // aggiorno il minimo
+                                    // non devo aggiornare
+                                } else {
+                                    if (debug >= 3) {
+                                        String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                        String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                        System.out.println("---------------------------------------");
+                                        System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Costs different, cost finite: non aggiorno " + this.costo);
+                                        System.out.println("---------------------------------------");
+                                    }
+                                    // non aggiorno
+                                    nodo.setStateIndex(valorePrecedente);
+                                    this.costo = costoPrecedente;
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+                }
+
+
+
+
+                if (checkValue(this.costo)) {
+                    throw new ResultOkException();
+                }
+
+                // è ora di aggiornare
+                k++;
+                temperatura = update(temperatura, k);
+                
+                if (!this.updateOnlyAtEnd) {
+                    status = "iteration_" + k + "=" + this.cop.status();
+                    if (this.pleaseReport) {
+                        this.report += status + "\n";
+                    } else {
+                        System.out.println(status);
+                    }
+                }
+
+                if (this.stepbystep) {
+                    System.out.print("Iteration " + (k) + "/" + this.kMax + " completed, press enter to continue");
+                    try {
+                        System.in.read();
+                    } catch (IOException ex) {
+                        //skip
+                    }
+                    System.out.println("");
+                }
+
+
+            }
+        } catch (ResultOkException rex) {
+            ffFound = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        this.fine = System.currentTimeMillis();
+        this.passi = k - 1;
+        this.ripristinaAssegnamento();
+
+
+
+
+        status = "final=" + this.costValue;//.cop.status();
+
+
+
+
+        if (!this.updateOnlyAtEnd) {
+            if (this.pleaseReport) {
+            } else {
+                System.out.println(status);
+            }
+        }
+
+
+        this.report += status + "\n";
+        this.report += "total time [ms]=" + (fine - inizio) + "\n";
+
+
+        this.report += "latest value got at iteration=" + mink + "\n";
+        this.report += "total number of iteration=" + passi + "\n";
+        this.report += "fixed point found=";
+        if (ffFound) {
+            this.report += "Y";
+        } else {
+            this.report += "N";
+        }
+        this.report += "\n";
+        if (this.pleaseReport) {
+            try {
+                Utils.stringToFile(this.report, this.reportpath);
+            } catch (IOException ex) {
+                System.out.println("Sorry but I'm unable to write the report to the file " + this.reportpath);
+            }
+        } else {
+            System.out.println(report);
+        }
+    }
+
     private boolean checkValue(double value) {
         if (this.op.equalsIgnoreCase("max")) {
             return value >= this.haltValue;
@@ -553,26 +891,14 @@ public class Eris implements Solver {
 
     private double getCosto() throws VariableNotSetException {
         // FIXME! only for sum!
-        /*double cost = 0;
-        RelaxableFunctionEvaluator rfe;
+        double cost = 0;
+
         for (FunctionEvaluator fe : this.functions) {
-            if (this.type==0){
-                cost += fe.actualValue();
-            } else if (this.type==1){
-                rfe = (RelaxableFunctionEvaluator) fe;
-                cost += rfe.relaxedActualValue();
-            }
+
+            cost += fe.actualValue();
+
         }
-        return cost;*/
-        if (this.type==0){
-            return this.cop.actualValue();
-        } else if (this.type==1){
-            //return ((Relaxable_MS_COP_Instance)cop).actualRelaxedValue();
-            return this.cop.actualValue();
-        }
-        else {
-            return this.cop.actualValue();
-        }
+        return cost;
     }
 
     public void setTemperature(double T) {
@@ -647,13 +973,13 @@ public class Eris implements Solver {
     }
 
     private void salvaAssegnamento() {
-        for (NodeVariable x : this.variables){
+        for (NodeVariable x : this.variables) {
             this.assegnamenti.put(x, x.getStateIndex());
         }
     }
 
-    private void ripristinaAssegnamento(){
-        for (Entry<NodeVariable, Integer> entry : this.assegnamenti.entrySet()){
+    private void ripristinaAssegnamento() {
+        for (Entry<NodeVariable, Integer> entry : this.assegnamenti.entrySet()) {
             entry.getKey().setStateIndex(entry.getValue());
         }
     }

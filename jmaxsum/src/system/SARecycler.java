@@ -45,7 +45,7 @@ public class SARecycler {
             int mink = 0;
             Eris eris = new Eris("min", cop,type);
             eris.setIterationsNumber(iteration);
-            eris.setTemperature(500);
+            eris.setTemperature(1000);
             long start = System.currentTimeMillis();
             for (int i = 0; i < numberOfExecutions; i++) {
 
@@ -121,7 +121,7 @@ public class SARecycler {
             //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
 
             COP_Instance original_cop = pg.getCopMnotInf();
-            SARecycler sar = new SARecycler(10, 25000, original_cop, null, "noinf");
+            SARecycler sar = new SARecycler(10, 25000, original_cop, null, "modinf");
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();
         } catch (InitializatedException ex) {

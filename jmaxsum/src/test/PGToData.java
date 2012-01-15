@@ -41,7 +41,7 @@ public class PGToData {
             PowerGrid pg = new PowerGrid(args[1]);
 
             if (args[0].equalsIgnoreCase("sarecycler")){
-                SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2], "inf");
+                SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2], "modinf");
             }
             else if (args[0].equalsIgnoreCase("sarecyclernoinf")){
                 SARecycler sa = new SARecycler(10, 25000, pg.getCopMnotInf(), args[2],"noinf");
