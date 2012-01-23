@@ -302,4 +302,8 @@ public class NodeVariable implements Node {
         NodeVariable.table = new HashMap<Integer, NodeVariable>();
         lastId = -1;
     }
+
+    public ArrayList<NodeArgument> getArguments(){
+        return this.values;
+    }
 }

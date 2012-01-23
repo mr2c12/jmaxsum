@@ -85,6 +85,9 @@ public class ScrewerUp {
                 do {
                     try {
                         delta = fe.getDelta();
+                        if (delta == 0){
+                            delta = fe.getDeltaNotNull();
+                        }
                         goon = true;
                     } catch (ValueNotSetException ex) {
                         fe.resetMaxMinCosts();

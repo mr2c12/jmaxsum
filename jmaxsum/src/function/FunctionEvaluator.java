@@ -273,6 +273,10 @@ public abstract class FunctionEvaluator {
         return this.maxCost() - this.minCost();
     }
 
+    public double getDeltaNotNull() throws ValueNotSetException{
+        return this.maxCost() / 100;
+    }
+
     public abstract FunctionEvaluator getClone();
 
 

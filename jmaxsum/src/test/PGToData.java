@@ -44,7 +44,7 @@ public class PGToData {
                 SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2], "modinf");
             }
             else if (args[0].equalsIgnoreCase("sarecyclernoinf")){
-                SARecycler sa = new SARecycler(10, 25000, pg.getCopMnotInf(), args[2],"noinf");
+                SARecycler sa = new SARecycler(10, 25000, pg.getCopMnotInfNoCo2(), args[2],"noinf");
             }
             else {
                 Athena athena = new Athena(pg.getCop(), "min", "sum");

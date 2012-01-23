@@ -213,6 +213,9 @@ public class Eris implements Solver {
     }
 
     public void solve() {
+
+        // FIXME: need to check the random initial solution and to save the assignment, too.
+
         if (this.type == 1) {
             // no inf!
             this.relaxedSolve();
@@ -286,6 +289,14 @@ public class Eris implements Solver {
 
         try {
             //while (temperatura > this.TLow) {
+
+            if (checkValue(NEW)) {
+                // used to check if the inizial random solution is THE solution
+                // if it's so, then stop and exit successfully
+                throw new ResultOkException();
+            }
+
+
             while (k <= this.kMax) {
 
                 do {
@@ -400,6 +411,13 @@ public class Eris implements Solver {
                             nodo.setStateIndex(valorePrecedente);
                         }
                     } else if (NEW < OLD) {
+                        if (debug>=1) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "NEW < OLD");
+                                System.out.println("---------------------------------------");
+                        }
                         // case IV : new != inf, new < old
                         // prendo
                         if (debug >= 3) {
@@ -565,6 +583,7 @@ public class Eris implements Solver {
 
         // inizializza random
         this.randomInit();
+        
         this.inizio = System.currentTimeMillis();
         this.report = "";
         // costo
@@ -611,6 +630,11 @@ public class Eris implements Solver {
 
         try {
             //while (temperatura > this.TLow) {
+            if (checkValue(costoPrecedente)) {
+                // used to check if the inizial random solution is THE solution
+                // if it's so, then stop and exit successfully
+                throw new ResultOkException();
+            }
             while (k <= this.kMax) {
 
 

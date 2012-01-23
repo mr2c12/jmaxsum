@@ -120,7 +120,7 @@ public class SARecycler {
             PowerGrid pg = new PowerGrid(filepath);
             //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
 
-            COP_Instance original_cop = pg.getCopMnotInf();
+            COP_Instance original_cop = pg.getCopMnotInfNoCo2();
             SARecycler sar = new SARecycler(10, 25000, original_cop, null, "modinf");
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();
