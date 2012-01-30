@@ -23,4 +23,13 @@ package exception;
  */
 public class NoMoreGeneratorsException extends Exception{
 
+    public NoMoreGeneratorsException(String message) {
+        super(message);
+    }
+
+    public NoMoreGeneratorsException() {
+    }
+
+    
+
 }

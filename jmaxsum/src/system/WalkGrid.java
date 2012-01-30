@@ -25,15 +25,17 @@ import exception.VariableNotSetException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
-import function.FunctionEvaluator;
 import function.RelaxableFunctionEvaluator;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Random;
 import maxsum.Relaxable_MS_COP_Instance;
+import misc.Utils;
 import operation.Solver;
 
 /**
@@ -46,8 +48,15 @@ public class WalkGrid implements Solver {
     Relaxable_MS_COP_Instance cop;
     ArrayList<NodeVariable> variables = new ArrayList<NodeVariable>();
     ArrayList<NodeFunction> functions = new ArrayList<NodeFunction>();
-    private int maximumNumberOfIterations = 100;
+    // TEMPERATURE MAX:
+    private int maximumNumberOfIterations = 2000;
     HashMap<NodeVariable, Integer> assignments;
+    boolean stepByStep = false;
+    boolean updateOnlyAtEnd = true;
+    boolean pleaseReport = false;
+    String reportpath = null;
+
+    final static int debug = test.DebugVerbosity.debugWalkGrid;
 
     public WalkGrid(Relaxable_MS_COP_Instance cop) {
         this.cop = cop;
@@ -74,6 +83,7 @@ public class WalkGrid implements Solver {
             }
         }
         //TODO: salva assegnamento
+        this.backupAssignment();
     }
 
     public NodeFunction getOverloadedGenerator() throws ResultOkException {
@@ -96,7 +106,8 @@ public class WalkGrid implements Solver {
     }
 
     public void pleaseReport(String file) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.pleaseReport = true;
+        this.reportpath = file;
     }
 
     public void setIterationsNumber(int n) {
@@ -104,18 +115,18 @@ public class WalkGrid implements Solver {
     }
 
     public void setStepbystep(boolean stepbystep) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.stepByStep = stepbystep;
     }
 
     public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.updateOnlyAtEnd = updateOnlyAtEnd;
     }
 
     public void solve() throws PostServiceNotSetException {
 
         this.randomInit();
         int iterationNumber = 0;
-        int solutionFoundAtIteration;
+        int solutionFoundAtIteration = Integer.MAX_VALUE;
         NodeFunction f = null, otherF = null;
         RelaxableFunctionEvaluator fe, otherFe;
         NodeVariable x = null;
@@ -127,6 +138,17 @@ public class WalkGrid implements Solver {
         double delta;
         double newOtherCost;
         double overloadF;
+        // class Double to let it be updated
+        Double prob = 0.18;
+
+        Long startTime = System.currentTimeMillis();
+        String report = "";
+
+        String status;
+
+        boolean ffFound = false;
+
+        report += "max_iterations_number=" + this.maximumNumberOfIterations + "\n";
 
         try {
             while (iterationNumber < maximumNumberOfIterations) {
@@ -211,10 +233,42 @@ public class WalkGrid implements Solver {
                 }
                 else {
                     // with probability p..
+                    //probab = Math.exp(-delta / temperatura);
+                    if (rnd.nextDouble() < prob) {
+                        // update
+                    }
+                    else {
+                        // does not update
+                        x.setStateIndex(oldXValue);
+                    }
                 }
 
 
+                
+                // TODO: update prob
+                prob = updateProb(iterationNumber, prob);
                 iterationNumber++;
+
+
+                if (!this.updateOnlyAtEnd) {
+                    status = "iteration_" + iterationNumber + "=" + this.cop.status();
+                    if (this.pleaseReport) {
+                        report += status + "\n";
+                    } else {
+                        System.out.println(status);
+                    }
+                }
+
+                if (this.stepByStep) {
+                    System.out.print("Iteration " + iterationNumber + "/" + this.maximumNumberOfIterations + " completed, press enter to continue");
+                    try {
+                        System.in.read();
+                    } catch (IOException ex) {
+                        //skip
+                    }
+                    System.out.println("");
+                }
+
             }
         } catch (VariableNotSetException ex) {
             ex.printStackTrace();
@@ -224,6 +278,53 @@ public class WalkGrid implements Solver {
             ex.printStackTrace();
         } catch (ResultOkException ex) {
             // do something
+            this.restoreAssignment();
+            solutionFoundAtIteration = iterationNumber+1;
+            ffFound = true;
+        }
+
+        if (debug>=3) {
+                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                System.out.println("---------------------------------------");
+                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "after "+(iterationNumber+1)+" iterations the result is: "+cop.status());
+                System.out.println("---------------------------------------");
+        }
+
+        long endTime = System.currentTimeMillis();
+        int totalIteration = (iterationNumber+1);
+
+        status = "final=" + cop.status();
+
+        if (!this.updateOnlyAtEnd) {
+            if (this.pleaseReport) {
+            } else {
+                System.out.println(status);
+            }
+        }
+
+
+        report += status + "\n";
+        report += "total time [ms]=" + (endTime - startTime) + "\n";
+
+
+        report += "latest value got at iteration=" + solutionFoundAtIteration + "\n";
+        report += "total number of iteration=" + totalIteration + "\n";
+        report += "fixed point found=";
+        if (ffFound) {
+            report += "Y";
+        } else {
+            report += "N";
+        }
+        report += "\n";
+        if (this.pleaseReport) {
+            try {
+                Utils.stringToFile(report, reportpath);
+            } catch (IOException ex) {
+                System.out.println("Sorry but I'm unable to write the report to the file " + reportpath);
+            }
+        } else {
+            System.out.println(report);
         }
 
     }
@@ -241,7 +342,11 @@ public class WalkGrid implements Solver {
     }
 
     private NodeVariable getFixableLoad(NodeFunction f) throws NoMoreValuesException {
-        for (NodeVariable x : f.getNeighbour()) {
+        LinkedList<NodeVariable> xes = new LinkedList<NodeVariable>(f.getNeighbour());
+        Collections.shuffle(xes);
+        //for (NodeVariable x : f.getNeighbour()) {
+        // xes let the load to be chosen in random order (not always the first one available)
+        for (NodeVariable x : xes) {
             try {
                 if (x.getStateArgument().getValue() == (Integer) f.id()) {
                     for (NodeArgument na : x.getArguments()) {
@@ -261,4 +366,13 @@ public class WalkGrid implements Solver {
         }
         throw new NoMoreValuesException();
     }
+
+    private Double updateProb(int iterationNumber, Double prob) {
+        // linear decreasing
+        // prob = 0.18 * ( iterationNumber / maxIteration ) + 0.18
+        return 0.18 * ( iterationNumber / this.maximumNumberOfIterations ) + 0.18;
+    }
+
+
+
 }

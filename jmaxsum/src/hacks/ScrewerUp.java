@@ -87,7 +87,7 @@ public class ScrewerUp {
                         delta = fe.getDelta();
                         if (delta == 0){
                             delta = fe.getDeltaNotNull();
-                            //FIXME: still zero if cost = 0
+                            //FIXME: still zero if maxcost = 0 or mincost = 0
                         }
                         goon = true;
                     } catch (ValueNotSetException ex) {

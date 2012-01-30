@@ -274,13 +274,13 @@ public abstract class FunctionEvaluator {
     }
 
     public double getDeltaNotNull() throws ValueNotSetException{
-        double maxCost = Math.abs(this.maxCost());
-        double minCost = Math.abs(this.minCost());
-        if (maxCost > minCost){
-            return maxCost / 100;
+        double maxCostLocal = Math.abs(this.maxCost());
+        double minCostLocal = Math.abs(this.minCost());
+        if (maxCostLocal > minCostLocal){
+            return maxCostLocal / 100;
         }
         else {
-            return minCost / 100;
+            return minCostLocal / 100;
         }
     }
 

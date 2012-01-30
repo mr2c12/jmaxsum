@@ -61,8 +61,8 @@ public class PowerGrid {
     protected MS_COP_Instance cop = null;
     protected MS_COP_Instance copm = null;
     protected MS_COP_Instance mccop = null;
-    protected MS_COP_Instance copmnoinfnoco2 = null;
-    protected MS_COP_Instance copmnoinfco2 = null;
+    protected Relaxable_MS_COP_Instance copmnoinfnoco2 = null;
+    protected Relaxable_MS_COP_Instance copmnoinfco2 = null;
 
     private PowerGrid() {
         Load.resetLoads();
@@ -1300,7 +1300,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 
         }
 
-        this.copmnoinfco2 = new Relaxable_MS_COP_Instance(nodevariables, nodefunctions, agents);
+        this.copmnoinfnoco2 = new Relaxable_MS_COP_Instance(nodevariables, nodefunctions, agents);
 
     }
 
@@ -1658,7 +1658,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
         return this.copm;
     }
 
-    public COP_Instance getCopMnotInfNoCo2() throws UnInitializatedException {
+    public Relaxable_MS_COP_Instance getCopMnotInfNoCo2() throws UnInitializatedException {
         if (this.copmnoinfnoco2 == null) {
             this.cop = null;
             this.mccop = null;
@@ -1667,7 +1667,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
         return this.copmnoinfnoco2;
     }
 
-    public COP_Instance getCopMnotInfCo2() throws UnInitializatedException {
+    public Relaxable_MS_COP_Instance getCopMnotInfCo2() throws UnInitializatedException {
         if (this.copmnoinfco2 == null) {
             this.cop = null;
             this.mccop = null;

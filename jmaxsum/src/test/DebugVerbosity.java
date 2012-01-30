@@ -76,6 +76,9 @@ public class DebugVerbosity {
     public static final int debugEris = 1
             + DebugVerbosity.debug;
 
+    public static final int debugWalkGrid = 3
+            + DebugVerbosity.debug;
+
     public static final int debugSARecycler = 3
             + DebugVerbosity.debug;
 
