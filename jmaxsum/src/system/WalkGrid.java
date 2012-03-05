@@ -17,18 +17,21 @@
 package system;
 
 import exception.FunctionNotPresentException;
+import exception.InitializatedException;
+import exception.MaximumNumberOfAttemptsException;
 import exception.NoMoreGeneratorsException;
 import exception.NoMoreValuesException;
 import exception.PostServiceNotSetException;
 import exception.ResultOkException;
+import exception.UnInitializatedException;
 import exception.VariableNotSetException;
 import factorgraph.NodeArgument;
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.RelaxableFunctionEvaluator;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,6 +40,7 @@ import java.util.Random;
 import maxsum.Relaxable_MS_COP_Instance;
 import misc.Utils;
 import operation.Solver;
+import powerGrid.PowerGrid;
 
 /**
  *
@@ -49,12 +53,13 @@ public class WalkGrid implements Solver {
     ArrayList<NodeVariable> variables = new ArrayList<NodeVariable>();
     ArrayList<NodeFunction> functions = new ArrayList<NodeFunction>();
     // TEMPERATURE MAX:
-    private int maximumNumberOfIterations = 2000;
+    private int maximumNumberOfIterations = 20000;
     HashMap<NodeVariable, Integer> assignments;
     boolean stepByStep = false;
     boolean updateOnlyAtEnd = true;
     boolean pleaseReport = false;
     String reportpath = null;
+    double maxProbability = 0.8;
 
     final static int debug = test.DebugVerbosity.debugWalkGrid;
 
@@ -90,6 +95,7 @@ public class WalkGrid implements Solver {
         NodeFunction f = null;
         Random rnd = new Random();
         ArrayList<NodeFunction> tempList = new ArrayList<NodeFunction>(this.functions);
+        Collections.shuffle(tempList);
         try {
             do {
                 if (tempList.size() > 0) {
@@ -140,6 +146,7 @@ public class WalkGrid implements Solver {
         double overloadF;
         // class Double to let it be updated
         Double prob = 0.18;
+        int attempt = 0;
 
         Long startTime = System.currentTimeMillis();
         String report = "";
@@ -153,129 +160,198 @@ public class WalkGrid implements Solver {
         try {
             while (iterationNumber < maximumNumberOfIterations) {
 
+                try {
 
-                //f = this.getOverloadedGenerator();
-                tempList.clear();
-                for (NodeFunction nf : this.functions) {
-                    try {
-                        if (nf.actualValue() >= Double.POSITIVE_INFINITY) {
-                            tempList.add(nf);
+                    //f = this.getOverloadedGenerator();
+                    tempList.clear();
+                    for (NodeFunction nf : this.functions) {
+                        try {
+                            if (nf.actualValue() >= Double.POSITIVE_INFINITY) {
+                                tempList.add(nf);
+                            }
+                        } catch (VariableNotSetException ex) {
+                            ex.printStackTrace();
                         }
-                    } catch (VariableNotSetException ex) {
-                        ex.printStackTrace();
                     }
-                }
-                if (tempList.isEmpty()) {
-                    throw new ResultOkException();
-                }
+                    if (tempList.isEmpty()) {
+                        throw new ResultOkException();
+                    }
 
-                do {
-                    searchAgain = false;
-                    try {
+                    Collections.shuffle(tempList);
 
-                        if (tempList.size() > 0) {
-                            f = tempList.remove(rnd.nextInt(tempList.size()));
-                        } else {
-                            // no valid f can be used!
-                            throw new NoMoreGeneratorsException();
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "There are "+tempList.size()+" overloaded F");
+                            System.out.println("---------------------------------------");
+                    }
+
+                    do {
+                        searchAgain = false;
+                        try {
+
+                            if (tempList.size() > 0) {
+                                f = tempList.remove(rnd.nextInt(tempList.size()));
+                            } else {
+                                // no valid f can be used!
+                                throw new NoMoreGeneratorsException();
+                            }
+
+
+                            x = this.getFixableLoad(f);
+                        } catch (NoMoreValuesException ex) {
+                            searchAgain = true;
+                        }
+                    } while (searchAgain);
+
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Generator choosen: "+f);
+                            System.out.println("---------------------------------------");
+                    }
+
+                    overloadF = ((RelaxableFunctionEvaluator) f.getFunction()).relaxedActualValue() - 1;
+
+                    // x is a valid load -> can be switched
+
+                    oldXValue = x.getStateIndex();
+                    for (NodeArgument na : x.getArguments()) {
+                        Integer id_otherF = (Integer) na.getValue();
+
+                        if (id_otherF != f.id()
+                                && NodeFunction.getNodeFunction(id_otherF).actualValue() < Double.POSITIVE_INFINITY) {
+                            otherF = NodeFunction.getNodeFunction(id_otherF);
+                            break;
                         }
 
 
-                        x = this.getFixableLoad(f);
-                    } catch (NoMoreValuesException ex) {
-                        searchAgain = true;
-                    }
-                } while (searchAgain);
-
-                overloadF = ((RelaxableFunctionEvaluator) f.getFunction()).relaxedActualValue() - 1;
-
-                // x is a valid load -> can be switched
-
-                oldXValue = x.getStateIndex();
-                for (NodeArgument na : x.getArguments()) {
-                    Integer id_otherF = (Integer) na.getValue();
-
-                    if (id_otherF != f.id()
-                            && NodeFunction.getNodeFunction(id_otherF).actualValue() < Double.POSITIVE_INFINITY) {
-                        otherF = NodeFunction.getNodeFunction(id_otherF);
-                        break;
                     }
 
+                    otherFe = (RelaxableFunctionEvaluator) otherF.getFunction();
 
-                }
-
-                otherFe = (RelaxableFunctionEvaluator) otherF.getFunction();
-
-                //delta = otherFe.relaxedActualValue();
+                    //delta = otherFe.relaxedActualValue();
 
 
-                // connect x to otherF and check
-                x.setStateArgument(
-                        NodeArgument.getNodeArgument(otherF.getId()));
+                    // connect x to otherF and check
+                    x.setStateArgument(
+                            NodeArgument.getNodeArgument(otherF.getId()));
 
-                newOtherCost = otherFe.relaxedActualValue();
-                //delta -= newOtherCost;
+                    newOtherCost = otherFe.relaxedActualValue();
+                    //delta -= newOtherCost;
 
-                // if f is no more overloaded
-                // and otherF is still no overloaded or overloaded of no more than overloadF quantity
+                    // if f is no more overloaded
+                    // and otherF is still no overloaded or overloaded of no more than overloadF quantity
 
-                if (
-                        (f.actualValue() < Double.POSITIVE_INFINITY)
-                        &&
-                        (   (otherF.actualValue() < Double.POSITIVE_INFINITY)
-                            ||
-                            (newOtherCost<=overloadF)
-                        )
-                        ){
-                    // accept
-                    this.backupAssignment();
-                    solutionFoundAtIteration = iterationNumber+1;
-                }
-                else {
-                    // with probability p..
-                    //probab = Math.exp(-delta / temperatura);
-                    if (rnd.nextDouble() < prob) {
-                        // update
+                    if (
+                            (f.actualValue() < Double.POSITIVE_INFINITY)
+                            &&
+                            (   (otherF.actualValue() < Double.POSITIVE_INFINITY)
+                                ||
+                                (newOtherCost<=overloadF)
+                            )
+                            ){
+                        // accept
+                        if (debug>=3) {
+                                String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                System.out.println("---------------------------------------");
+                                System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Move accepted");
+                                System.out.println("---------------------------------------");
+                        }
+                        this.backupAssignment();
+                        solutionFoundAtIteration = iterationNumber+1;
                     }
                     else {
-                        // does not update
-                        x.setStateIndex(oldXValue);
+                        // with probability p..
+                        //probab = Math.exp(-delta / temperatura);
+                        if (rnd.nextDouble() < prob) {
+                            // update
+                            if (debug>=3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Move accepted due to probability");
+                                    System.out.println("---------------------------------------");
+                            }
+                        }
+                        else {
+                            // does not update
+                            if (debug>=3) {
+                                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                                    System.out.println("---------------------------------------");
+                                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Move rejected");
+                                    System.out.println("---------------------------------------");
+                            }
+                            x.setStateIndex(oldXValue);
+                        }
                     }
+
+
+
+                    // TODO: update prob
+                    prob = updateProb(iterationNumber, prob);
+                    iterationNumber++;
+
+                    if (debug>=3) {
+                            String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                            String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                            System.out.println("---------------------------------------");
+                            System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "iteration: "+ (iterationNumber+1) +" probability become: "+prob);
+                            System.out.println("---------------------------------------");
+                    }
+
+
+                    if (!this.updateOnlyAtEnd) {
+                        status = "iteration_" + iterationNumber + "=" + this.cop.status();
+                        if (this.pleaseReport) {
+                            report += status + "\n";
+                        } else {
+                            System.out.println(status);
+                        }
+                    }
+
+                    if (this.stepByStep) {
+                        System.out.print("Iteration " + iterationNumber + "/" + this.maximumNumberOfIterations + " completed, press enter to continue");
+                        try {
+                            System.in.read();
+                        } catch (IOException ex) {
+                            //skip
+                        }
+                        System.out.println("");
+                    }
+                } catch (NoMoreGeneratorsException eg) {
+                    // reinit?
+                    this.randomInit();
+                    iterationNumber = 0;
+                    solutionFoundAtIteration = Integer.MAX_VALUE;
+                    searchAgain = false;
+                    prob = 0.18;
+                    attempt++;
+
+                    if (attempt>=50){
+                        throw new MaximumNumberOfAttemptsException();
+                    }
+
                 }
 
-
-                
-                // TODO: update prob
-                prob = updateProb(iterationNumber, prob);
-                iterationNumber++;
-
-
-                if (!this.updateOnlyAtEnd) {
-                    status = "iteration_" + iterationNumber + "=" + this.cop.status();
-                    if (this.pleaseReport) {
-                        report += status + "\n";
-                    } else {
-                        System.out.println(status);
-                    }
-                }
-
-                if (this.stepByStep) {
-                    System.out.print("Iteration " + iterationNumber + "/" + this.maximumNumberOfIterations + " completed, press enter to continue");
-                    try {
-                        System.in.read();
-                    } catch (IOException ex) {
-                        //skip
-                    }
-                    System.out.println("");
-                }
 
             }
         } catch (VariableNotSetException ex) {
             ex.printStackTrace();
-        } catch (NoMoreGeneratorsException eg) {
-            eg.printStackTrace();
         } catch (FunctionNotPresentException ex) {
             ex.printStackTrace();
+        } catch (MaximumNumberOfAttemptsException en){
+            if (debug>=3) {
+                    String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
+                    String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
+                    System.out.println("---------------------------------------");
+                    System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + "Maximum number of attempts reached.");
+                    System.out.println("---------------------------------------");
+            }
         } catch (ResultOkException ex) {
             // do something
             this.restoreAssignment();
@@ -317,6 +393,7 @@ public class WalkGrid implements Solver {
             report += "N";
         }
         report += "\n";
+        report += "attempt number=" + (attempt+1);
         if (this.pleaseReport) {
             try {
                 Utils.stringToFile(report, reportpath);
@@ -370,9 +447,31 @@ public class WalkGrid implements Solver {
     private Double updateProb(int iterationNumber, Double prob) {
         // linear decreasing
         // prob = 0.18 * ( iterationNumber / maxIteration ) + 0.18
-        return 0.18 * ( iterationNumber / this.maximumNumberOfIterations ) + 0.18;
+        return - this.maxProbability * ( (double)iterationNumber / (double)this.maximumNumberOfIterations ) + this.maxProbability;
     }
 
 
 
+    public static void main(String[] args){
+        try {
+            PowerGrid pg = new PowerGrid("/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg");
+            Relaxable_MS_COP_Instance cop = pg.getCopMnotInfNoCo2();
+            WalkGrid instance = new WalkGrid(cop);
+            instance.solve();
+            System.out.println("After solve, istance is:" + cop.status());
+            System.out.println("Relaxed cost is:" + cop.actualRelaxedValue());
+        } catch (VariableNotSetException ex) {
+            ex.printStackTrace();
+        } catch (PostServiceNotSetException ex) {
+            ex.printStackTrace();
+        } catch (UnInitializatedException ex) {
+            ex.printStackTrace();
+        } catch (InitializatedException ex) {
+            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

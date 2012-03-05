@@ -33,7 +33,7 @@ import system.SARecycler;
 public class PGToData {
 
     public static void main (String[] args){
-        if (args.length != 3 ){
+        if (args.length < 3 ){
             System.out.println("Please enter instance type, instance file and report path.");
             System.exit(0);
         }
@@ -41,13 +41,25 @@ public class PGToData {
             PowerGrid pg = new PowerGrid(args[1]);
 
             if (args[0].equalsIgnoreCase("sarecycler")){
-                SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2], "modinf");
+                //SARecycler sa = new SARecycler(10, 25000, pg.getCopM(), args[2], "modinf");
+                
+                int kmax = Integer.valueOf(args[3]);
+                double tmax = Double.valueOf(args[4]);
+                String report = args[2];
+                SARecycler sa = new SARecycler(20, kmax, pg.getCopM(), report,"modinf", tmax);
             }
             else if (args[0].equalsIgnoreCase("sarecyclernoinf")){
-                SARecycler sa = new SARecycler(10, 25000, pg.getCopMnotInfNoCo2(), args[2],"noinf");
+
+
+                int kmax = Integer.valueOf(args[3]);
+                double tmax = Double.valueOf(args[4]);
+                int repetition = Integer.valueOf(args[5]);
+                String report = args[2];
+                System.out.println("Running SARecycler for "+repetition+" repetition, with kmax="+kmax+", tmax="+tmax+", report: "+report);
+                SARecycler sa = new SARecycler(repetition, kmax, pg.getCopM(), report,"modinf", tmax);
             }
             else {
-                Athena athena = new Athena(pg.getCop(), "min", "sum");
+                Athena athena = new Athena(pg.getCopM(), "min", "sum");
                 athena.pleaseReport(args[2]);
                 athena.setUpdateOnlyAtEnd(true);
                 athena.setIterationsNumber(300);

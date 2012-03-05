@@ -73,7 +73,7 @@ public class DebugVerbosity {
     public static final int debugAthena = 0
             + DebugVerbosity.debug;
 
-    public static final int debugEris = 1
+    public static final int debugEris = 0
             + DebugVerbosity.debug;
 
     public static final int debugWalkGrid = 3

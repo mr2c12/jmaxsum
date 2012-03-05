@@ -37,7 +37,7 @@ public class SARecycler {
 
 
 
-    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report, String type) {
+    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report, String type, double tmax) {
 
         try {
 
@@ -45,7 +45,7 @@ public class SARecycler {
             int mink = 0;
             Eris eris = new Eris("min", cop,type);
             eris.setIterationsNumber(iteration);
-            eris.setTemperature(1000);
+            eris.setTemperature(tmax);
             long start = System.currentTimeMillis();
             for (int i = 0; i < numberOfExecutions; i++) {
 
@@ -96,6 +96,7 @@ public class SARecycler {
 
 
                 System.out.println("final="+finalValue+";");
+                System.out.println("Conclusion for original cop="+finalValue+";");
                 System.out.println("total time [ms]="+(finish-start));
                 System.out.println("latest value got at iteration="+mink);
             }
@@ -115,13 +116,27 @@ public class SARecycler {
     }
 
     public static void main(String[] args) {
+
         try {
+            System.out.println("If args are given: FILEPATH REPETITION ITERATION TEMPERATURE");
             String filepath = "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg";
+            if (args.length >=1){
+                filepath = args[0];
+            }
             PowerGrid pg = new PowerGrid(filepath);
             //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
 
             COP_Instance original_cop = pg.getCopMnotInfNoCo2();
-            SARecycler sar = new SARecycler(10, 25000, original_cop, null, "modinf");
+            if (args.length >= 4){
+                SARecycler sar = new SARecycler(
+                        Integer.parseInt(args[1]),
+                        Integer.parseInt(args[2]),
+                        original_cop, null, "startandstop",
+                        Integer.parseInt(args[3]));
+            }
+            else {
+                SARecycler sar = new SARecycler(1, 25000000, original_cop, null, "startandstop",1000);
+            }
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();
         } catch (InitializatedException ex) {

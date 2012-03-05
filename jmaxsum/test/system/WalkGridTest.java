@@ -177,6 +177,7 @@ public class WalkGridTest {
         WalkGrid instance = new WalkGrid(cop);
         instance.solve();
         System.out.println("After solve, istance is:"+cop.status());
+        System.out.println("Relaxed cost is:"+cop.actualRelaxedValue());
     }
 
 }

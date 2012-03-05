@@ -261,6 +261,7 @@ public class Hermes {
         usage += "\t--otimes\tthe otimes operator, only \"sum\" available at the moment (default: \"sum\")\n";
 
         usage += "\t--old-format\tif the input file does not specify function id and agent\n";
+        usage += "\t--is-power-grid\tif the input file represent a power grid\n";
         usage += "\t--step-by-step\tat each iteration the execution pause and wait for ENTER to be pressed\n";
         usage += "\t--iterations-number <n> | -i <n>\n\t\tset the number of iterations of the algorithm\n";
         usage += "\t--update-each-iteration <n> | -U <n>\n\t\tprint the utility value and variables value at every iteration\n";

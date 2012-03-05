@@ -51,10 +51,10 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/test_infinity_4.cop2",
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node200Domain3InducedWidth2Den2.0e-2-30.dcop"
                 //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/DCOPProblem/Node20Domain03InducedWidth5Den0.1-01.dcop",
-                //"/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
+                "/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/report/2/0.25/0.pg",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/232.pg",
-                "/home/mik/NetBeansProjects/jMaxSumSVN/dcopInput.cop",
+                //"/home/mik/NetBeansProjects/jMaxSumSVN/dcopInput.cop",
             };
 
             for (String path : paths) {
@@ -78,16 +78,16 @@ public class Main {
                 }*/
 
 
-                boolean powerGridV = false;
+                boolean powerGridV = true;
                 String filepath = path;
                 boolean oldformatV = false;
-                boolean screwupV = true;
+                boolean screwupV = false;
                 boolean boundedV = false;
                 String solverV = "athena";
                 String oplusV = "min";
                 String otimesV = "sum";
 
-                int iterationsV = 250;
+                int iterationsV = 2500;
 
                 boolean stepbystepV = false;
                 boolean updateelV = false;
@@ -99,7 +99,8 @@ public class Main {
                 if (powerGridV) {
                     PowerGrid pg = new PowerGrid(filepath);
                     //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
-                    original_cop = pg.getCopM();
+                    //original_cop = pg.getCopM();
+                    original_cop = pg.getCopMnotInfNoCo2();
                     //System.out.println(pg.toStringFile());
                 } else {
                     original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
