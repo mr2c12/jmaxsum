@@ -56,6 +56,7 @@ public class Hermes {
         CmdLineParser.Option otimes = parser.addStringOption("otimes");
         CmdLineParser.Option solver = parser.addStringOption("solver");
         CmdLineParser.Option powerGrid = parser.addBooleanOption("is-power-grid");
+        CmdLineParser.Option bms_preamble = parser.addStringOption("bms-preamble");
 
         try {
             parser.parse(args);
@@ -83,6 +84,7 @@ public class Hermes {
         String oplusV = (String) parser.getOptionValue(oplus, "max");
         String otimesV = (String) parser.getOptionValue(otimes, "sum");
         String solverV = (String) parser.getOptionValue(solver, "athena");
+        String bmspV = (String) parser.getOptionValue(bms_preamble);
 
         String[] otherArgs = parser.getRemainingArgs();
         String filepath = "";
@@ -221,6 +223,14 @@ public class Hermes {
                     System.out.println("Unable to get the Approximation Ratio: at least one variable is not set");
                 } catch (WeightNotSetException e2) {
                     System.out.println(e2);
+                }
+
+                if (bmspV != null){
+                    System.out.println("bounded report="+bmspV+
+                            cop.actualValue()+","+
+                            original_cop.actualValue()+","+
+                            (original_cop.actualValue()+BMax.getB())
+                            );
                 }
             }
 

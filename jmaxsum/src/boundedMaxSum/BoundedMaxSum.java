@@ -85,7 +85,9 @@ public class BoundedMaxSum {
     }
 
 
-
+    public double getB(){
+        return this.weight_removed;
+    }
 
 
     /**
