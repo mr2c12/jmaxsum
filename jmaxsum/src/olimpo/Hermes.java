@@ -22,9 +22,13 @@ import exception.InvalidInputFileException;
 import exception.PostServiceNotSetException;
 import exception.VariableNotSetException;
 import exception.WeightNotSetException;
+import factorgraph.NodeVariable;
 import hacks.ScrewerUp;
 import jargs.gnu.CmdLineParser;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import misc.Utils;
 import operation.Solver;
@@ -44,9 +48,13 @@ public class Hermes {
         CmdLineParser parser = new CmdLineParser();
 
         CmdLineParser.Option oldformat = parser.addBooleanOption("old-format");
+        CmdLineParser.Option oldformatMV = parser.addIntegerOption("MV");
+        CmdLineParser.Option oldformatMC = parser.addDoubleOption("MC");
+
         CmdLineParser.Option iterationnumber = parser.addIntegerOption('i', "iterations-number");
         CmdLineParser.Option stepbystep = parser.addBooleanOption("step-by-step");
         CmdLineParser.Option report = parser.addStringOption('R', "report");
+        CmdLineParser.Option output = parser.addStringOption('O',"output");
         CmdLineParser.Option screwup = parser.addBooleanOption("screw-it-up");
         CmdLineParser.Option updateel = parser.addBooleanOption('U', "update-each-iteration");
         CmdLineParser.Option noBounded = parser.addBooleanOption("bounded-max-sum");
@@ -57,6 +65,7 @@ public class Hermes {
         CmdLineParser.Option solver = parser.addStringOption("solver");
         CmdLineParser.Option powerGrid = parser.addBooleanOption("is-power-grid");
         CmdLineParser.Option bms_preamble = parser.addStringOption("bms-preamble");
+                
 
         try {
             parser.parse(args);
@@ -68,6 +77,10 @@ public class Hermes {
 
 
         Boolean oldformatV = (Boolean) parser.getOptionValue(oldformat, false);
+        int oldformatMVV = (Integer) parser.getOptionValue(oldformatMV, new Integer(100));
+        double oldformatMCV = (Double) parser.getOptionValue(oldformatMC, new Double(10000));
+        
+        
         Boolean stepbystepV = (Boolean) parser.getOptionValue(stepbystep, false);
         Boolean screwupV = (Boolean) parser.getOptionValue(screwup, false);
         Boolean updateelV = (Boolean) parser.getOptionValue(updateel, false);
@@ -78,7 +91,8 @@ public class Hermes {
         Boolean powerGridV = (Boolean) parser.getOptionValue(powerGrid, false);
         // what if no report? -> null!
         String reportV = (String) parser.getOptionValue(report);
-
+        String outputV = (String) parser.getOptionValue(output);
+        
         Integer iterationsV = (Integer) parser.getOptionValue(iterationnumber, new Integer(10));
 
         String oplusV = (String) parser.getOptionValue(oplus, "max");
@@ -134,7 +148,7 @@ public class Hermes {
                 original_cop = pg.getCopM();
             }
             else {
-                original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
+                original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV, oldformatMVV,oldformatMCV);
             }
 
 
@@ -249,6 +263,34 @@ public class Hermes {
             } else {
                 System.out.println(finale);
             }
+           
+            
+            if(outputV!=null){
+            	String outString = "";
+            	for (NodeVariable nv : original_cop.getNodevariables()) {
+    				outString += nv.getId();
+    				outString += " ";
+    				try {
+    					outString += nv.getStateArgument();
+    				} catch (VariableNotSetException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+    				outString += "\n";
+    			}
+                try {
+                	System.out.println(outString);
+                    BufferedWriter out = new BufferedWriter(new FileWriter(outputV));
+                    out.write(outString);
+                    out.close();
+                } catch (IOException ex) {
+                    System.out.println("Sorry but I'm unable to write the output to the file "+outputV);
+                }
+            	
+            }
+
+            
+            
 
         } catch (IllegalArgumentException iaex) {
             System.out.println(iaex.getMessage());

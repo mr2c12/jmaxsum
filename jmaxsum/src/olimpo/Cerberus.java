@@ -54,7 +54,7 @@ public class Cerberus {
      * @return the instance
      */
     public static COP_Instance getInstanceFromFile(String fname) throws InvalidInputFileException {
-        return getInstanceFromFile(fname, false);
+        return getInstanceFromFile(fname, false,0,0);
     }
 
     /**
@@ -62,9 +62,11 @@ public class Cerberus {
      *
      * @param fname path to instance file
      * @param oldFormat if true, use the original format from UK
+     * @param MaxValue maximum values across all functions
+     * @param MultConst scale factor 
      * @return the instance
      */
-    public static COP_Instance getInstanceFromFile(String fname, boolean oldFormat) throws InvalidInputFileException{
+    public static COP_Instance getInstanceFromFile(String fname, boolean oldFormat, int MaxValue, double MultConst) throws InvalidInputFileException{
         HashSet<NodeVariable> nodevariables = new HashSet<NodeVariable>();
         HashSet<NodeFunction> nodefunctions = new HashSet<NodeFunction>();
         HashSet<NodeArgument> nodeargumens = new HashSet<NodeArgument>();
@@ -217,10 +219,15 @@ public class Cerberus {
                                     );
                         }
                         else {
-                            // just a number
-                            nodefunction.getFunction().addParametersCost(arguments,
-                                    Double.parseDouble(costString)
-                                    );
+                        	if (oldFormat){
+	                        	Integer x = Integer.parseInt(costString);
+	                        	double value = MaxValue - (x/MultConst); 
+	                        	nodefunction.getFunction().addParametersCost(arguments,value);
+                        	} else {
+                                nodefunction.getFunction().addParametersCost(arguments,
+                                Double.parseDouble(costString)
+                                );                        		
+                        	}
                         }
 
 

@@ -20,6 +20,8 @@ import operation.Solver;
 import exception.MessagesFixedPointException;
 import exception.PostServiceNotSetException;
 import exception.VariableNotSetException;
+import factorgraph.NodeVariable;
+
 import java.io.IOException;
 import java.util.Iterator;
 import maxsum.Agent;
@@ -70,6 +72,9 @@ public class Athena implements Solver {
     private boolean pleaseReport = false;
     private String reportpath = "";
     private String report = "";
+
+	private boolean writeOutput = false;
+	private String writeOutputPath = "";
 
     public Athena(COP_Instance cop, String plus_operation, String times_operation) throws IllegalArgumentException {
         this.cop = cop;
@@ -566,6 +571,7 @@ public class Athena implements Solver {
             }
         }
         
+        
     }
 
     public String stringStatus(int iteration){
@@ -592,4 +598,5 @@ public class Athena implements Solver {
         status.append(this.cop.status());
         return status.toString();
     }
+
 }

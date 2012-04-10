@@ -103,7 +103,7 @@ public class Main {
                     original_cop = pg.getCopMnotInfNoCo2();
                     //System.out.println(pg.toStringFile());
                 } else {
-                    original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV);
+                    original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV,100,10000);
                 }
 
                 //System.out.println(original_cop.toStringFile());

@@ -91,7 +91,7 @@ public class DebugVerbosity {
     public static final int debugRMessageList = 0
             + DebugVerbosity.debug;
 
-    public static final int debugScrewerUp = 0
+    public static final int debugScrewerUp = 3
             + DebugVerbosity.debug;
 
     public static final int debugClonedMSInstance = 0
@@ -99,7 +99,7 @@ public class DebugVerbosity {
     public static final int debugInstanceCloner = 0
             + DebugVerbosity.debug;
 
-    public static final int debugBoundedMaxSum = 0
+    public static final int debugBoundedMaxSum = 3
             + DebugVerbosity.debug;
 
     public static final int debugPowerGrid = 0

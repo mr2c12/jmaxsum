@@ -1417,4 +1417,5 @@ public class Eris implements Solver {
             entry.getKey().setStateIndex(entry.getValue());
         }
     }
+
 }

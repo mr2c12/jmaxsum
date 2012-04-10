@@ -47,4 +47,5 @@ public interface Solver {
 
     void solve() throws PostServiceNotSetException;
 
+
 }
