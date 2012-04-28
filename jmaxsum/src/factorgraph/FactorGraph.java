@@ -311,4 +311,8 @@ public class FactorGraph{
         }
         return string.toString();
     }
+
+    public int getEdgeNumber(){
+        return this.edges.size();
+    }
 }

@@ -277,4 +277,12 @@ public abstract class COP_Instance {
      * @return new instance of this.Class
      */
     public abstract COP_Instance getNewMe();
+
+    public int getAgentsNumber(){
+        return this.agents.size();
+    }
+
+    public double getDensity(){
+        return (double)this.factorgraph.getEdgeNumber() / (double)this.agents.size();
+    }
 }

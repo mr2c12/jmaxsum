@@ -64,7 +64,7 @@ public class Hermes {
         CmdLineParser.Option otimes = parser.addStringOption("otimes");
         CmdLineParser.Option solver = parser.addStringOption("solver");
         CmdLineParser.Option powerGrid = parser.addBooleanOption("is-power-grid");
-        CmdLineParser.Option bms_preamble = parser.addStringOption("bms-preamble");
+        CmdLineParser.Option bms_report = parser.addBooleanOption("bms-report");
                 
 
         try {
@@ -98,7 +98,7 @@ public class Hermes {
         String oplusV = (String) parser.getOptionValue(oplus, "max");
         String otimesV = (String) parser.getOptionValue(otimes, "sum");
         String solverV = (String) parser.getOptionValue(solver, "athena");
-        String bmspV = (String) parser.getOptionValue(bms_preamble);
+        Boolean bmsrV = (Boolean) parser.getOptionValue(bms_report);
 
         String[] otherArgs = parser.getRemainingArgs();
         String filepath = "";
@@ -239,8 +239,10 @@ public class Hermes {
                     System.out.println(e2);
                 }
 
-                if (bmspV != null){
-                    System.out.println("bounded report="+bmspV+
+                if (bmsrV != null){
+                    System.out.println("bounded report="+
+                            cop.getAgentsNumber()+","+
+                            cop.getDensity()+","+
                             cop.actualValue()+","+
                             original_cop.actualValue()+","+
                             (original_cop.actualValue()+BMax.getB())
@@ -322,6 +324,7 @@ public class Hermes {
         usage += "\t--bounded-max-sum\tuse the Bounded Max Sum phase\n";
         usage += "\t--time | -T\n\t\tprint total time usage\n";
         usage += "\t--report <file>\twrite the report of the execution on <file>";
+        usage += "\t--bms-report\twrite the short report for bounded phase";
 
         System.out.println(usage);
     }
