@@ -49,8 +49,15 @@ public class DisjointSetNode {
     public static void union(Node e1, Node e2){
         if (!sameDS(e1,e2)){
             // merge
-            map.put(e1, map.get(e1).union(map.get(e2)));
-            map.put(e2, map.get(e1));
+            //map.put(e1, map.get(e1).union(map.get(e2)));
+            //map.put(e2, map.get(e1));
+
+
+            //all nodes in map.get(e2) and map.get(e1) have to point to u.
+            DisjointSet<Node> u = map.get(e1).union(map.get(e2));
+            for (Node e : u.getElements()) { // e1 and e2 are included in u
+                 map.put(e, u);
+            }
         }
     }
 
