@@ -1,0 +1,1 @@
+jmaxsum is a java library for solving factored and decentralized optimization problems using the max-sum algorithm. The code is based on the factor graph representation of a factored function.
