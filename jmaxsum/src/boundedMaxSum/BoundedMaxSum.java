@@ -473,7 +473,7 @@ public class BoundedMaxSum {
         if (this.weight_removed == null) {
             throw new WeightNotSetException("Unable to compute the approximation: no weight-removed set. This is not supposed to happen. Did you run letsBound() before calling getApproximationRatio()?");
         }
-        double ratio = ( ( solutionOnTree + this.weight_removed - solutionOnOriginalGraph) / solutionOnOriginalGraph);
+        double ratio = ( ( solutionOnTree + this.weight_removed) / solutionOnOriginalGraph);
         if (debug>=3) {
                 String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
                 String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
