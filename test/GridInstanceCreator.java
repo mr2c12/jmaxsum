@@ -103,7 +103,7 @@ public class GridInstanceCreator {
         while (n > 0) {
             try {
                 //System.out.println("Attempt to create instance " + n);
-                tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
+                tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta, -1);
                 pgList.add(tempInstance);
                 n--;
                 //System.out.println("Created instance");
@@ -123,7 +123,7 @@ public class GridInstanceCreator {
 
         try {
             //System.out.println("New object PowerGrid");
-            tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta);
+            tempInstance = new PowerGrid(core, numberOfGenerators, numberOfLoadsForGenerator, R, xmean, delta, -1);
             //System.out.println("New object PowerGrid ready, saving..");
             tempInstance.saveToFile(path);
             //System.out.println("New object PowerGrid saved,");
