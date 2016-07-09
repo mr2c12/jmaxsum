@@ -38,7 +38,7 @@ public class Main {
 
         try {
 
-            String[] paths = {
+            /*String[] paths = {
                 //"/home/mik/NetBeansProjects/maxSum/copTest.cop2",
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/input.cop2",
                 //"/home/mik/NetBeansProjects/maxSum/paper.cop2",
@@ -57,7 +57,7 @@ public class Main {
                 //"/home/mik/NetBeansProjects/jMaxSumSVN/dcopInput.cop",
             };
 
-            for (String path : paths) {
+            for (String path : paths) {*/
 
                 /*if (debug >= 1) {
                 String dmethod = Thread.currentThread().getStackTrace()[0].getMethodName();
@@ -79,7 +79,7 @@ public class Main {
 
 
                 boolean powerGridV = true;
-                String filepath = path;
+                //String filepath = path;
                 boolean oldformatV = false;
                 boolean screwupV = false;
                 boolean boundedV = false;
@@ -87,7 +87,7 @@ public class Main {
                 String oplusV = "min";
                 String otimesV = "sum";
 
-                int iterationsV = 2500;
+                int iterationsV = 300;
 
                 boolean stepbystepV = false;
                 boolean updateelV = false;
@@ -96,15 +96,10 @@ public class Main {
 
 
                 COP_Instance original_cop;
-                if (powerGridV) {
-                    PowerGrid pg = new PowerGrid(filepath);
-                    //PowerGrid pg = new PowerGrid(2, 3, 2, 0.2, 0.1);
-                    //original_cop = pg.getCopM();
-                    original_cop = pg.getCopMnotInfNoCo2();
-                    //System.out.println(pg.toStringFile());
-                } else {
-                    original_cop = Cerberus.getInstanceFromFile(filepath, oldformatV,100,10000);
-                }
+		PowerGrid pg = new PowerGrid(200, 3, 2, 0.29, 0.2);
+		//original_cop = pg.getCopM();
+		original_cop = pg.getCopMnotInfNoCo2();
+		//System.out.println(pg.toStringFile());
 
                 //System.out.println(original_cop.toStringFile());
 
@@ -239,7 +234,7 @@ public class Main {
                 else {
                 System.out.println("FAIL on "+path);
                 }*/
-            }
+           // }
             /*
             ScrewerUp su = new ScrewerUp(cop);
 
