@@ -24,7 +24,7 @@ import exception.VariableNotSetException;
 import exception.WeightNotSetException;
 import factorgraph.NodeVariable;
 import hacks.ScrewerUp;
-import jargs.gnu.CmdLineParser;
+import com.sanityinc.jargs.CmdLineParser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,24 +47,24 @@ public class Hermes {
 
         CmdLineParser parser = new CmdLineParser();
 
-        CmdLineParser.Option oldformat = parser.addBooleanOption("old-format");
-        CmdLineParser.Option oldformatMV = parser.addIntegerOption("MV");
-        CmdLineParser.Option oldformatMC = parser.addDoubleOption("MC");
+        CmdLineParser.Option<Boolean> oldformat = parser.addBooleanOption("old-format");
+        CmdLineParser.Option<Integer> oldformatMV = parser.addIntegerOption("MV");
+        CmdLineParser.Option<Double> oldformatMC = parser.addDoubleOption("MC");
 
-        CmdLineParser.Option iterationnumber = parser.addIntegerOption('i', "iterations-number");
-        CmdLineParser.Option stepbystep = parser.addBooleanOption("step-by-step");
-        CmdLineParser.Option report = parser.addStringOption('R', "report");
-        CmdLineParser.Option output = parser.addStringOption('O',"output");
-        CmdLineParser.Option screwup = parser.addBooleanOption("screw-it-up");
-        CmdLineParser.Option updateel = parser.addBooleanOption('U', "update-each-iteration");
-        CmdLineParser.Option noBounded = parser.addBooleanOption("bounded-max-sum");
-        CmdLineParser.Option printFactorGraph = parser.addBooleanOption('F', "print-factor-graph");
-        CmdLineParser.Option time = parser.addBooleanOption('T', "time");
-        CmdLineParser.Option oplus = parser.addStringOption("oplus");
-        CmdLineParser.Option otimes = parser.addStringOption("otimes");
-        CmdLineParser.Option solver = parser.addStringOption("solver");
-        CmdLineParser.Option powerGrid = parser.addBooleanOption("is-power-grid");
-        CmdLineParser.Option bms_report = parser.addBooleanOption("bms-report");
+        CmdLineParser.Option<Integer> iterationnumber = parser.addIntegerOption('i', "iterations-number");
+        CmdLineParser.Option<Boolean> stepbystep = parser.addBooleanOption("step-by-step");
+        CmdLineParser.Option<String> report = parser.addStringOption('R', "report");
+        CmdLineParser.Option<String> output = parser.addStringOption('O', "output");
+        CmdLineParser.Option<Boolean> screwup = parser.addBooleanOption("screw-it-up");
+        CmdLineParser.Option<Boolean> updateel = parser.addBooleanOption('U', "update-each-iteration");
+        CmdLineParser.Option<Boolean> noBounded = parser.addBooleanOption("bounded-max-sum");
+        CmdLineParser.Option<Boolean> printFactorGraph = parser.addBooleanOption('F', "print-factor-graph");
+        CmdLineParser.Option<Boolean> time = parser.addBooleanOption('T', "time");
+        CmdLineParser.Option<String> oplus = parser.addStringOption("oplus");
+        CmdLineParser.Option<String> otimes = parser.addStringOption("otimes");
+        CmdLineParser.Option<String> solver = parser.addStringOption("solver");
+        CmdLineParser.Option<Boolean> powerGrid = parser.addBooleanOption("is-power-grid");
+        CmdLineParser.Option<Boolean> bms_report = parser.addBooleanOption("bms-report");
                 
 
         try {
