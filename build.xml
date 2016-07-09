@@ -9,4 +9,12 @@
         <javac includeantruntime="false" srcdir="." destdir="build"/>
     </target>
 
+    <target name="jar">
+        <jar destfile="jmaxsum.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="olimpo.Hermes"/>
+            </manifest>
+        </jar>
+    </target>
+
 </project>
