@@ -46,6 +46,11 @@ public class Hermes {
 
 	public static void main(String[] args) {
 
+		if (args.length == 0) {
+			printUsage();
+			System.exit(2);
+		}
+
 		CmdLineParser parser = new CmdLineParser();
 
 		// Required
