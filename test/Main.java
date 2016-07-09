@@ -13,6 +13,9 @@ import olimpo.Eris;
 import operation.Solver;
 import powerGrid.PowerGrid;
 
+import com.sanityinc.jargs.CmdLineParser;
+import com.sanityinc.jargs.CmdLineParser.Option;
+
 /**
  * Class used for test executions.
  * @author Michele Roncalli
