@@ -4,9 +4,7 @@ JMaxSum is a Java implementation of the Max-Sum algorithm that solves the power 
 
 Compilation
 ----------
-JMaxSum requires `ant` to compile.
-
-The source code can be compiled with `ant compile`, and then packaged into a jar with `ant jar`.
+JMaxSum requires `ant` to compile. The source code can be compiled into a jar with `ant compile jar`.
 
 Execution
 ----------
