@@ -59,6 +59,7 @@ public class Hermes {
 		CmdLineParser.Option<String> solver = parser.addStringOption("algorithm");
 		CmdLineParser.Option<String> oplus = parser.addStringOption("oplus");
 		CmdLineParser.Option<String> otimes = parser.addStringOption("otimes");
+		CmdLineParser.Option<Long> seed = parser.addLongOption("seed");
 		CmdLineParser.Option<Integer> iterationnumber = parser.addIntegerOption("iterations");
 		CmdLineParser.Option<Boolean> printFactorGraph = parser.addBooleanOption("printfactor");
 		CmdLineParser.Option<Boolean> screwup = parser.addBooleanOption("screw");
@@ -84,6 +85,7 @@ public class Hermes {
 		String solverV = (String) parser.getOptionValue(solver, "maxsum");
 		String oplusV = (String) parser.getOptionValue(oplus, "min");
 		String otimesV = (String) parser.getOptionValue(otimes, "sum");
+		Long seedV = (Long) parser.getOptionValue(seed, new Long(-1));
 		Integer iterationsV = (Integer) parser.getOptionValue(iterationnumber, new Integer(300));
 		Boolean printFactorGraphV = (Boolean) parser.getOptionValue(printFactorGraph, false);
 		Boolean screwupV = (Boolean) parser.getOptionValue(screwup, false);
@@ -116,7 +118,7 @@ public class Hermes {
 
 			long startTime = System.currentTimeMillis();
 			COP_Instance original_cop;
-			PowerGrid pg = new PowerGrid(M_V, D_V, R_V, C_V, W_V);
+			PowerGrid pg = new PowerGrid(M_V, D_V, R_V, C_V, W_V, seedV);
 			original_cop = pg.getCopM();
 			InstanceCloner ic = null;
 			COP_Instance cop;
@@ -154,7 +156,6 @@ public class Hermes {
 			}
 
 			core.setIterationsNumber(iterationsV);
-
 			core.setStepbystep(stepbystepV);
 			core.setUpdateOnlyAtEnd(!stepbystepV);
 
