@@ -157,7 +157,7 @@ public class Hermes {
 				core = new Athena(cop, oplusV, otimesV);
 			}
 			else if (solverV.equalsIgnoreCase("annealing")){
-				core = new Eris(oplusV, cop);
+				core = new Eris(oplusV, cop, "modinf");
 			}
 
 			core.setIterationsNumber(iterationsV);
