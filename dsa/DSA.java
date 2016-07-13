@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 /**
- * This class implements the common features among all the versions of DSA.<br/>
+ * This class implements the common features among all versions of DSA.<br/>
  * It is abstract, as it is extended by the DSA-* subclasses.
  * @author Filippo Bistaffa <filippo dot bistaffa at univr dot it>
  */
