@@ -52,7 +52,7 @@ public class DSA implements Solver {
 	private boolean stepbystep = false;
 	private boolean updateOnlyAtEnd = true;
 	private double costo;
-	int passi = -1;
+	int steps = -1;
 	private int kMax = 10000;
 
 	/**
@@ -164,7 +164,7 @@ public class DSA implements Solver {
 			ex.printStackTrace();
 		}
 
-		this.passi = -1;
+		this.steps = -1;
 	}
 
 	public void selectNextValue() {
