@@ -150,7 +150,7 @@ public class Hermes {
 			ScrewerUp screwerup = null;
 
 			if (screwupV) {
-				screwerup = new ScrewerUp(cop);
+				screwerup = new ScrewerUp(cop, seedV);
 				cop = screwerup.screwItUp();
 			}
 
@@ -169,7 +169,7 @@ public class Hermes {
 				core = new Athena(cop, oplusV, otimesV);
 			}
 			else if (solverV.equalsIgnoreCase("annealing")){
-				core = new Eris(oplusV, cop, "modinf");
+				core = new Eris(oplusV, cop, "modinf", seedV);
 			}
 			else if (solverV.equalsIgnoreCase("dsa")){
 				core = new dsa.DSA(cop, oplusV);

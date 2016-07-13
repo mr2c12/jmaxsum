@@ -228,7 +228,7 @@ public class Utils {
      * @param a array to be shuffled
      * @return a shuffled
      */
-    public static Object[] shuffleArrayFY(Object[] a){
+    public static Object[] shuffleArrayFY(Object[] a, Random rnd){
         /*
          * To shuffle an array a of n elements (indices 0..n-1):
           for i from n − 1 downto 1 do
@@ -236,7 +236,6 @@ public class Utils {
                exchange a[j] and a[i]
          */
         int n = a.length;
-        Random rnd = new Random();
         int j;
         Object tmp;
         for (int i = n-1; n>=1; n--){

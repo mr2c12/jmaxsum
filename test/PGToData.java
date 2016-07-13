@@ -46,7 +46,7 @@ public class PGToData {
                 int kmax = Integer.valueOf(args[3]);
                 double tmax = Double.valueOf(args[4]);
                 String report = args[2];
-                SARecycler sa = new SARecycler(20, kmax, pg.getCopM(), report,"modinf", tmax);
+                SARecycler sa = new SARecycler(20, kmax, pg.getCopM(), report,"modinf", tmax, -1);
             }
             else if (args[0].equalsIgnoreCase("sarecyclernoinf")){
 
@@ -56,7 +56,7 @@ public class PGToData {
                 int repetition = Integer.valueOf(args[5]);
                 String report = args[2];
                 System.out.println("Running SARecycler for "+repetition+" repetition, with kmax="+kmax+", tmax="+tmax+", report: "+report);
-                SARecycler sa = new SARecycler(repetition, kmax, pg.getCopM(), report,"modinf", tmax);
+                SARecycler sa = new SARecycler(repetition, kmax, pg.getCopM(), report,"modinf", tmax, -1);
             }
             else {
                 Athena athena = new Athena(pg.getCopM(), "min", "sum");

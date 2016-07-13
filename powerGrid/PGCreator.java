@@ -38,8 +38,9 @@ public class PGCreator implements Runnable {
     boolean isAlive;
     LinkedList<Generator> generators_that_admit_another_link;
     LinkedList<Load> loads_to_link;
+    private Random rnd;
 
-    public PGCreator(int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta, HashSet<Generator> generators, HashSet<Load> loads, LinkedList<Generator> generators_that_admit_another_link, LinkedList<Load> loads_to_link) {
+    public PGCreator(int numberOfGenerators, int numberOfLoadsForGenerator, int R, double xmean, double delta, HashSet<Generator> generators, HashSet<Load> loads, LinkedList<Generator> generators_that_admit_another_link, LinkedList<Load> loads_to_link, Random rnd) {
         this.numberOfGenerators = numberOfGenerators;
         this.numberOfLoadsForGenerator = numberOfLoadsForGenerator;
         this.R = R;
@@ -47,6 +48,7 @@ public class PGCreator implements Runnable {
         this.delta = delta;
         this.generators = generators;
         this.loads = loads;
+	this.rnd = rnd;
 
         this.generators_that_admit_another_link = generators_that_admit_another_link;
         this.loads_to_link = loads_to_link;
@@ -57,7 +59,6 @@ public class PGCreator implements Runnable {
 
         this.isAlive = true;
 
-        Random rnd = new Random();
         Generator gen;
         Load ld;
 

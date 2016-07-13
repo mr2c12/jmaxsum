@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import maxsum.Agent;
 import maxsum.MS_COP_Instance;
 import system.COP_Instance;
+import java.util.Random;
 
 /**
  * Cerberus is a multi-headed hound (usually three-headed) which guards the gates of the Underworld, to prevent those who have crossed the river Styx from ever escaping.<br/>
@@ -45,7 +46,6 @@ public class Cerberus {
 
     public static final int debug = test.DebugVerbosity.debugCerbero;
 
-
     //COP_Instance instance;
 
     /**
@@ -53,8 +53,8 @@ public class Cerberus {
      * @param fname path to instance file
      * @return the instance
      */
-    public static COP_Instance getInstanceFromFile(String fname) throws InvalidInputFileException {
-        return getInstanceFromFile(fname, false,0,0);
+    public static COP_Instance getInstanceFromFile(String fname, Random rnd) throws InvalidInputFileException {
+        return getInstanceFromFile(fname, false, 0, 0, rnd);
     }
 
     /**
@@ -66,7 +66,7 @@ public class Cerberus {
      * @param MultConst scale factor 
      * @return the instance
      */
-    public static COP_Instance getInstanceFromFile(String fname, boolean oldFormat, int MaxValue, double MultConst) throws InvalidInputFileException{
+    public static COP_Instance getInstanceFromFile(String fname, boolean oldFormat, int MaxValue, double MultConst, Random rnd) throws InvalidInputFileException{
         HashSet<NodeVariable> nodevariables = new HashSet<NodeVariable>();
         HashSet<NodeFunction> nodefunctions = new HashSet<NodeFunction>();
         HashSet<NodeArgument> nodeargumens = new HashSet<NodeArgument>();
@@ -99,7 +99,7 @@ public class Cerberus {
                         if(debug>=3){
                             System.out.println("Agent id: "+agent_id);
                         }
-                        agent = Agent.getAgent(agent_id);
+                        agent = Agent.getAgent(agent_id, rnd);
 
                         agents.add(agent);
 
@@ -120,12 +120,12 @@ public class Cerberus {
                             System.out.println("Variable number of argument: "+ number_of_argument);
                         }
 
-                        nodevariable = NodeVariable.getNodeVariable(variable_id);
+                        nodevariable = NodeVariable.getNodeVariable(variable_id, rnd);
 
                         nodevariables.add(nodevariable);
 
                         //agent.addNodeVariable(nodevariable);
-                        Agent.getAgent(variable_to_agent).addNodeVariable(nodevariable);
+                        Agent.getAgent(variable_to_agent, rnd).addNodeVariable(nodevariable);
 
 
                         // add the possible values
@@ -157,23 +157,23 @@ public class Cerberus {
                         }
                         else {
                             function_to_agent = Integer.parseInt(t.nextToken());
-                            Agent.getAgent(function_to_agent).addNodeFunction(nodefunction);
+                            Agent.getAgent(function_to_agent, rnd).addNodeFunction(nodefunction);
                         }
 
                         argumentsOfFunction = new LinkedList<NodeVariable>();
 
                         while(t.hasMoreTokens()){
                             variable_to_function = Integer.parseInt(t.nextToken());
-                            argumentsOfFunction.add( NodeVariable.getNodeVariable(variable_to_function));
+                            argumentsOfFunction.add( NodeVariable.getNodeVariable(variable_to_function, rnd));
                             if(debug>=3){
                                 System.out.println("Function "+function_id+ " has parameter "+ variable_to_function);
                             }
 
 
                             // add this nodefunction to the actual nodevariable's neighbour
-                            NodeVariable.getNodeVariable(variable_to_function).addNeighbour(nodefunction);
+                            NodeVariable.getNodeVariable(variable_to_function, rnd).addNeighbour(nodefunction);
                             // viceversa
-                            nodefunction.addNeighbour(NodeVariable.getNodeVariable(variable_to_function));
+                            nodefunction.addNeighbour(NodeVariable.getNodeVariable(variable_to_function, rnd));
                             
 
                         }

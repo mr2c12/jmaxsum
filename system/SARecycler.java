@@ -37,13 +37,13 @@ public class SARecycler {
 
 
 
-    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report, String type, double tmax) {
+    public SARecycler(int numberOfExecutions, int iteration, COP_Instance cop, String report, String type, double tmax, long seed) {
 
         try {
 
             double finalValue = Double.POSITIVE_INFINITY;
             int mink = 0;
-            Eris eris = new Eris("min", cop,type);
+            Eris eris = new Eris("min", cop, type, seed);
             eris.setIterationsNumber(iteration);
             eris.setTemperature(tmax);
             long start = System.currentTimeMillis();
@@ -132,10 +132,10 @@ public class SARecycler {
                         Integer.parseInt(args[1]),
                         Integer.parseInt(args[2]),
                         original_cop, null, "startandstop",
-                        Integer.parseInt(args[3]));
+                        Integer.parseInt(args[3]), -1);
             }
             else {
-                SARecycler sar = new SARecycler(1, 25000000, original_cop, null, "startandstop",1000);
+                SARecycler sar = new SARecycler(1, 25000000, original_cop, null, "startandstop",1000, -1);
             }
         } catch (UnInitializatedException ex) {
             ex.printStackTrace();

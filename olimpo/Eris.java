@@ -64,11 +64,13 @@ public class Eris implements Solver {
     // 1 -> relaxed
     private int type = 0;
     private HashMap<NodeVariable, Integer> assegnamenti = new HashMap<NodeVariable, Integer>();
+    private Random rnd;
 
-    public Eris(String op, COP_Instance cop) throws ParameterNotFoundException {
+    public Eris(String op, COP_Instance cop, long seed) throws ParameterNotFoundException {
 
         double changeInfinityTo = 0;
         double infinity;
+	rnd = seed == -1 ? new Random() : new Random(seed);
 
         if (op.equalsIgnoreCase("max")) {
             this.op = "max";
@@ -112,7 +114,7 @@ public class Eris implements Solver {
         }
     }
 
-    public Eris(String op, COP_Instance cop, String type) throws ParameterNotFoundException {
+    public Eris(String op, COP_Instance cop, String type, long seed) throws ParameterNotFoundException {
 
         if (type.equalsIgnoreCase("noinf")) {
             this.type = 1;
@@ -124,6 +126,7 @@ public class Eris implements Solver {
 
         double changeInfinityTo = 0;
         double infinity;
+	rnd = seed == -1 ? new Random() : new Random(seed);
 
         if (op.equalsIgnoreCase("max")) {
             this.op = "max";
@@ -206,8 +209,6 @@ public class Eris implements Solver {
 
     private NodeVariable randomNodo() {
 
-        Random rnd = new Random();
-
         return this.variables.get(rnd.nextInt(this.variables.size()));
     }
 
@@ -284,7 +285,6 @@ public class Eris implements Solver {
             } while (repeat);
         }
 
-        Random rnd = new Random();
         String status;
         boolean ffFound = false;
         this.report += "max_iterations_number=" + this.kMax + "\n";
@@ -629,7 +629,6 @@ public class Eris implements Solver {
             System.out.println("[class: " + dclass + " method: " + dmethod + "] " + "Temperatura iniziale = " + temperatura);
             System.out.println("---------------------------------------");
         }
-        Random rnd = new Random();
         String status;
         boolean ffFound = false;
         this.report += "max_iterations_number=" + this.kMax + "\n";
@@ -906,7 +905,6 @@ public class Eris implements Solver {
 
 
         this.inizio = System.currentTimeMillis();
-        Random rnd = new Random();
         String status;
         boolean ffFound = false;
         this.report = "";

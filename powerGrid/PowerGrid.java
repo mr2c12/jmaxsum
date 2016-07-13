@@ -63,6 +63,7 @@ public class PowerGrid {
 	protected MS_COP_Instance mccop = null;
 	protected Relaxable_MS_COP_Instance copmnoinfnoco2 = null;
 	protected Relaxable_MS_COP_Instance copmnoinfco2 = null;
+	private Random rnd;
 
 	private PowerGrid() {
 		Load.resetLoads();
@@ -111,7 +112,7 @@ public class PowerGrid {
 			throw new IllegalArgumentException("Condition required: 2 * Xmean >= Delta");
 		}
 
-		Random rnd = seed == -1 ? new Random() : new Random(seed);
+		rnd = seed == -1 ? new Random() : new Random(seed);
 		Generator gen;
 		Load ld;
 		LinkedList<Generator> generators_that_admit_another_link = new LinkedList<Generator>();
@@ -407,12 +408,12 @@ public class PowerGrid {
 
 			for (int core_i = 1; core_i < coreNumber; core_i++) {
 				//Thread pg = new Thread(new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link));
-				PGCreator pg = new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link);
+				PGCreator pg = new PGCreator(generatorForeachCore, numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link, rnd);
 				pg.run();
 				pgs.add(pg);
 			}
 			// last core, the remaining
-			PGCreator pg = new PGCreator(generatorForeachCore + (numberOfGenerators % coreNumber), numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link);
+			PGCreator pg = new PGCreator(generatorForeachCore + (numberOfGenerators % coreNumber), numberOfLoadsForGenerator, R, xmean, delta, generators, loads, generators_that_admit_another_link, loads_to_link, rnd);
 			pg.run();
 			pgs.add(pg);
 
@@ -449,7 +450,7 @@ public class PowerGrid {
 				}
 			} while (!finished);
 
-			Random rnd = seed == -1 ? new Random() : new Random(seed);
+			rnd = seed == -1 ? new Random() : new Random(seed);
 
 			if (debug >= 3) {
 				String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
@@ -801,7 +802,7 @@ public class PowerGrid {
 		NodeArgument nodeargument;
 		NodeFunction nodefunction;
 		TabularFunction tfunction;
-		Agent agent = Agent.getAgent(0);
+		Agent agent = Agent.getAgent(0, rnd);
 		agents.add(agent);
 		int[] numberOfValues;
 
@@ -816,7 +817,7 @@ public class PowerGrid {
 
 		// nodevariables: one for each load, same id, nodeargument one for each generator
 		for (Load lit : this.getLoads()) {
-			nodevariable = NodeVariable.getNodeVariable(lit.getId());
+			nodevariable = NodeVariable.getNodeVariable(lit.getId(), rnd);
 			if (debug >= 3) {
 				String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
 				String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -840,7 +841,7 @@ public class PowerGrid {
 			tfunction = new TabularFunction();
 			for (Load git_l : git.getLoads()) {
 				tfunction.addParameter(
-						NodeVariable.getNodeVariable(git_l.getId()));
+						NodeVariable.getNodeVariable(git_l.getId(), rnd));
 			}
 
 			numberOfValues = new int[tfunction.getParameters().size()];
@@ -972,7 +973,7 @@ public class PowerGrid {
 		NodeVariable nodevariable;
 		NodeFunction nodefunction;
 		TabularFunction tfunction;
-		Agent agent = Agent.getAgent(0);
+		Agent agent = Agent.getAgent(0, rnd);
 		agents.add(agent);
 		int[] numberOfValues;
 
@@ -986,7 +987,7 @@ public class PowerGrid {
 
 		// nodevariables: one for each load, same id, nodeargument one for each generator
 		for (Load lit : this.getLoads()) {
-			nodevariable = NodeVariable.getNodeVariable(lit.getId());
+			nodevariable = NodeVariable.getNodeVariable(lit.getId(), rnd);
 			if (debug >= 3) {
 				String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
 				String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -1022,7 +1023,7 @@ public class PowerGrid {
 					tmod += git_l.getRequiredPower();
 				}
 				else { tfunction.addParameter(
-						NodeVariable.getNodeVariable(git_l.getId()));
+						NodeVariable.getNodeVariable(git_l.getId(), rnd));
 				}
 			}
 
@@ -1137,7 +1138,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 		NodeVariable nodevariable;
 		NodeFunction nodefunction;
 		RelaxedTabularFunction tfunction;
-		Agent agent = Agent.getAgent(0);
+		Agent agent = Agent.getAgent(0, rnd);
 		agents.add(agent);
 		int[] numberOfValues;
 
@@ -1152,7 +1153,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 
 		// nodevariables: one for each load, same id, nodeargument one for each generator
 		for (Load lit : this.getLoads()) {
-			nodevariable = NodeVariable.getNodeVariable(lit.getId());
+			nodevariable = NodeVariable.getNodeVariable(lit.getId(), rnd);
 			if (debug >= 3) {
 				String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
 				String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -1189,7 +1190,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 					tmod += git_l.getRequiredPower();
 				}
 				else { tfunction.addParameter(
-						NodeVariable.getNodeVariable(git_l.getId()));
+						NodeVariable.getNodeVariable(git_l.getId(), rnd));
 				}
 			}
 
@@ -1312,7 +1313,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 		NodeVariable nodevariable;
 		NodeFunction nodefunction;
 		RelaxedTabularFunction tfunction;
-		Agent agent = Agent.getAgent(0);
+		Agent agent = Agent.getAgent(0, rnd);
 		agents.add(agent);
 		int[] numberOfValues;
 
@@ -1327,7 +1328,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 
 		// nodevariables: one for each load, same id, nodeargument one for each generator
 		for (Load lit : this.getLoads()) {
-			nodevariable = NodeVariable.getNodeVariable(lit.getId());
+			nodevariable = NodeVariable.getNodeVariable(lit.getId(), rnd);
 			if (debug >= 3) {
 				String dmethod = Thread.currentThread().getStackTrace()[2].getMethodName();
 				String dclass = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -1364,7 +1365,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 					tmod += git_l.getRequiredPower();
 				}
 				else { tfunction.addParameter(
-						NodeVariable.getNodeVariable(git_l.getId()));
+						NodeVariable.getNodeVariable(git_l.getId(), rnd));
 				}
 			}
 
@@ -1488,7 +1489,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 		NodeFunction nodefunction;
 		TabularFunction tfunction;
 		TabularFunctionOnlyValidRows hfunction;
-		Agent agent = Agent.getAgent(1);
+		Agent agent = Agent.getAgent(1, rnd);
 		agents.add(agent);
 		int[] numberOfValues;
 
@@ -1517,7 +1518,7 @@ private void buildCOPMnoInfNoCO2Instance() throws UnInitializatedException {
 				nodefunctions.add(nodefunction);
 
 				if (howManyNodesForLoad>1){
-					nodevariable = NodeVariable.getNewNextNodeVariable();
+					nodevariable = NodeVariable.getNewNextNodeVariable(rnd);
 					agent.addNodeVariable(nodevariable);
 					nodevariables.add(nodevariable);
 					nodevariable.addValue(NodeArgument.getNodeArgument(0));
