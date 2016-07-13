@@ -1,6 +1,6 @@
 JMaxSum
 ===================
-JMaxSum is a Java implementation of the Max-Sum algorithm that solves the power distribution model proposed by [Zdeborová et al. (2009)](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.80.046112).
+JMaxSum is a Java implementation of the Max-Sum algorithm that solves the power distribution model proposed by [Zdeborová et al. (2009)](http://journals.aps.org/pre/abstract/10.1103/PhysRevE.80.046112). This package also includes an implementation of simulated annealing [(Kirkpatrick et al., 1983)](http://science.sciencemag.org/content/220/4598/671) and distributed stochastic search [(Zhang et al., 2004)](http://ac.els-cdn.com/S0004370204001481/1-s2.0-S0004370204001481-main.pdf?_tid=c1dd4508-48ec-11e6-9e88-00000aacb362&acdnat=1468409418_719aadebd6eab7e49029ed25e222739e) for comparison purposes.
 
 Compilation
 ----------
