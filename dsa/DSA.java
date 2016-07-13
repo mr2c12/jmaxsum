@@ -134,7 +134,7 @@ public class DSA implements Solver {
 		this.updateOnlyAtEnd = updateOnlyAtEnd;
 	}
 
-	private double getCosto() throws VariableNotSetException {
+	private double getCost() throws VariableNotSetException {
 
 		double cost = 0;
 
@@ -155,7 +155,7 @@ public class DSA implements Solver {
 		}
 
 		try {
-			this.costo = this.getCosto();
+			this.costo = this.getCost();
 		} catch (VariableNotSetException ex) {
 			ex.printStackTrace();
 		}
