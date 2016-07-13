@@ -46,8 +46,14 @@ public class DSA implements Solver {
 	private ArrayList<FunctionEvaluator> functions;
 	private double costValue = Double.NaN;
 	private double haltValue = Double.NaN;
+	private boolean pleaseReport = false;
+	private String reportpath = "";
+	private String report = "";
+	private boolean stepbystep = false;
+	private boolean updateOnlyAtEnd = true;
 	private double costo;
 	int passi = -1;
+	private int kMax = 10000;
 
 	/**
 	 * Please report all the information and put them in file
@@ -55,6 +61,8 @@ public class DSA implements Solver {
 	 */
 	public void pleaseReport(String file) {
 
+		this.pleaseReport = true;
+		this.reportpath = file;
 	}
 
 	/**
@@ -63,10 +71,12 @@ public class DSA implements Solver {
 	 */
 	public void setIterationsNumber(int n) {
 
+	        this.kMax = n;
 	}
 
 	public void setStepbystep(boolean stepbystep) {
 
+		this.stepbystep = stepbystep;
 	}
 
 	/**
@@ -75,6 +85,7 @@ public class DSA implements Solver {
 	 */
 	public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
 
+		this.updateOnlyAtEnd = updateOnlyAtEnd;
 	}
 
 	public void solve() throws PostServiceNotSetException {
