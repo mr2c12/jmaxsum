@@ -131,8 +131,6 @@ public class Hermes {
 			System.exit(2);
 		}
 
-		System.exit(0);
-
 		try {
 
 			long startTime = System.currentTimeMillis();
