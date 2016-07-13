@@ -27,12 +27,20 @@ import system.COP_Instance;
 
 public class DSA_C extends DSA {
 
-	public DSA_C(COP_Instance cop, String op, long seed) throws ParameterNotFoundException {
+	public DSA_C(COP_Instance cop, String op, double p, long seed) throws ParameterNotFoundException {
 
-		super(cop, op, seed);
+		super(cop, op, p, seed);
 	}
 
-	public void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
+	protected boolean changeState(boolean deltaIsZero, boolean conflict) {
 
+		if (!deltaIsZero)
+			return (rnd.nextDouble() < p);
+		else {
+			if (conflict)
+				return (rnd.nextDouble() < p);
+			else
+				return (rnd.nextDouble() < p);
+		}
 	}
 }

@@ -44,39 +44,35 @@ public abstract class DSA implements Solver {
 	private String op;
 	private ArrayList<NodeVariable> variables;
 	private ArrayList<FunctionEvaluator> functions;
-	private double costValue = Double.NaN;
-	private double haltValue = Double.NaN;
 	private boolean pleaseReport = false;
 	private String reportpath = "";
 	private String report = "";
 	private boolean stepbystep = false;
 	private boolean updateOnlyAtEnd = true;
 	private double costo;
+	private double infinity;
 	private int kMax = 10000;
 	private long begin, end;
-	private Random rnd;
+	protected Random rnd;
+	protected double p;
 
-	public DSA(COP_Instance cop, String op, long seed) throws ParameterNotFoundException {
+	public DSA(COP_Instance cop, String op, double p, long seed) throws ParameterNotFoundException {
 
 		double changeInfinityTo = 0;
-		double infinity;
 
 		if (op.equalsIgnoreCase("max")) {
 			this.op = "max";
-			this.costValue = Double.NEGATIVE_INFINITY;
-			this.haltValue = Double.POSITIVE_INFINITY;
-			infinity = Double.NEGATIVE_INFINITY;
+			this.infinity = Double.NEGATIVE_INFINITY;
 			changeInfinityTo = -1e05;
 		} else if (op.equalsIgnoreCase("min")) {
 			this.op = "min";
-			this.costValue = Double.POSITIVE_INFINITY;
-			this.haltValue = Double.NEGATIVE_INFINITY;
-			infinity = Double.POSITIVE_INFINITY;
+			this.infinity = Double.POSITIVE_INFINITY;
 			changeInfinityTo = 5000; //1e05;
 		} else {
 			throw new ParameterNotFoundException("Unknown operation: " + op);
 		}
 
+		this.p = p;
 		this.cop = cop;
 		this.variables = new ArrayList<NodeVariable>();
 		rnd = seed == -1 ? new Random() : new Random(seed);
@@ -146,6 +142,17 @@ public abstract class DSA implements Solver {
 		return cost;
 	}
 
+	protected int getNumberOfConflicts(NodeVariable x) throws VariableNotSetException {
+
+		int ret = 0;
+
+		for (NodeFunction f : x.getNeighbour())
+			if (f.actualValue() == infinity)
+				ret++;
+
+		return ret;
+	}
+
 	private void randomInit() {
 
 		for (NodeVariable x : this.variables) {
@@ -176,11 +183,49 @@ public abstract class DSA implements Solver {
 			ex.printStackTrace();
 		}
 
-		for (NodeVariable x : this.variables)
-			selectNextValue(x, variables);
+		for (int k = 0; k < kMax; k++)
+			for (NodeVariable x : this.variables)
+				selectNextValue(x, variables);
 
 		end = System.currentTimeMillis();
 	}
 
-	public abstract void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables);
+	private void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
+
+		try {
+			System.out.println("Variable " + x.getId());
+			int oldState = x.getStateIndex();
+			int oldConflicts = getNumberOfConflicts(x);
+			System.out.println("oldState = " + oldState);
+			System.out.println("oldConflicts = " + oldConflicts);
+			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
+
+			for (int newState = 0; newState < x.size(); newState++)
+				if (oldState != newState) {
+					x.setStateIndex(newState);
+					int newConflicts = getNumberOfConflicts(x);
+					System.out.println("newState = " + newState);
+					System.out.println("newConflicts = " + newConflicts);
+					if (newConflicts <= bestConflicts) {
+						bestConflicts = newConflicts;
+						bestState = newState;
+						delta = oldConflicts - bestConflicts;
+						System.out.println("updating bestConflicts = " + bestConflicts);
+						System.out.println("updating bestState = " + newState);
+						System.out.println("updating delta = " + delta);
+					}
+				}
+
+			if (changeState(delta == 0, oldConflicts != 0)) {
+				System.out.println("updating state = " + bestState);
+				x.setStateIndex(bestState);
+			} else {
+				System.out.println("reverting old state = " + oldState);
+				x.setStateIndex(oldState);
+			}
+
+		} catch (VariableNotSetException e) {}
+	}
+
+	abstract protected boolean changeState(boolean deltaIsZero, boolean conflict);
 }

@@ -63,6 +63,7 @@ public class Hermes {
 		// Optional
 		CmdLineParser.Option<String> solver = parser.addStringOption("algorithm");
 		CmdLineParser.Option<String> dsa = parser.addStringOption("dsa");
+		CmdLineParser.Option<Double> p = parser.addDoubleOption("probability");
 		CmdLineParser.Option<String> oplus = parser.addStringOption("oplus");
 		CmdLineParser.Option<String> otimes = parser.addStringOption("otimes");
 		CmdLineParser.Option<Long> seed = parser.addLongOption("seed");
@@ -90,6 +91,7 @@ public class Hermes {
 		Boolean stepbystepV = false;
 		String solverV = (String) parser.getOptionValue(solver, "maxsum");
 		String dsaV = (String) parser.getOptionValue(dsa);
+		Double pV = (Double) parser.getOptionValue(p, new Double(0.5));
 		String oplusV = (String) parser.getOptionValue(oplus, "min");
 		String otimesV = (String) parser.getOptionValue(otimes, "sum");
 		Long seedV = (Long) parser.getOptionValue(seed, new Long(-1));
@@ -173,15 +175,15 @@ public class Hermes {
 			}
 			else if (solverV.equalsIgnoreCase("dsa")){
 				if (dsaV.equalsIgnoreCase("a"))
-					core = new dsa.DSA_A(cop, oplusV, seedV);
+					core = new dsa.DSA_A(cop, oplusV, pV, seedV);
 				else if (dsaV.equalsIgnoreCase("b"))
-					core = new dsa.DSA_B(cop, oplusV, seedV);
+					core = new dsa.DSA_B(cop, oplusV, pV, seedV);
 				else if (dsaV.equalsIgnoreCase("c"))
-					core = new dsa.DSA_C(cop, oplusV, seedV);
+					core = new dsa.DSA_C(cop, oplusV, pV, seedV);
 				else if (dsaV.equalsIgnoreCase("d"))
-					core = new dsa.DSA_D(cop, oplusV, seedV);
+					core = new dsa.DSA_D(cop, oplusV, pV, seedV);
 				else if (dsaV.equalsIgnoreCase("e"))
-					core = new dsa.DSA_E(cop, oplusV, seedV);
+					core = new dsa.DSA_E(cop, oplusV, pV, seedV);
 			}
 
 			core.setIterationsNumber(iterationsV);
@@ -271,6 +273,7 @@ public class Hermes {
 		usage += "OPTIONS include:\n\n";
 		usage += "--algorithm A\tCan be \"maxsum\" for Max Sum, \"annealing\" for Simulated Annealing or \"dsa\" for DSA (default: \"maxsum\")\n";
 		usage += "--dsa V\t\tDSA version, can be \"a\" -- \"e\" (required when using DSA as algorithm)\n";
+		usage += "--probability P\tProbability between 0 and 1 used in DSA (default: 0.5)\n";
 		usage += "--oplus OP\tThe oplus operator, can be \"max\" or \"min\" (default: \"min\")\n";
 		usage += "--otimes OT\tThe otimes operator, only \"sum\" available at the moment (default: \"sum\")\n";
 		usage += "--seed S\tSeed used to generate the random powergrid instance (default: random)\n";
