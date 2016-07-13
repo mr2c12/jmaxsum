@@ -54,6 +54,7 @@ public class DSA implements Solver {
 	private double costo;
 	int steps = -1;
 	private int kMax = 10000;
+	private long begin, end;
 
 	public DSA(COP_Instance cop, String op) throws ParameterNotFoundException {
 
@@ -163,11 +164,25 @@ public class DSA implements Solver {
 		this.steps = -1;
 	}
 
-	public void selectNextValue() {
+	public void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
 
 	}
 
 	public void solve() throws PostServiceNotSetException {
 
+		randomInit();
+		begin = System.currentTimeMillis();
+		report = "";
+		double prevcost = Double.NaN;
+
+		try {
+			prevcost = getCost();
+		} catch (VariableNotSetException ex) {
+			ex.printStackTrace();
+		}
+
+		for (int k = 0; k < kMax; k++) {
+
+		}
 	}
 }
