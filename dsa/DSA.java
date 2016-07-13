@@ -38,7 +38,7 @@ import java.util.Random;
  * @author Filippo Bistaffa <filippo dot bistaffa at univr dot it>
  */
 
-public class DSA implements Solver {
+public abstract class DSA implements Solver {
 
 	private COP_Instance cop;
 	private String op;
@@ -164,10 +164,6 @@ public class DSA implements Solver {
 		this.steps = -1;
 	}
 
-	public void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
-
-	}
-
 	public void solve() throws PostServiceNotSetException {
 
 		randomInit();
@@ -181,8 +177,9 @@ public class DSA implements Solver {
 			ex.printStackTrace();
 		}
 
-		for (int k = 0; k < kMax; k++) {
-
-		}
+		for (NodeVariable x : this.variables)
+			selectNextValue(x, variables);
 	}
+
+	public abstract void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables);
 }
