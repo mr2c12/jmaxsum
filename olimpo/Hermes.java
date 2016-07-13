@@ -62,6 +62,7 @@ public class Hermes {
 
 		// Optional
 		CmdLineParser.Option<String> solver = parser.addStringOption("algorithm");
+		CmdLineParser.Option<String> dsa = parser.addStringOption("dsa");
 		CmdLineParser.Option<String> oplus = parser.addStringOption("oplus");
 		CmdLineParser.Option<String> otimes = parser.addStringOption("otimes");
 		CmdLineParser.Option<Long> seed = parser.addLongOption("seed");
@@ -88,6 +89,7 @@ public class Hermes {
 
 		Boolean stepbystepV = false;
 		String solverV = (String) parser.getOptionValue(solver, "maxsum");
+		String dsaV = (String) parser.getOptionValue(dsa);
 		String oplusV = (String) parser.getOptionValue(oplus, "min");
 		String otimesV = (String) parser.getOptionValue(otimes, "sum");
 		Long seedV = (Long) parser.getOptionValue(seed, new Long(-1));
@@ -110,8 +112,18 @@ public class Hermes {
 			if (!( (otimesV.equalsIgnoreCase("sum")) || (otimesV.equalsIgnoreCase("prod"))))
 				throw new Exception("Invalid value for OTimes!\n");
 
-			if (!((solverV.equalsIgnoreCase("maxsum")) || (solverV.equalsIgnoreCase("annealing"))))
+			if (!((solverV.equalsIgnoreCase("maxsum")) || (solverV.equalsIgnoreCase("annealing")) || (solverV.equalsIgnoreCase("dsa"))))
 				throw new Exception("Invalid algorithm!\n");
+
+			if (solverV.equalsIgnoreCase("dsa")) {
+				if (dsaV == null)
+					throw new Exception("Missing DSA version!\n");
+				else if (!((dsaV.equalsIgnoreCase("a")) || (dsaV.equalsIgnoreCase("b")) || (dsaV.equalsIgnoreCase("c")) || (dsaV.equalsIgnoreCase("d")) || (dsaV.equalsIgnoreCase("e"))))
+					throw new Exception("Invalid DSA version!\n");
+			} else {
+				if (dsaV != null)
+					throw new Exception("Specified DSA version without using DSA algorithm!\n");
+			}
 
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -246,6 +258,7 @@ public class Hermes {
 		usage += "--width W\tThe width of the uniform distribution\n\n";
 		usage += "OPTIONS include:\n\n";
 		usage += "--algorithm A\tCan be \"maxsum\" for Max Sum, \"annealing\" for Simulated Annealing or \"dsa\" for DSA (default: \"maxsum\")\n";
+		usage += "--dsa V\t\tDSA version, can be \"a\" -- \"e\" (required when using DSA as algorithm)\n";
 		usage += "--oplus OP\tThe oplus operator, can be \"max\" or \"min\" (default: \"min\")\n";
 		usage += "--otimes OT\tThe otimes operator, only \"sum\" available at the moment (default: \"sum\")\n";
 		usage += "--seed S\tSeed used to generate the random powergrid instance (default: random)\n";
