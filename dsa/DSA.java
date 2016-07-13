@@ -52,7 +52,6 @@ public abstract class DSA implements Solver {
 	private boolean stepbystep = false;
 	private boolean updateOnlyAtEnd = true;
 	private double costo;
-	int steps = -1;
 	private int kMax = 10000;
 	private long begin, end;
 	private Random rnd;
@@ -162,8 +161,6 @@ public abstract class DSA implements Solver {
 		} catch (VariableNotSetException ex) {
 			ex.printStackTrace();
 		}
-
-		this.steps = -1;
 	}
 
 	public void solve() throws PostServiceNotSetException {
