@@ -178,6 +178,8 @@ public abstract class DSA implements Solver {
 
 		for (NodeVariable x : this.variables)
 			selectNextValue(x, variables);
+
+		end = System.currentTimeMillis();
 	}
 
 	public abstract void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables);
