@@ -55,8 +55,9 @@ public abstract class DSA implements Solver {
 	int steps = -1;
 	private int kMax = 10000;
 	private long begin, end;
+	private Random rnd;
 
-	public DSA(COP_Instance cop, String op) throws ParameterNotFoundException {
+	public DSA(COP_Instance cop, String op, long seed) throws ParameterNotFoundException {
 
 		double changeInfinityTo = 0;
 		double infinity;
@@ -79,6 +80,7 @@ public abstract class DSA implements Solver {
 
 		this.cop = cop;
 		this.variables = new ArrayList<NodeVariable>();
+		rnd = seed == -1 ? new Random() : new Random(seed);
 
 		for (NodeVariable nv : this.cop.getNodevariables()) {
 			if (nv.size() > 1) {

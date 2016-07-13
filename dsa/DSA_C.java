@@ -27,9 +27,9 @@ import system.COP_Instance;
 
 public class DSA_C extends DSA {
 
-	public DSA_C(COP_Instance cop, String op) throws ParameterNotFoundException {
+	public DSA_C(COP_Instance cop, String op, long seed) throws ParameterNotFoundException {
 
-		super(cop, op);
+		super(cop, op, seed);
 	}
 
 	public void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {

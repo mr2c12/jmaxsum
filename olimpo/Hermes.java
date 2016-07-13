@@ -173,15 +173,15 @@ public class Hermes {
 			}
 			else if (solverV.equalsIgnoreCase("dsa")){
 				if (dsaV.equalsIgnoreCase("a"))
-					core = new dsa.DSA_A(cop, oplusV);
+					core = new dsa.DSA_A(cop, oplusV, seedV);
 				else if (dsaV.equalsIgnoreCase("b"))
-					core = new dsa.DSA_B(cop, oplusV);
+					core = new dsa.DSA_B(cop, oplusV, seedV);
 				else if (dsaV.equalsIgnoreCase("c"))
-					core = new dsa.DSA_C(cop, oplusV);
+					core = new dsa.DSA_C(cop, oplusV, seedV);
 				else if (dsaV.equalsIgnoreCase("d"))
-					core = new dsa.DSA_D(cop, oplusV);
+					core = new dsa.DSA_D(cop, oplusV, seedV);
 				else if (dsaV.equalsIgnoreCase("e"))
-					core = new dsa.DSA_E(cop, oplusV);
+					core = new dsa.DSA_E(cop, oplusV, seedV);
 			}
 
 			core.setIterationsNumber(iterationsV);
