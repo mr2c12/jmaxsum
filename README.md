@@ -23,6 +23,7 @@ The following *required* parameters must be specified:
 In addition, the following *optional* parameters can be specified:
 
     --algorithm A	Either "maxsum", "annealing" or "dsa" (default: "maxsum")
+    --dsa V			DSA version, can be "a" -- "e" (required when using DSA as algorithm)
     --oplus OP		The oplus operator, either "max" or "min" (default: "min")
     --otimes OT		The otimes operator, only "sum" available ATM (default: "sum")
     --seed S		Seed used to generate the random instance (default: random)
