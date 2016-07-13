@@ -131,6 +131,8 @@ public class Hermes {
 			System.exit(2);
 		}
 
+		System.exit(0);
+
 		try {
 
 			long startTime = System.currentTimeMillis();
@@ -170,6 +172,9 @@ public class Hermes {
 			}
 			else if (solverV.equalsIgnoreCase("annealing")){
 				core = new Eris(oplusV, cop, "modinf");
+			}
+			else if (solverV.equalsIgnoreCase("dsa")){
+				core = new dsa.DSA(cop, oplusV);
 			}
 
 			core.setIterationsNumber(iterationsV);
