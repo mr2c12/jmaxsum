@@ -41,12 +41,12 @@ import java.util.Random;
 public class DSA implements Solver {
 
 	private COP_Instance cop;
-	private String op = "max";
+	private String op;
 	private ArrayList<NodeVariable> variables;
 	private ArrayList<FunctionEvaluator> functions;
 	private double costValue = Double.NaN;
 	private double haltValue = Double.NaN;
-	double costo;
+	private double costo;
 	int passi = -1;
 
 	/**
