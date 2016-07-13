@@ -55,43 +55,6 @@ public class DSA implements Solver {
 	int steps = -1;
 	private int kMax = 10000;
 
-	/**
-	 * Please report all the information and put them in file
-	 * @param file report path
-	 */
-	public void pleaseReport(String file) {
-
-		this.pleaseReport = true;
-		this.reportpath = file;
-	}
-
-	/**
-	 * How many steps to do?
-	 * @param n number of steps.
-	 */
-	public void setIterationsNumber(int n) {
-
-	        this.kMax = n;
-	}
-
-	public void setStepbystep(boolean stepbystep) {
-
-		this.stepbystep = stepbystep;
-	}
-
-	/**
-	 * Set if the update is only after the algorithm is finished or after each step.
-	 * @param updateOnlyAtEnd yes if to update only when finished.
-	 */
-	public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
-
-		this.updateOnlyAtEnd = updateOnlyAtEnd;
-	}
-
-	public void solve() throws PostServiceNotSetException {
-
-	}
-
 	public DSA(COP_Instance cop, String op) throws ParameterNotFoundException {
 
 		double changeInfinityTo = 0;
@@ -138,6 +101,39 @@ public class DSA implements Solver {
 		}
 	}
 
+	/**
+	 * Please report all the information and put them in file
+	 * @param file report path
+	 */
+	public void pleaseReport(String file) {
+
+		this.pleaseReport = true;
+		this.reportpath = file;
+	}
+
+	/**
+	 * How many steps to do?
+	 * @param n number of steps.
+	 */
+	public void setIterationsNumber(int n) {
+
+	        this.kMax = n;
+	}
+
+	public void setStepbystep(boolean stepbystep) {
+
+		this.stepbystep = stepbystep;
+	}
+
+	/**
+	 * Set if the update is only after the algorithm is finished or after each step.
+	 * @param updateOnlyAtEnd yes if to update only when finished.
+	 */
+	public void setUpdateOnlyAtEnd(boolean updateOnlyAtEnd) {
+
+		this.updateOnlyAtEnd = updateOnlyAtEnd;
+	}
+
 	private double getCosto() throws VariableNotSetException {
 
 		double cost = 0;
@@ -148,7 +144,7 @@ public class DSA implements Solver {
 		return cost;
 	}
 
-	public void randomInit() {
+	private void randomInit() {
 
 		for (NodeVariable x : this.variables) {
 			try {
@@ -168,6 +164,10 @@ public class DSA implements Solver {
 	}
 
 	public void selectNextValue() {
+
+	}
+
+	public void solve() throws PostServiceNotSetException {
 
 	}
 }
