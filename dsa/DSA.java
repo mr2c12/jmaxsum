@@ -20,12 +20,14 @@ import exception.NoMoreValuesException;
 import exception.ParameterNotFoundException;
 import exception.ResultOkException;
 import exception.VariableNotSetException;
+import java.io.IOException;
 
 import factorgraph.NodeFunction;
 import factorgraph.NodeVariable;
 import function.FunctionEvaluator;
 import system.COP_Instance;
 import operation.Solver;
+import misc.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ import java.util.Random;
 
 public abstract class DSA implements Solver {
 
+	private static final boolean debug = true;
 	private COP_Instance cop;
 	private String op;
 	private ArrayList<NodeVariable> variables;
@@ -190,37 +193,49 @@ public abstract class DSA implements Solver {
 		end = System.currentTimeMillis();
 	}
 
+	private void logMessage(String s) {
+
+		try {
+			if (pleaseReport)
+				Utils.stringToFile(s + "\n", reportpath);
+			else if (debug)
+				System.out.println(s);
+		} catch (IOException ex) {
+			System.out.println("Unable to write the report to " + reportpath);
+		}
+	}
+
 	private void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
 
 		try {
-			System.out.println("Variable " + x.getId());
+			logMessage("Variable " + x.getId());
 			int oldState = x.getStateIndex();
 			int oldConflicts = getNumberOfConflicts(x);
-			System.out.println("oldState = " + oldState);
-			System.out.println("oldConflicts = " + oldConflicts);
+			logMessage("oldState = " + oldState);
+			logMessage("oldConflicts = " + oldConflicts);
 			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
 
 			for (int newState = 0; newState < x.size(); newState++)
 				if (oldState != newState) {
 					x.setStateIndex(newState);
 					int newConflicts = getNumberOfConflicts(x);
-					System.out.println("newState = " + newState);
-					System.out.println("newConflicts = " + newConflicts);
+					logMessage("newState = " + newState);
+					logMessage("newConflicts = " + newConflicts);
 					if (newConflicts <= bestConflicts) {
 						bestConflicts = newConflicts;
 						bestState = newState;
 						delta = oldConflicts - bestConflicts;
-						System.out.println("updating bestConflicts = " + bestConflicts);
-						System.out.println("updating bestState = " + newState);
-						System.out.println("updating delta = " + delta);
+						logMessage("updating bestConflicts = " + bestConflicts);
+						logMessage("updating bestState = " + newState);
+						logMessage("updating delta = " + delta);
 					}
 				}
 
 			if (changeState(delta == 0, oldConflicts != 0)) {
-				System.out.println("updating state = " + bestState);
+				logMessage("updating state = " + bestState);
 				x.setStateIndex(bestState);
 			} else {
-				System.out.println("reverting old state = " + oldState);
+				logMessage("reverting old state = " + oldState);
 				x.setStateIndex(oldState);
 			}
 
