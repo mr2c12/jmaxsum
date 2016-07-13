@@ -60,11 +60,13 @@ public class WalkGrid implements Solver {
     boolean pleaseReport = false;
     String reportpath = null;
     double maxProbability = 0.8;
+    private Random rnd;
 
     final static int debug = test.DebugVerbosity.debugWalkGrid;
 
-    public WalkGrid(Relaxable_MS_COP_Instance cop) {
+    public WalkGrid(Relaxable_MS_COP_Instance cop, Random rnd) {
         this.cop = cop;
+	this.rnd = rnd;
 
         for (NodeVariable x : cop.getNodevariables()) {
             if (x.size() == 1) {
@@ -93,7 +95,6 @@ public class WalkGrid implements Solver {
 
     public NodeFunction getOverloadedGenerator() throws ResultOkException {
         NodeFunction f = null;
-        Random rnd = new Random();
         ArrayList<NodeFunction> tempList = new ArrayList<NodeFunction>(this.functions);
         Collections.shuffle(tempList);
         try {
@@ -137,7 +138,6 @@ public class WalkGrid implements Solver {
         RelaxableFunctionEvaluator fe, otherFe;
         NodeVariable x = null;
         LinkedList<NodeVariable> loadsOfGenerator = new LinkedList<NodeVariable>();
-        Random rnd = new Random();
         boolean searchAgain = false;
         ArrayList<NodeFunction> tempList = new ArrayList<NodeFunction>();
         int oldXValue;
@@ -448,30 +448,5 @@ public class WalkGrid implements Solver {
         // linear decreasing
         // prob = 0.18 * ( iterationNumber / maxIteration ) + 0.18
         return - this.maxProbability * ( (double)iterationNumber / (double)this.maximumNumberOfIterations ) + this.maxProbability;
-    }
-
-
-
-    public static void main(String[] args){
-        try {
-            PowerGrid pg = new PowerGrid("/home/mik/Documenti/univr/Ragionamento Automatico/stage/report/200/0.29/2.pg");
-            Relaxable_MS_COP_Instance cop = pg.getCopMnotInfNoCo2();
-            WalkGrid instance = new WalkGrid(cop);
-            instance.solve();
-            System.out.println("After solve, istance is:" + cop.status());
-            System.out.println("Relaxed cost is:" + cop.actualRelaxedValue());
-        } catch (VariableNotSetException ex) {
-            ex.printStackTrace();
-        } catch (PostServiceNotSetException ex) {
-            ex.printStackTrace();
-        } catch (UnInitializatedException ex) {
-            ex.printStackTrace();
-        } catch (InitializatedException ex) {
-            ex.printStackTrace();
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 }

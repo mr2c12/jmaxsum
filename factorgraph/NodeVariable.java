@@ -39,11 +39,14 @@ public class NodeVariable implements Node {
      */
     protected int index_actual_argument = -1;
 
-    private NodeVariable(int id) {
+    private Random rnd;
+
+    private NodeVariable(int id, Random rnd) {
         this.id = id;
         lastId = id;
         this.values = new ArrayList<NodeArgument>();
         this.neighbours = new HashSet<NodeFunction>();
+	this.rnd = rnd;
     }
 
     /**
@@ -120,19 +123,19 @@ public class NodeVariable implements Node {
         return this.neighbours;
     }
 
-    public static NodeVariable getNodeVariable(Integer id) {
+    public static NodeVariable getNodeVariable(Integer id, Random rnd) {
         if (!(NodeVariable.table.containsKey(id))) {
-            NodeVariable.table.put(id, new NodeVariable(id));
+            NodeVariable.table.put(id, new NodeVariable(id, rnd));
         }
         return NodeVariable.table.get(id);
     }
 
-    public static NodeVariable getNewNextNodeVariable() {
+    public static NodeVariable getNewNextNodeVariable(Random rnd) {
         int idn = NodeVariable.lastId + 1;
         while (NodeVariable.table.containsKey(idn)) {
             idn++;
         }
-        return NodeVariable.getNodeVariable(idn);
+        return NodeVariable.getNodeVariable(idn, rnd);
     }
 
     void clearValues() {
@@ -197,7 +200,6 @@ public class NodeVariable implements Node {
                 throw new NoMoreValuesException();
             }
         } else if (this.size() > 1) {
-            Random rnd = new Random();
             int oldValue = this.getStateIndex();
             int pos;
             do {
@@ -223,8 +225,6 @@ public class NodeVariable implements Node {
                     System.out.println("[class: "+dclass+" method: " + dmethod+ "] " + this + " actual state argument="+this.getStateIndex());
                     System.out.println("---------------------------------------");
             }
-
-            Random rnd = new Random();
 
             int pos = rnd.nextInt(this.size());
 
@@ -256,7 +256,7 @@ public class NodeVariable implements Node {
      */
     public NodeVariable getClone() throws OutOfNodeVariableNumberException {
 
-        NodeVariable nv = NodeVariable.getNewNextNodeVariable();
+        NodeVariable nv = NodeVariable.getNewNextNodeVariable(this.rnd);
         // copy the possible values
         for (NodeArgument argument : this.getValues()) {
             nv.addValue(argument);

@@ -32,6 +32,7 @@ import messages.PostService;
 import misc.Utils;
 import olimpo.Athena;
 import operation.Operator;
+import java.util.Random;
 
 /**
  * Agent that controls variables in a COP problem instance.
@@ -57,6 +58,7 @@ public class Agent {
 
     private int id;
     static int lastId = -1;
+    private Random rnd;
 
     /**
      * NodeVariables controlled by the agent
@@ -67,27 +69,27 @@ public class Agent {
      */
     private HashSet<NodeFunction> functions;
     
-    private Agent(int id){
+    private Agent(int id, Random rnd){
         this.id = id;
         lastId = id;
         this.variables = new HashSet<NodeVariable>();
         this.functions = new HashSet<NodeFunction>();
-
+	this.rnd = rnd;
     }
 
-    public static Agent getAgent(int id){
+    public static Agent getAgent(int id, Random rnd){
         if (!(Agent.table.containsKey(id))){
-            Agent.table.put(id, new Agent(id));
+            Agent.table.put(id, new Agent(id, rnd));
         }
         return Agent.table.get(id);
     }
 
-    public static Agent getNewNextAgent(){
+    public static Agent getNewNextAgent(Random rnd){
         int id = lastId + 1;
         while (Agent.table.containsKey(id)) {
             id++;
         }
-        return Agent.getAgent(id);
+        return Agent.getAgent(id, rnd);
     }
 
     public void setOp(Operator op) {
@@ -138,11 +140,11 @@ public class Agent {
 
             case 1:
                 Object[] arrayx = this.getVariables().toArray();
-                arrayx = Utils.shuffleArrayFY(arrayx);
+                arrayx = Utils.shuffleArrayFY(arrayx, rnd);
 
                 for (Object nodeVariable : arrayx) {
                     Object[] arrayf = this.getFunctionsOfVariable(((NodeVariable)nodeVariable)).toArray();
-                    arrayf = Utils.shuffleArrayFY(arrayf);
+                    arrayf = Utils.shuffleArrayFY(arrayf, rnd);
 
                     // TODO: shuffling is DA WAY
                     
@@ -222,11 +224,11 @@ public class Agent {
 
             case 1:
                 Object[] arrayf = this.getFunctions().toArray();
-                arrayf = Utils.shuffleArrayFY(arrayf);
+                arrayf = Utils.shuffleArrayFY(arrayf, rnd);
 
                 for (Object nodeFunction : arrayf) {
                     Object[] arrayx = this.getVariablesOfFunction((NodeFunction)nodeFunction).toArray();
-                    arrayx = Utils.shuffleArrayFY(arrayx);
+                    arrayx = Utils.shuffleArrayFY(arrayx, rnd);
 
                     // TODO: shuffling is DA WAY
 
@@ -306,7 +308,7 @@ public class Agent {
 
             case 1:
                 Object[] arrayx = this.getVariables().toArray();
-                arrayx = Utils.shuffleArrayFY(arrayx);
+                arrayx = Utils.shuffleArrayFY(arrayx, rnd);
 
                 for (Object nodeVariable : arrayx) {
                     this.op.updateZ((NodeVariable)nodeVariable, postservice);
@@ -398,7 +400,7 @@ public class Agent {
 
     public Agent getClone() throws OutOfAgentNumberException{
 
-        Agent cloned = Agent.getNewNextAgent();
+        Agent cloned = Agent.getNewNextAgent(this.rnd);
         cloned.setOp(this.op);
         cloned.setPostservice(this.postservice);
 

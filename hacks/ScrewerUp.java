@@ -49,11 +49,13 @@ public class ScrewerUp {
      */
     protected HashMap<NodeVariable, Double[]> modifierTable;
     protected boolean screwed = false;
+    private Random rnd;
 
-    public ScrewerUp(COP_Instance cop) {
+    public ScrewerUp(COP_Instance cop, long seed) {
         this.cop = cop;
         this.intervalTable = new HashMap<NodeVariable, Double>();
         this.modifierTable = new HashMap<NodeVariable, Double[]>();
+	rnd = seed == -1 ? new Random() : new Random(seed);
     }
 
     /**
@@ -120,7 +122,6 @@ public class ScrewerUp {
 
         double numArgument;
         Double[] modifier;
-        Random rnd = new Random();
         for (NodeVariable nv : this.intervalTable.keySet()) {
             numArgument = this.intervalTable.get(nv);
             if (numArgument <= 0) {
