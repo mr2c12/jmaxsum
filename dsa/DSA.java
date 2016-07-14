@@ -173,6 +173,18 @@ public abstract class DSA implements Solver {
 		}
 	}
 
+	private void logMessage(String s) {
+
+		try {
+			if (pleaseReport)
+				Utils.stringToFile(s + "\n", reportpath);
+			else if (debug)
+				System.out.println(s);
+		} catch (IOException ex) {
+			System.out.println("Unable to write the report to " + reportpath);
+		}
+	}
+
 	public void solve() throws PostServiceNotSetException {
 
 		randomInit();
@@ -186,58 +198,49 @@ public abstract class DSA implements Solver {
 			ex.printStackTrace();
 		}
 
-		for (int k = 0; k < kMax; k++)
+		for (int k = 0; k < kMax; k++) {
+			logMessage("==========================================\n" +
+				   "Iteration " + (k + 1) + "\n" +
+				   "==========================================\n");
 			for (NodeVariable x : this.variables)
 				selectNextValue(x, variables);
+		}
 
 		end = System.currentTimeMillis();
-	}
-
-	private void logMessage(String s) {
-
-		try {
-			if (pleaseReport)
-				Utils.stringToFile(s + "\n", reportpath);
-			else if (debug)
-				System.out.println(s);
-		} catch (IOException ex) {
-			System.out.println("Unable to write the report to " + reportpath);
-		}
 	}
 
 	private void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
 
 		try {
-			logMessage("Variable " + x.getId());
 			int oldState = x.getStateIndex();
 			int oldConflicts = getNumberOfConflicts(x);
-			logMessage("oldState = " + oldState);
-			logMessage("oldConflicts = " + oldConflicts);
+			logMessage(String.format("[% 5d] oldState = %d", x.getId(), oldState));
+			logMessage(String.format("[% 5d] oldConflicts = %d", x.getId(), oldConflicts));
 			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
 
 			for (int newState = 0; newState < x.size(); newState++)
 				if (oldState != newState) {
 					x.setStateIndex(newState);
 					int newConflicts = getNumberOfConflicts(x);
-					logMessage("newState = " + newState);
-					logMessage("newConflicts = " + newConflicts);
+					logMessage(String.format("[% 5d] newState = %d", x.getId(), newState));
+					logMessage(String.format("[% 5d] newConflicts = %d", x.getId(), newConflicts));
 					if (newConflicts <= bestConflicts) {
 						bestConflicts = newConflicts;
 						bestState = newState;
 						delta = oldConflicts - bestConflicts;
-						logMessage("updating bestConflicts = " + bestConflicts);
-						logMessage("updating bestState = " + newState);
-						logMessage("updating delta = " + delta);
+						logMessage(String.format("[% 5d] bestConflicts <- %d", x.getId(), bestConflicts));
+						logMessage(String.format("[% 5d] bestState <- %d", x.getId(), bestState));
+						logMessage(String.format("[% 5d] delta <- %d", x.getId(), delta));
 					}
 				}
 
 			if (changeState(delta == 0, oldConflicts != 0)) {
-				logMessage("updating state = " + bestState);
+				logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
 				x.setStateIndex(bestState);
-			} else {
-				logMessage("reverting old state = " + oldState);
+			} else
 				x.setStateIndex(oldState);
-			}
+
+			logMessage("");
 
 		} catch (VariableNotSetException e) {}
 	}
