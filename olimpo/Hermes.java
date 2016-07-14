@@ -235,7 +235,7 @@ public class Hermes {
 				}
 			}
 
-			finale += "Conclusion for original cop=" + original_cop.status() + "\n";
+			finale += "Value=" + original_cop.status() + "\n";
 
 			if (timeV) {
 				finale += "Time needed: " + ((endTime - startTime) / (double) 1000) + " [s]";
@@ -250,8 +250,6 @@ public class Hermes {
 			} else {
 				System.out.println(finale);
 			}
-
-			System.out.println("Value = " + cop.actualValue());
 
 		} catch (IllegalArgumentException iaex) {
 			System.out.println(iaex.getMessage());
