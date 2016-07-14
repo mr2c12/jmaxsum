@@ -34,3 +34,7 @@ In addition, the following *optional* parameters can be specified:
     --bounded		Use the Bounded Max Sum phase
     --time			Print total time usage
     --report FILE	Write the report of the execution on FILE
+
+Experiments
+----------
+The experiments to determine the best probability for the DSA algorithm has been run via the [`exp/pdsa.sh`](https://github.com/mr2c12/jmaxsum/blob/dsa/exp/pdsa.sh) script.
