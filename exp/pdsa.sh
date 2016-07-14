@@ -16,9 +16,9 @@ mkdir -p $SUBDIR
 
 for DSA in a b c d e
 do
-	if [ -f $DSA.csv ]
+	if [ -f $SUBDIR/$DSA.csv ]
 	then
-		rm $DSA.csv # clear previous experiments
+		rm $SUBDIR/$DSA.csv # clear previous experiments
 	fi
 	for P in 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 	do
@@ -30,10 +30,10 @@ do
 			rm $TMP
 			if [ $SEED -ne 1 ]
 			then
-				echo -n "," >> $DSA.csv
+				echo -n "," >> $SUBDIR/$DSA.csv
 			fi
-			echo -n $VALUE >> $DSA.csv
+			echo -n $VALUE >> $SUBDIR/$DSA.csv
 		done
-		echo >> $DSA.csv
+		echo >> $SUBDIR/$DSA.csv
 	done
 done
