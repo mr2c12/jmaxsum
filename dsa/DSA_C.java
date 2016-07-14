@@ -34,13 +34,6 @@ public class DSA_C extends DSA {
 
 	protected boolean changeState(boolean deltaIsZero, boolean conflict) {
 
-		if (!deltaIsZero)
-			return (rnd.nextDouble() < p);
-		else {
-			if (conflict)
-				return (rnd.nextDouble() < p);
-			else
-				return (rnd.nextDouble() < p);
-		}
+		return (rnd.nextDouble() < p);
 	}
 }

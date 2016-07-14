@@ -36,11 +36,7 @@ public class DSA_E extends DSA {
 
 		if (!deltaIsZero)
 			return true;
-		else {
-			if (conflict)
-				return (rnd.nextDouble() < p);
-			else
-				return (rnd.nextDouble() < p);
-		}
+		else
+			return (rnd.nextDouble() < p);
 	}
 }
