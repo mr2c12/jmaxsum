@@ -42,7 +42,7 @@ import java.util.Random;
 
 public abstract class DSA implements Solver {
 
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 	private COP_Instance cop;
 	private String op;
 	private ArrayList<NodeVariable> variables;
