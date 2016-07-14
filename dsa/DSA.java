@@ -220,6 +220,7 @@ public abstract class DSA implements Solver {
 			logMessage(String.format("[% 5d] oldCost = %f", x.getId(), oldCost));
 			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
 			double bestCost = oldCost;
+			boolean updated = false;
 
 			for (int newState = 0; newState < x.size(); newState++)
 				if (oldState != newState) {
@@ -228,8 +229,8 @@ public abstract class DSA implements Solver {
 					double newCost = cop.actualValue();
 					logMessage(String.format("[% 5d] newState = %d", x.getId(), newState));
 					logMessage(String.format("[% 5d] newConflicts = %d", x.getId(), newConflicts));
-						bestConflicts = newConflicts;
 					if (newConflicts <= bestConflicts && newCost <= bestCost) {
+						updated = true;
 						bestState = newState;
 						bestConflicts = newConflicts;
 						bestCost = newCost;
@@ -241,7 +242,7 @@ public abstract class DSA implements Solver {
 					}
 				}
 
-			if (changeState(delta == 0, oldConflicts != 0)) {
+			if (updated && changeState(delta == 0, oldConflicts != 0)) {
 				logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
 				x.setStateIndex(bestState);
 			} else
