@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Experiments to determine the best p for DSA
+# DSA experiments
 
 SUBDIR=dsa
 
