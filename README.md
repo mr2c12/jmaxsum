@@ -38,3 +38,5 @@ In addition, the following *optional* parameters can be specified:
 Experiments
 ----------
 The experiments to determine the best probability for the DSA algorithm have been run via the [`exp/pdsa.sh`](https://github.com/mr2c12/jmaxsum/blob/dsa/exp/pdsa.sh) script.
+The complete set of experiments with the DSA algorithm has been run via the [`exp/dsa.sh`](https://github.com/mr2c12/jmaxsum/blob/dsa/exp/dsa.sh) script.
+The complete set of experiments with the Max-Sum algorithm has been run via the [`exp/maxsum.sh`](https://github.com/mr2c12/jmaxsum/blob/dsa/exp/maxsum.sh) script.
