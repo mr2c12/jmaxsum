@@ -198,18 +198,25 @@ public abstract class DSA implements Solver {
 			ex.printStackTrace();
 		}
 
+		HashMap<Integer,Integer> newStates = new HashMap<Integer,Integer>();
+
 		for (int k = 0; k < kMax; k++) {
+
 			logMessage("==========================================\n" +
 				   "Iteration " + (k + 1) + "\n" +
 				   "==========================================\n");
+
 			for (NodeVariable x : this.variables)
-				selectNextValue(x, variables);
+				newStates.put(x.getId(), selectNextValue(x, variables));
+
+			for (NodeVariable x : this.variables)
+				x.setStateIndex(newStates.get(x.getId()));
 		}
 
 		end = System.currentTimeMillis();
 	}
 
-	private void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
+	private int selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
 
 		try {
 			double oldCost = cop.actualValue();
@@ -242,15 +249,18 @@ public abstract class DSA implements Solver {
 					}
 				}
 
-			if (updated && changeState(delta == 0, oldConflicts != 0)) {
-				logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
-				x.setStateIndex(bestState);
-			} else
-				x.setStateIndex(oldState);
-
+			x.setStateIndex(oldState);
 			logMessage("");
 
-		} catch (VariableNotSetException e) {}
+			if (updated && changeState(delta == 0, oldConflicts != 0)) {
+				logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
+				return bestState;
+			} else
+				return oldState;
+
+		} catch (VariableNotSetException e) {
+			return x.getStateIndex();
+		}
 	}
 
 	abstract protected boolean changeState(boolean deltaIsZero, boolean conflict);
