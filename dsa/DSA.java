@@ -212,28 +212,28 @@ public abstract class DSA implements Solver {
 	private void selectNextValue(NodeVariable x, ArrayList<NodeVariable> variables) {
 
 		try {
-			double oldCost = cop.actualValue();
+			//double oldCost = cop.actualValue();
 			int oldState = x.getStateIndex();
 			int oldConflicts = getNumberOfConflicts(x);
 			//logMessage(String.format("[% 5d] oldState = %d", x.getId(), oldState));
 			//logMessage(String.format("[% 5d] oldConflicts = %d", x.getId(), oldConflicts));
 			//logMessage(String.format("[% 5d] oldCost = %f", x.getId(), oldCost));
 			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
-			double bestCost = oldCost;
+			//double bestCost = oldCost;
 			boolean updated = false;
 
 			for (int newState = 0; newState < x.size(); newState++)
 				if (oldState != newState) {
 					x.setStateIndex(newState);
 					int newConflicts = getNumberOfConflicts(x);
-					double newCost = cop.actualValue();
+					//double newCost = cop.actualValue();
 					//logMessage(String.format("[% 5d] newState = %d", x.getId(), newState));
 					//logMessage(String.format("[% 5d] newConflicts = %d", x.getId(), newConflicts));
-					if (newConflicts <= bestConflicts && newCost <= bestCost) {
+					if (newConflicts <= bestConflicts /*&& newCost <= bestCost*/) {
 						updated = true;
 						bestState = newState;
 						bestConflicts = newConflicts;
-						bestCost = newCost;
+						//bestCost = newCost;
 						delta = oldConflicts - bestConflicts;
 						//logMessage(String.format("[% 5d] bestState <- %d", x.getId(), bestState));
 						//logMessage(String.format("[% 5d] bestConflicts <- %d", x.getId(), bestConflicts));
