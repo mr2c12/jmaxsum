@@ -215,9 +215,9 @@ public abstract class DSA implements Solver {
 			double oldCost = cop.actualValue();
 			int oldState = x.getStateIndex();
 			int oldConflicts = getNumberOfConflicts(x);
-			logMessage(String.format("[% 5d] oldState = %d", x.getId(), oldState));
-			logMessage(String.format("[% 5d] oldConflicts = %d", x.getId(), oldConflicts));
-			logMessage(String.format("[% 5d] oldCost = %f", x.getId(), oldCost));
+			//logMessage(String.format("[% 5d] oldState = %d", x.getId(), oldState));
+			//logMessage(String.format("[% 5d] oldConflicts = %d", x.getId(), oldConflicts));
+			//logMessage(String.format("[% 5d] oldCost = %f", x.getId(), oldCost));
 			int bestState = oldState, delta = 0, bestConflicts = oldConflicts;
 			double bestCost = oldCost;
 			boolean updated = false;
@@ -227,28 +227,28 @@ public abstract class DSA implements Solver {
 					x.setStateIndex(newState);
 					int newConflicts = getNumberOfConflicts(x);
 					double newCost = cop.actualValue();
-					logMessage(String.format("[% 5d] newState = %d", x.getId(), newState));
-					logMessage(String.format("[% 5d] newConflicts = %d", x.getId(), newConflicts));
+					//logMessage(String.format("[% 5d] newState = %d", x.getId(), newState));
+					//logMessage(String.format("[% 5d] newConflicts = %d", x.getId(), newConflicts));
 					if (newConflicts <= bestConflicts && newCost <= bestCost) {
 						updated = true;
 						bestState = newState;
 						bestConflicts = newConflicts;
 						bestCost = newCost;
 						delta = oldConflicts - bestConflicts;
-						logMessage(String.format("[% 5d] bestState <- %d", x.getId(), bestState));
-						logMessage(String.format("[% 5d] bestConflicts <- %d", x.getId(), bestConflicts));
-						logMessage(String.format("[% 5d] bestCost <- %f", x.getId(), bestCost));
-						logMessage(String.format("[% 5d] delta <- %d", x.getId(), delta));
+						//logMessage(String.format("[% 5d] bestState <- %d", x.getId(), bestState));
+						//logMessage(String.format("[% 5d] bestConflicts <- %d", x.getId(), bestConflicts));
+						//logMessage(String.format("[% 5d] bestCost <- %f", x.getId(), bestCost));
+						//logMessage(String.format("[% 5d] delta <- %d", x.getId(), delta));
 					}
 				}
 
 			if (updated && changeState(delta == 0, oldConflicts != 0)) {
-				logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
+				//logMessage(String.format("[% 5d] updating state = %d", x.getId(), bestState));
 				x.setStateIndex(bestState);
 			} else
 				x.setStateIndex(oldState);
 
-			logMessage("");
+			//logMessage("");
 
 		} catch (VariableNotSetException e) {}
 	}
