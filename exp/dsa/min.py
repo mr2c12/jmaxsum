@@ -1,19 +1,35 @@
 import sys
 import csv
+import numpy
 
-with open(sys.argv[1], "r") as f_input:
-    lmin_col = []
-    lmin_row = []
-    reader = csv.reader(f_input)
-    next(reader, None)  # skip the headers
+for x in range(290, 301):
+	xf = "%.3f" % (x/1000.0)
+	f_input = open(sys.argv[1] + "/" + xf + "/c-v.csv", "r")
+	reader = csv.reader(f_input)
+	lmin_col = []
 
-    for row in reader:
-        row = map(float, row)
-        lmin_row.append(min(row))
+	for row in csv.reader(f_input):
+		row = map(float, row)
+		if lmin_col:
+			lmin_col = map(min, lmin_col, row)
+		else:
+			lmin_col = row
+	
+	print "%.3f,%f,%f" % (x/1000.0, numpy.ma.masked_invalid(lmin_col).mean(), numpy.ma.masked_invalid(lmin_col).std())
 
-        if lmin_col:
-            lmin_col = map(min, lmin_col, row)
-        else:
-            lmin_col = row
+print
 
-    print(lmin_col[::2])
+for x in range(290, 301):
+	xf = "%.3f" % (x/1000.0)
+	f_input = open(sys.argv[1] + "/" + xf + "/e-v.csv", "r")
+	reader = csv.reader(f_input)
+	lmin_col = []
+
+	for row in csv.reader(f_input):
+		row = map(float, row)
+		if lmin_col:
+			lmin_col = map(min, lmin_col, row)
+		else:
+			lmin_col = row
+	
+	print "%.3f,%f,%f" % (x/1000.0, numpy.ma.masked_invalid(lmin_col).mean(), numpy.ma.masked_invalid(lmin_col).std())
